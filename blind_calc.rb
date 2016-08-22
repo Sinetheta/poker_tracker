@@ -15,7 +15,7 @@ def get_blinds(players, chips, demoninations, tournament_length, max_time_over, 
   (0..tournament_length+max_time_over).step(round_length).each_with_index do |time, i|
     round = i+1
     if round <= number_of_rounds
-      small_blind = total_chips*((0.05/number_of_rounds)*round)
+      small_blind = (total_chips*((0.05/number_of_rounds)*round)).to_i
     elsif time == tournament_length+max_time_over
       # This is the time the tournament has to finish
       small_blind = (total_chips*0.25).round_to(demoninations.max)
