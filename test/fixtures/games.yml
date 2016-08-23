@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  players: 1
+  chips: 1
+  game_length: 1
+  round_length: 1
+  blinds: MyText
+
+two:
+  name: MyString
+  players: 1
+  chips: 1
+  game_length: 1
+  round_length: 1
+  blinds: MyText

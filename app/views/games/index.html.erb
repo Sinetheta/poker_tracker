@@ -1,0 +1,20 @@
+<h1>All Games</h1>
+
+<div class="container">
+  <div class="span5 offset2">
+    <table class="table table-bordered">
+      <tr>
+        <th>Game name</th>
+        <th>Players</th>
+        <th>Chips per player</th>
+      </tr>
+      <% @games.each do |game| %>
+        <tr>
+          <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
+          <td><%= game.players %></td>
+          <td><%= game.chips %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>

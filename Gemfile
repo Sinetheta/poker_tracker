@@ -15,6 +15,8 @@ gem 'coffee-rails', '~> 4.1.0'
 # gem 'therubyracer', platforms: :ruby
 
 gem 'rounding'
+gem 'sprockets-rails', :require => 'sprockets/railtie'
+gem 'bootstrap-sass', '~> 3.3.6'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
