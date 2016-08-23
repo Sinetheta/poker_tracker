@@ -1,6 +1,23 @@
 <h1><%= @game.name %></h1>
 
-<p><%= "A game with #{@game.players} players, starting with #{@game.chips} chips each." %></p>
+<div class="container">
+  <div class="span-md-5 offset-md-2">
+    <p><%= "A game with #{@game.players} players, starting with #{@game.chips} chips each." %></p>
+    <% if @game.status == "active" %>
+      <p>
+        <%= "This game is currently active on round #{@game.round}." %>
+        <%= link_to "Suspend Game", game_path(@game, :game => {status: "suspended"}), method: :patch %>
+      </p>
+    <% else %>
+      <p>
+        <%= "This game is currently #{@game.status}." %>
+        <% if @game.status == "inactive" || "suspended" %>
+          <%= link_to "Start Game", game_path(@game, :game => {status: "active"}), method: :patch %>
+        <% end %>
+      </p>
+    <% end %>
+  </div>
+</div>
 
 <div class="container">
   <div class="span5 offset2">
@@ -10,7 +27,7 @@
         <th>Small Blind</th>
         <th>Big Blind</th>
         <th>Time</th>
-      </tr>  
+      </tr>
       <% @game.blinds.each_with_index do |blind, i| %>
         <tr>
           <td><%= i+1 %></td>

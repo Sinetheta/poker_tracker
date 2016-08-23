@@ -20,9 +20,9 @@ ActiveRecord::Schema.define(version: 20160823202124) do
     t.integer  "game_length"
     t.integer  "round_length"
     t.text     "blinds"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
-    t.text     "status"
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.text     "status",       default: "inactive"
     t.integer  "round"
   end
 
