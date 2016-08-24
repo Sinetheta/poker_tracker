@@ -28,10 +28,8 @@
             <td><%= blind %></td>
             <td><%= blind*2 %></td>
             <% hours_start, minutes_start = ((i)*@game.round_length).divmod(60) %>
-            <% minutes_start = "00" if minutes_start == 0 %>
             <% hours_end, minutes_end = ((i+1)*@game.round_length).divmod(60) %>
-            <% minutes_end = "00" if minutes_end == 0 %>
-            <td><%= "#{hours_start}:#{minutes_start} - #{hours_end}:#{minutes_end}" %></td>
+            <td><%= "#{hours_start}:#{minutes_start.to_s.rjust(2, '0')} - #{hours_end}:#{minutes_end.to_s.rjust(2, '0')}" %></td>
             </tr>
           <% end %>
     </table>

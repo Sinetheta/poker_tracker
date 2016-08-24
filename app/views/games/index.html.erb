@@ -7,12 +7,14 @@
         <th>Game name</th>
         <th>Players</th>
         <th>Chips per player</th>
+        <th></th>
       </tr>
       <% @games.each do |game| %>
         <tr>
           <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
           <td><%= game.players %></td>
           <td><%= game.chips %></td>
+          <td><%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %></td>
         </tr>
       <% end %>
     </table>

@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
   def index
     @games = Game.all
+    redirect_to new_game_path if @games.empty?
   end
 
   def new
@@ -10,13 +11,19 @@ class GamesController < ApplicationController
   def create
     @game = Game.new(game_params)
     if @game.save
-      redirect_to root_path
+      redirect_to game_path(@game)
     else
       render :new
     end
   end
 
   def edit
+  end
+
+  def destroy
+    game = Game.find(params[:id])
+    game.delete
+    redirect_to games_path
   end
 
   def update

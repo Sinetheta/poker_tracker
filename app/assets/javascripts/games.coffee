@@ -1,5 +1,4 @@
 updateTimer = (currentTime) ->
-  console.log(currentTime)
   minutes = Math.floor(currentTime/60)
   seconds = currentTime % 60
   seconds = "00" if seconds == 0

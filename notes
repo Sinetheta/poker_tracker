@@ -18,3 +18,8 @@ It would be good to figure out why the timer doesn't reset to 900?
   Keeping track of the rounds there is probably still a good idea though
 
 
+For each round removed, round_time time is removed.
+round_time*removed_count = total_time_removed
+
+
+

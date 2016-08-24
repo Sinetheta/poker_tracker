@@ -13,12 +13,6 @@
       </ul>
     <% end %>
     <div class="form-group">
-      <%= f.label :name, "Name", class: "col-md-2 control-label" %>
-      <div class="col-md-4">
-        <%= f.text_field :name, class: "form-control" %>
-      </div>
-    </div>
-    <div class="form-group">
       <%= f.label :players, "Number of players", class: "col-md-2 control-label" %>
       <div class="col-md-4">
         <%= f.number_field :players, class: "form-control" %>
@@ -31,9 +25,9 @@
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :game_length, "Game length (minutes)", class: "col-md-2 control-label" %>
+      <%= f.label :game_length, "Game length (hours)", class: "col-md-2 control-label" %>
       <div class="col-md-4">
-        <%= f.number_field :game_length, class: "form-control" %>
+        <%= f.number_field :game_length, class: "form-control", step: 0.05 %>
       </div>
     </div>
     <div class="form-group">
