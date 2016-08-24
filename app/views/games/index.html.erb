@@ -2,11 +2,12 @@
 
 <div class="container">
   <div class="span5 offset2">
-    <table class="table table-bordered">
+    <table class="table">
       <tr>
         <th>Game name</th>
         <th>Players</th>
-        <th>Chips per player</th>
+        <th>Chips (per player)</th>
+        <th>Length of game (minutes)</th>
         <th></th>
       </tr>
       <% @games.each do |game| %>
@@ -14,7 +15,11 @@
           <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
           <td><%= game.players %></td>
           <td><%= game.chips %></td>
-          <td><%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %></td>
+          <td><%= game.game_length %></td>
+          <td>
+            <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %>
+            <%= link_to "Edit Game Settings", edit_game_path(game), class: "btn btn-primary" %>
+          </td>
         </tr>
       <% end %>
     </table>

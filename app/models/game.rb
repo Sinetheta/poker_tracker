@@ -1,21 +1,19 @@
 class Game < ActiveRecord::Base
-  after_validation :convert_game_length, on: :create
-  after_validation :generate_blinds, on: :create
-  after_validation :generate_name, on: :create
+  before_validation :generate_name, :convert_game_length, :generate_blinds, on: :create
 
   serialize :blinds, Array
-  validates :players, :chips, :game_length, :round_length, presence: true
-  validates :players, :chips, numericality: { only_integer: true, greater_than: 0 }
+  validates :name, :players, :chips, :game_length, :round_length, :blinds, presence: true
+  validates :players, :chips, :game_length, :round_length, numericality: { only_integer: true, greater_than: 0 }
 
   protected
 
-  def sensibly_round(n, denominations)
-    closest_denom = denominations.min_by { |x| (n-x).abs }
+  def round_values(n, denominations)
     # Round to the closest denomination if within 10%
+    closest_denom = denominations.min_by { |x| (n-x).abs }
     if (n-closest_denom).abs/closest_denom <= 0.1
       return n.round_to(closest_denom)
     end
-    # Maybe we should try rounding against multple denoms to get a better result
+    # Round to a roughly reasonable denomination
     denominations.sort.each_with_index do |denomination, i|
       if n < denomination*10
         return n.round_to(denomination)
@@ -24,10 +22,14 @@ class Game < ActiveRecord::Base
     return n.round_to(denominations[-1])
   end
 
+  # Convert game_length from hours to minutes
+  # This is a clunky solution because is breaks if you apply it on :update
+  # Is there a way to handle this in the controller?
   def convert_game_length
     self.game_length = self.game_length*60
   end
 
+  # Randomly generate an appropriate name
   def generate_name
     names = ["High Card",
              "Ace King",
@@ -45,8 +47,7 @@ class Game < ActiveRecord::Base
 
   def generate_blinds
     if errors.empty?
-      # tournament_length and round_length in minutes
-      # at tournament_length ~5% of total chips can be small blind
+      # first_small_blind should be configurable
       denominations = [1,5,10,25,50,100,500,1000,5000,10000]
       first_small_blind = 1
 
@@ -57,21 +58,23 @@ class Game < ActiveRecord::Base
 
       blinds = []
       round = 0
-      duplicate_errors = 0
+      duplicate_errors = nil
 
       while blinds.length < number_of_rounds
         time = self.round_length*round
-        small_blind = sensibly_round(Math::E**(k*time), denominations)
+        small_blind = round_values((first_small_blind*Math::E)**(k*time), denominations)
         if small_blind == blinds[-1]
-          duplicate_errors += 1
+          duplicate_errors ||= true
         else
           blinds << small_blind
         end
         round += 1
       end
+      # Filter blinds larger than the pot
       blinds.select! {|blind| blind < total_chips/3}
+      # If duplicate errors occured, adjust round_length to compensate
+      # It would be nice to give the user an option here
       if duplicate_errors
-        # Find where the final position should be and calculate round times
         last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
         self.round_length = self.game_length/last_blind
       end

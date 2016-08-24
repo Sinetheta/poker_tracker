@@ -1,37 +1,32 @@
-<h1><%= @game.name %></h1>
-
 <div class="container">
-  <div class="span-md-5 offset-md-2">
-    <p><%= "A game with #{@game.players} players, starting with #{@game.chips} chips each." %></p>
-    <p id="timer"><%= "#{@game.round_length}:00" %></p>
-    <%= link_to "Start Timer", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary", id: "startTimer" %>
-    <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}), method: :patch, class: "btn btn-primary" %>
-  </div>
-</div>
-
-<div class="container">
-  <div class="span-md-5 offset-md-2">
-    <table class="table table-bordered">
-      <tr>
-        <th>Round Number</th>
-        <th>Small Blind</th>
-        <th>Big Blind</th>
-        <th>Time (hh:mm)</th>
-      </tr>
-      <% @game.blinds.each_with_index do |blind, i| %>
-        <% if @game.round == i %>
-          <tr class="info">
-          <% else %>
-            <tr>
-            <% end %>
-            <td><%= link_to i+1, game_path(@game, :game => {round: i}), method: :patch %></td>
-            <td><%= blind %></td>
-            <td><%= blind*2 %></td>
-            <% hours_start, minutes_start = ((i)*@game.round_length).divmod(60) %>
-            <% hours_end, minutes_end = ((i+1)*@game.round_length).divmod(60) %>
-            <td><%= "#{hours_start}:#{minutes_start.to_s.rjust(2, '0')} - #{hours_end}:#{minutes_end.to_s.rjust(2, '0')}" %></td>
-            </tr>
+  <div class="row">
+    <div class="col-md-5 offset-md-2">
+      <h1><%= @game.name %></h1>
+      <%= link_to "Start Timer", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary", id: "startTimer" %>
+      <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}), method: :patch, class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
+      <h1>Round <%= @game.round+1 %></h1>
+      <h2><%= "Small Blind: #{@current_blinds[0]} - Big Blind: #{@current_blinds[1]}" %></h2>
+      <div class="row">
+        <div class="col-md-4">
+          <% upcoming_blinds = @game.blinds.select {|blind| blind > @current_blinds[0]}.take(4) %>
+          <% unless upcoming_blinds.empty? %>
+            <table class="table table-hover">
+              <tr>
+                <h3>Upcoming Blinds</h3>
+              </tr>
+              <% upcoming_blinds.each_with_index do |blind, i| %>
+                <tr>
+                  <td><%= blind %></td>
+                  <td><%= blind*2 %></td>
+                </tr>
+              <% end %>
+            </table>
           <% end %>
-    </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <h1 id="timer"><%= "#{@game.round_length}:00" %></h1>
+    </div>
   </div>
 </div>
