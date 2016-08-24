@@ -3,32 +3,20 @@
 <div class="container">
   <div class="span-md-5 offset-md-2">
     <p><%= "A game with #{@game.players} players, starting with #{@game.chips} chips each." %></p>
-    <% if @game.status == "active" %>
-      <p>
-      <%= "This game is currently active on round #{@game.round+1}." %>
-      <%= link_to "Suspend Game", game_path(@game, :game => {status: "suspended"}), method: :patch %>
-      </p>
-    <% else %>
-      <p>
-      <%= "This game is currently #{@game.status}." %>
-      <% if @game.status == "inactive" || "suspended" %>
-        <%= link_to "Start Game", game_path(@game, :game => {status: "active"}), method: :patch %>
-      <% end %>
-      </p>
-    <% end %>
-    <p id="timer"><%= @game.round_length*60 %></p>
+    <p id="timer"><%= "#{@game.round_length}:00" %></p>
     <%= link_to "Start Timer", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary", id: "startTimer" %>
+    <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}), method: :patch, class: "btn btn-primary" %>
   </div>
 </div>
 
 <div class="container">
-  <div class="span5 offset2">
+  <div class="span-md-5 offset-md-2">
     <table class="table table-bordered">
       <tr>
         <th>Round Number</th>
         <th>Small Blind</th>
         <th>Big Blind</th>
-        <th>Time</th>
+        <th>Time (hh:mm)</th>
       </tr>
       <% @game.blinds.each_with_index do |blind, i| %>
         <% if @game.round == i %>
@@ -39,7 +27,11 @@
             <td><%= link_to i+1, game_path(@game, :game => {round: i}), method: :patch %></td>
             <td><%= blind %></td>
             <td><%= blind*2 %></td>
-            <td><%= (i+1)*@game.round_length %></td>
+            <% hours_start, minutes_start = ((i)*@game.round_length).divmod(60) %>
+            <% minutes_start = "00" if minutes_start == 0 %>
+            <% hours_end, minutes_end = ((i+1)*@game.round_length).divmod(60) %>
+            <% minutes_end = "00" if minutes_end == 0 %>
+            <td><%= "#{hours_start}:#{minutes_start} - #{hours_end}:#{minutes_end}" %></td>
             </tr>
           <% end %>
     </table>

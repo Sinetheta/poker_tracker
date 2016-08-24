@@ -23,7 +23,7 @@ class GamesController < ApplicationController
     game = Game.find(params[:id])
     game.update_attributes(game_params)
     if game.save
-      flash[:alert] = "game updated"
+      flash[:alert] = "game updated" unless game_params[:round]
     end
     redirect_to game_path(game)
   end

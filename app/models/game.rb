@@ -26,7 +26,7 @@ class Game < ActiveRecord::Base
     if errors.empty?
       # tournament_length and round_length in minutes
       # at tournament_length ~5% of total chips can be small blind
-      denominations = [1,5,10,25,50,100,500,1000]
+      denominations = [1,5,10,25,50,100,500,1000,5000,10000]
       first_small_blind = 1
       extra_time = self.round_length*6
       total_chips = self.players * self.chips
