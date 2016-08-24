@@ -20,21 +20,25 @@ class GamesController < ApplicationController
   end
 
   def update
-    @game = Game.find(params[:id])
-    @game.status = game_params[:status]
-    if @game.save
+    game = Game.find(params[:id])
+    game.update_attributes(game_params)
+    if game.save
       flash[:alert] = "game updated"
     end
-    redirect_to games_path
+    redirect_to game_path(game)
   end
 
   def show
     @game = Game.find(params[:id])
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
+    respond_to do |format|
+      format.html
+      format.json
+    end
   end
 
   private
   def game_params
-    params.require(:game).permit(:name, :players, :chips, :game_length, :round_length, :status)
+    params.require(:game).permit(:name, :players, :chips, :game_length, :round_length, :status, :round, :round_start)
   end
 end

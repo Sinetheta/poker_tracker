@@ -5,17 +5,22 @@
     <p><%= "A game with #{@game.players} players, starting with #{@game.chips} chips each." %></p>
     <% if @game.status == "active" %>
       <p>
-        <%= "This game is currently active on round #{@game.round}." %>
-        <%= link_to "Suspend Game", game_path(@game, :game => {status: "suspended"}), method: :patch %>
+      <%= "This game is currently active on round #{@game.round+1}." %>
+      <%= link_to "Suspend Game", game_path(@game, :game => {status: "suspended"}), method: :patch %>
       </p>
     <% else %>
       <p>
-        <%= "This game is currently #{@game.status}." %>
-        <% if @game.status == "inactive" || "suspended" %>
-          <%= link_to "Start Game", game_path(@game, :game => {status: "active"}), method: :patch %>
-        <% end %>
+      <%= "This game is currently #{@game.status}." %>
+      <% if @game.status == "inactive" || "suspended" %>
+        <%= link_to "Start Game", game_path(@game, :game => {status: "active"}), method: :patch %>
+      <% end %>
       </p>
     <% end %>
+    <p id="timer"></p>
+    <%= javascript_tag "updateTimer(#{@game.round_length}, #{@game.round_start.to_i})" %>
+    <button onclick="updateTimer(<%= @game.round_length %>, <%= @game.round_start.to_i %>)" class="btn btn-primary">Update Timer</button>
+    <%= link_to "Start Timer", game_path(@game, :game => {round_start: DateTime.now}), method: :patch %>
+
   </div>
 </div>
 
@@ -29,13 +34,20 @@
         <th>Time</th>
       </tr>
       <% @game.blinds.each_with_index do |blind, i| %>
-        <tr>
-          <td><%= i+1 %></td>
-          <td><%= blind %></td>
-          <td><%= blind*2 %></td>
-          <td><%= (i+1)*@game.round_length %></td>
-        </tr>
-      <% end %>
+        <% if @game.round == i %>
+          <tr class="info">
+          <% else %>
+            <tr>
+            <% end %>
+            <td><%= link_to i+1, game_path(@game, :game => {round: i}), method: :patch %></td>
+            <td><%= blind %></td>
+            <td><%= blind*2 %></td>
+            <td><%= (i+1)*@game.round_length %></td>
+            </tr>
+          <% end %>
     </table>
   </div>
 </div>
+
+<button class="btn btn-default"
+        onclick="updateTimer(<%= @game.round_length %>, <%= @game.created_at.to_i %>)">Update Timer</button>
