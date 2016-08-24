@@ -2,8 +2,8 @@ class Game < ActiveRecord::Base
   before_validation :generate_name, :convert_game_length, :generate_blinds, on: :create
 
   serialize :blinds, Array
-  validates :name, :players, :chips, :game_length, :round_length, :blinds, presence: true
-  validates :players, :chips, :game_length, :round_length, numericality: { only_integer: true, greater_than: 0 }
+  validates :name, :players, :chips, :game_length, :round_length, :blinds, :first_small_blind, presence: true
+  validates :players, :chips, :game_length, :round_length, :first_small_blind, numericality: { only_integer: true, greater_than: 0 }
 
   protected
 
@@ -49,7 +49,7 @@ class Game < ActiveRecord::Base
     if errors.empty?
       # first_small_blind should be configurable
       denominations = [1,5,10,25,50,100,500,1000,5000,10000]
-      first_small_blind = 1
+      first_small_blind = self.first_small_blind
 
       total_chips = self.players * self.chips
       number_of_rounds = (self.game_length/self.round_length)+6
@@ -62,7 +62,7 @@ class Game < ActiveRecord::Base
 
       while blinds.length < number_of_rounds
         time = self.round_length*round
-        small_blind = round_values((first_small_blind*Math::E)**(k*time), denominations)
+        small_blind = round_values(first_small_blind*(Math::E**(k*time)), denominations)
         if small_blind == blinds[-1]
           duplicate_errors ||= true
         else

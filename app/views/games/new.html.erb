@@ -36,6 +36,12 @@
         <%= f.number_field :round_length, class: "form-control" %>
       </div>
     </div>
+    <div class="form-group">
+      <%= f.label :first_small_blind, "First Small Blind", class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.number_field :first_small_blind, class: "form-control" %>
+      </div>
+    </div>
     <div class="col-md-10 col-md-offset-2">
       <%= f.submit "Create game", class: "btn btn-primary" %>
     </div>

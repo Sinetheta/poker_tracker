@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160823202124) do
+ActiveRecord::Schema.define(version: 20160824232537) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
@@ -20,9 +20,10 @@ ActiveRecord::Schema.define(version: 20160823202124) do
     t.integer  "game_length"
     t.integer  "round_length"
     t.text     "blinds"
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.integer  "round",        default: 0
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.integer  "round",             default: 0
+    t.integer  "first_small_blind"
   end
 
 end
