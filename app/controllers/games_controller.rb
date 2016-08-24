@@ -33,7 +33,7 @@ class GamesController < ApplicationController
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     respond_to do |format|
       format.html
-      format.json
+      format.json { render json: @game }
     end
   end
 
