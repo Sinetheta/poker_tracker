@@ -14,8 +14,8 @@ function timeRemaining(roundLength, timeStarted) {
 function updateTimer(roundLength, timeStarted) {
   var t = Math.round(timeRemaining(roundLength, timeStarted));
   document.getElementById('timer').innerHTML = t;
+};
+
+function startTimer(roundLength, timeStarted) {
   var i = setInterval(updateTimer, 1000, roundLength, timeStarted);
-  if (t == 0) {
-    clearInterval(i);
-  };
 };

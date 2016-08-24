@@ -17,8 +17,7 @@
       </p>
     <% end %>
     <p id="timer"></p>
-    <%= javascript_tag "updateTimer(#{@game.round_length}, #{@game.round_start.to_i})" %>
-    <button onclick="updateTimer(<%= @game.round_length %>, <%= @game.round_start.to_i %>)" class="btn btn-primary">Update Timer</button>
+    <%= javascript_tag "startTimer(#{@game.round_length}, #{@game.round_start.to_i})" %>
     <%= link_to "Start Timer", game_path(@game, :game => {round_start: DateTime.now}), method: :patch %>
 
   </div>
@@ -48,6 +47,3 @@
     </table>
   </div>
 </div>
-
-<button class="btn btn-default"
-        onclick="updateTimer(<%= @game.round_length %>, <%= @game.created_at.to_i %>)">Update Timer</button>

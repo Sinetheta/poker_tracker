@@ -1,0 +1,16 @@
+Todo:
+
+Now that we have a timer going, we should be able to detect when it's done and
+give some options about moving to the next round.
+We should be able to continue to track current round information in the db
+and give an ability to suspend games.
+
+We should probably also look at adding accounts and associating them with games
+so that users can be tracked/scored.
+
+Is it something with turbolinks that is causing the script to continue to run (and break)
+when I've naviagted away?
+
+It would be good to figure out why the timer doesn't reset to 900?
+
+
