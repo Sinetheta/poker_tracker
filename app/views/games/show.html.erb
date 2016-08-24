@@ -17,7 +17,7 @@
       </p>
     <% end %>
     <p id="timer"></p>
-    <%= javascript_tag "startTimer(#{@game.round_length}, #{@game.round_start.to_i})" %>
+    <%= javascript_tag "updateTimer(#{@game.round_length*60})" %>
     <%= link_to "Start Timer", game_path(@game, :game => {round_start: DateTime.now}), method: :patch %>
 
   </div>

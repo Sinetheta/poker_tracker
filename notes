@@ -2,6 +2,7 @@ Todo:
 
 Now that we have a timer going, we should be able to detect when it's done and
 give some options about moving to the next round.
+  This will be trickier now that the timer is only in JS
 We should be able to continue to track current round information in the db
 and give an ability to suspend games.
 
@@ -10,7 +11,10 @@ so that users can be tracked/scored.
 
 Is it something with turbolinks that is causing the script to continue to run (and break)
 when I've naviagted away?
+  Still investigating, but the JS handles this better now
 
 It would be good to figure out why the timer doesn't reset to 900?
+  Probably it's best to proceed without tracking timings in the db at all
+  Keeping track of the rounds there is probably still a good idea though
 
 
