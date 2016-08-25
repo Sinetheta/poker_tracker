@@ -28,7 +28,6 @@ class Game < ActiveRecord::Base
   end
 
   def generate_blinds
-
     def round_values(n, denominations)
       # Round to the closest denomination if within 10%
       closest_denom = denominations.min_by { |x| (n-x).abs }
@@ -45,10 +44,8 @@ class Game < ActiveRecord::Base
     end
 
     if errors.empty?
-      # first_small_blind should be configurable
       denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
       denominations.select! {|denom| denom >= self.smallest_denomination}
-
       total_chips = players*chips
       number_of_rounds = ((self.game_length*60)/round_length)+10
       # http://www.maa.org/book/export/html/115405

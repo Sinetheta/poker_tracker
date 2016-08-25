@@ -31,13 +31,17 @@
           <button class="btn btn-primary" type="button" id="declareWinner">Declare Winner</button>
         </div>
       </div>
+
       <div class="row" id="winnerSubmission">
         <%= form_for(@game) do |f|%>
-        <div class="col-xs-8">
+        <div class="col-xs-6">
           <%= f.text_field :winner, class: "form-control" %>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-6">
           <%= f.submit "Submit Winner", class: "btn btn-primary" %>
+          <% if @game.winner != "" %>
+            <%= link_to "Remove winner", game_path(@game, :game => {winner: nil}), class: "btn btn-warning", method: :patch %>
+          <% end %>
         </div>
         <% end %>
       </div>
@@ -45,7 +49,7 @@
       <div class="row">
         <h2><%= "#{@game.winner} is the winner!" %></h2>
       </div>
-    <% end %>
+      <% end %>
     </div>
 
     <div class="col-md-3">

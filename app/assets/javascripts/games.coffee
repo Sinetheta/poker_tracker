@@ -28,4 +28,8 @@ $(document).on "turbolinks:load", ->
     updateTimer(data.round_length*60)
   document.getElementById('winnerSubmission').style.display = "none"
   $("#declareWinner").on "click", (event) ->
-    document.getElementById('winnerSubmission').style.display = "block"
+    winnerSubmission = document.getElementById('winnerSubmission')
+    if winnerSubmission.style.display == "block"
+      winnerSubmission.style.display = "none"
+    else
+      winnerSubmission.style.display = "block"

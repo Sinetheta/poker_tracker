@@ -4,15 +4,11 @@ We should look at adding accounts and associating them with games so that users 
 
 Mark games "completed" and view them in an archive.
 Allow games to be ended and have a winner declared.
+  I think just by having a winner declared, they can be considered completed.
 
-More Javascript can be done to make the timers more useful.
 An "in game" screen with visual information meant to be displayed during the game.
+  This is getting there, how can I improve it's aesthetic and function?
 
-Handling the before_validation callback to convert game_length to minutes
-causes a bunch of headaches. Can I update the param before it's passed in the
-controller?
+The solution is to hold game_length in hours in the db and
+then convert it to minutes for calculations when necessary
 
-The model is rounding all non-integer game_length values. This is happening before
-validation, so it must be from the form? (it's not, it's because of the schema)
-game_length might have to be able to accept a floating point.
-I can validate it as an integer, but it will be saved as a floating point.
