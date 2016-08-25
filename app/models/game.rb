@@ -13,21 +13,6 @@ class Game < ActiveRecord::Base
 
   protected
 
-  def round_values(n, denominations)
-    # Round to the closest denomination if within 10%
-    closest_denom = denominations.min_by { |x| (n-x).abs }
-    if (n-closest_denom).abs/closest_denom <= 0.1
-      return n.round_to(closest_denom)
-    end
-    # Round to a roughly reasonable denomination
-    denominations.sort.each_with_index do |denomination, i|
-      if n < denomination*10
-        return n.round_to(denomination)
-      end
-    end
-    return n.round_to(denominations[-1])
-  end
-
   # Convert game_length from hours to minutes
   # Validates to an integer, but is handled as a float in the db
   # This is done to allow users to enter partial hours
@@ -52,13 +37,29 @@ class Game < ActiveRecord::Base
   end
 
   def generate_blinds
+
+    def round_values(n, denominations)
+      # Round to the closest denomination if within 10%
+      closest_denom = denominations.min_by { |x| (n-x).abs }
+      if (n-closest_denom).abs/closest_denom <= 0.1
+        return n.round_to(closest_denom)
+      end
+      # Round to a roughly reasonable denomination
+      denominations.sort.each_with_index do |denomination, i|
+        if n < denomination*10
+          return n.round_to(denomination)
+        end
+      end
+      return n.round_to(denominations[-1])
+    end
+
     if errors.empty?
       # first_small_blind should be configurable
       denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
       denominations.select! {|denom| denom >= self.smallest_denomination}
 
       total_chips = players*chips
-      number_of_rounds = (self.game_length/round_length)+6
+      number_of_rounds = (self.game_length/round_length)+10
       # http://www.maa.org/book/export/html/115405
       k = (Math::log((total_chips*0.05).abs)-Math::log(first_small_blind.abs))/self.game_length
 

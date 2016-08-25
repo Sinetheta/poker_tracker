@@ -7,7 +7,7 @@
         <th>Game name</th>
         <th>Players</th>
         <th>Chips (per player)</th>
-        <th>Length of game (minutes)</th>
+        <th>Length of game (hours)</th>
         <th></th>
       </tr>
       <% @games.each do |game| %>
@@ -15,7 +15,7 @@
           <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
           <td><%= game.players %></td>
           <td><%= game.chips %></td>
-          <td><%= game.game_length %></td>
+          <td><%= game.game_length/60 %></td>
           <td>
             <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %>
             <%= link_to "Edit Game Settings", edit_game_path(game), class: "btn btn-primary" %>
