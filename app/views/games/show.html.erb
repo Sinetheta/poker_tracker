@@ -41,7 +41,7 @@
         </div>
         <% end %>
       </div>
-      <% if @game.winner && !@game.winner.empty?%>
+      <% if @game.winner && @game.winner != "" %>
       <div class="row">
         <h2><%= "#{@game.winner} is the winner!" %></h2>
       </div>

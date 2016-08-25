@@ -36,6 +36,8 @@ class GamesController < ApplicationController
     game = Game.find(params[:id])
     if game_params[:round]
       game.update_attribute(:round, game_params[:round])
+    elsif game_params[:winner]
+      game.update_attribute(:winner, game_params[:winner])
     else
       game.update_attributes(game_params)
     end
