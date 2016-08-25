@@ -16,7 +16,7 @@
           <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
           <td><%= game.players %></td>
           <td><%= game.chips %></td>
-          <td><%= game.game_length/60 %></td>
+          <td><%= game.game_length %></td>
           <td>
             <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %>
             <%= link_to "Edit Game Settings", edit_game_path(game), class: "btn btn-primary" %>

@@ -1,24 +1,15 @@
 class Game < ActiveRecord::Base
 
-  before_validation :convert_game_length, on: [:create, :update]
-  before_validation :generate_name, :generate_blinds, on: :create
+  after_validation :generate_name, :generate_blinds, on: :create
 
   serialize :blinds, Array
-  validates :name, :players, :chips,
-            :game_length, :round_length, :blinds,
-            :first_small_blind, :smallest_denomination, presence: true
   validates :players, :chips,
             :game_length, :round_length,
+            :first_small_blind, :smallest_denomination, presence: true
+  validates :players, :chips, :round_length,
             :first_small_blind, :smallest_denomination, numericality: { only_integer: true, greater_than: 0 }
 
   protected
-
-  # Convert game_length from hours to minutes
-  # Validates to an integer, but is handled as a float in the db
-  # This is done to allow users to enter partial hours
-  def convert_game_length
-    self.game_length = (game_length*60).to_i if game_length
-  end
 
   # Randomly generate an appropriate name
   def generate_name
@@ -59,9 +50,9 @@ class Game < ActiveRecord::Base
       denominations.select! {|denom| denom >= self.smallest_denomination}
 
       total_chips = players*chips
-      number_of_rounds = (self.game_length/round_length)+10
+      number_of_rounds = ((self.game_length*60)/round_length)+10
       # http://www.maa.org/book/export/html/115405
-      k = (Math::log((total_chips*0.05).abs)-Math::log(first_small_blind.abs))/self.game_length
+      k = (Math::log((total_chips*0.05).abs)-Math::log(first_small_blind.abs))/(self.game_length*60)
 
       blinds = []
       round = 0
@@ -82,7 +73,7 @@ class Game < ActiveRecord::Base
       # If duplicate errors occured, adjust round_length to compensate
       if duplicate_errors
         last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
-        adjusted_round_length = round_values(self.game_length/last_blind, [1,2,5,10])
+        adjusted_round_length = round_values((self.game_length*60)/last_blind, [1,2,5,10])
         # Promt the user with the option to adjust round_length
         if adjusted_round_length != round_length
           self.round_length = adjusted_round_length

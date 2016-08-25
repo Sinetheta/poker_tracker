@@ -28,19 +28,13 @@ class GamesController < ApplicationController
     if game.save
       redirect_to game_path(game)
     else
-      render :new
+      redirect_to new_game_path
     end
   end
 
   def update
     game = Game.find(params[:id])
-    if game_params[:round]
-      game.update_attribute(:round, game_params[:round])
-    elsif game_params[:winner]
-      game.update_attribute(:winner, game_params[:winner])
-    else
-      game.update_attributes(game_params)
-    end
+    flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
     redirect_to game_path(game)
   end
 
