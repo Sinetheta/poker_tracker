@@ -73,10 +73,13 @@ class Game < ActiveRecord::Base
       # Filter blinds larger than the pot
       blinds.select! {|blind| blind < total_chips/3}
       # If duplicate errors occured, adjust round_length to compensate
-      # It would be nice to give the user an option here
       if duplicate_errors
         last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
-        self.round_length = self.game_length/last_blind
+        adjusted_round_length = round_values(self.game_length/last_blind, [1,2,5,10])
+        # Promt the user with the option to adjust round_length
+        if adjusted_round_length != self.round_length
+          self.round_length = adjusted_round_length
+        end
       end
       self.blinds = blinds
     end
