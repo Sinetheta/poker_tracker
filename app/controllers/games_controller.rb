@@ -24,6 +24,7 @@ class GamesController < ApplicationController
   end
 
   def create
+    puts game_params
     game = Game.new(game_params)
     if game.save
       redirect_to game_path(game)
@@ -34,9 +35,10 @@ class GamesController < ApplicationController
 
   def update
     game = Game.find(params[:id])
-    game.update_attributes(game_params)
-    if game.save
-      flash[:alert] = "Game Updated" unless game_params[:round]
+    if game.update_attributes(game_params)
+      flash[:notice] = "Game Updated" unless game_params[:round]
+    else
+      flass[:alert] = "Game failed to update"
     end
     redirect_to game_path(game)
   end
