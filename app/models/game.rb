@@ -48,7 +48,8 @@ class Game < ActiveRecord::Base
   def generate_blinds
     if errors.empty?
       # first_small_blind should be configurable
-      denominations = [1,5,10,25,50,100,500,1000,5000,10000]
+      denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
+      denominations.select! {|denom| denom >= self.smallest_denomination}
       first_small_blind = self.first_small_blind
 
       total_chips = self.players * self.chips

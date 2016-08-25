@@ -37,6 +37,12 @@
       </div>
     </div>
     <div class="form-group">
+      <%= f.label :smallest_denomination, "Smallest Denomination", class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.number_field :smallest_denomination, class: "form-control" %>
+      </div>
+    </div>
+    <div class="form-group">
       <%= f.label :first_small_blind, "First Small Blind", class: "col-md-2 control-label" %>
       <div class="col-md-4">
         <%= f.number_field :first_small_blind, class: "form-control" %>
