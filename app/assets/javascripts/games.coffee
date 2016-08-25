@@ -8,8 +8,8 @@ updateTimer = (currentTime) ->
           timer.style.visibility = "visible"
         else
           timer.style.visibility = "hidden"
-          updateTimer(0)
-          ), 500)
+        updateTimer(0)
+        ), 500)
     else
       minutes = Math.floor(currentTime/60)
       seconds = currentTime % 60

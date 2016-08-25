@@ -1,30 +1,49 @@
 <div class="container">
   <div class="row">
-    <div class="col-md-5 offset-md-2">
-      <h1><%= @game.name %></h1>
-      <div class="dropdown">
-        <button class="btn btn-primary" type="button" id="roundSelect"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        Go to round <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="roundSelect">
-          <% @game.blinds.each_with_index do |blind, i| %>
-            <li><%= link_to "Round #{i+1} [#{blind} - #{blind*2}]", game_path(@game, :game => {round: i}), method: :patch %></li>
-          <% end %>
-        </ul>
-        <%= link_to "Start Timer", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary", id: "startTimer" %>
-        <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}), method: :patch, class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
-      </div>
-      <h1>Round <%= @game.round+1 %></h1>
-      <h2><%= "Small #{@current_blinds[0]} - Big #{@current_blinds[1]}" %></h2>
+
+    <div class="col-md-6 offset-md-2">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
+          <h1><%= @game.name %></h1>
+        </div>
+        <div class="col-md-6">
+          <h1>Round <%= @game.round+1 %></h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-6">
+          <%= link_to "Start Timer", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary", id: "startTimer" %>
+          <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}), method: :patch, class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
+        </div>
+        <div class="dropdown col-xs-6">
+          <button class="btn btn-primary" type="button" id="roundSelect"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          Go to round <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="roundSelect">
+            <% @game.blinds.each_with_index do |blind, i| %>
+              <li><%= link_to "Round #{i+1} [#{blind} - #{blind*2}]", game_path(@game, :game => {round: i}), method: :patch %></li>
+            <% end %>
+          </ul>
+          <button class="btn btn-primary" type="button" id="declareWinner">Declare Winner</button>
         </div>
       </div>
     </div>
+
     <div class="col-md-3">
-      <div id="timer-container">
+      <div class="timer-container">
         <h1 id="timer"><%= "#{@game.round_length}:00" %></h1>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <h2 class="blind">Small</h2>
+          <h3 class="blind"><%= @current_blinds[0] %></h3>
+        </div>
+        <div class="col-md-6">
+          <h2 class="blind">Big</h2>
+          <h3 class="blind"><%= @current_blinds[1] %></h3>
+        </div>
       </div>
       <% upcoming_blinds = @game.blinds.select {|blind| blind > @current_blinds[0]}.take(4) %>
       <% unless upcoming_blinds.empty? %>
@@ -41,5 +60,6 @@
         </table>
       <% end %>
     </div>
+
   </div>
 </div>
