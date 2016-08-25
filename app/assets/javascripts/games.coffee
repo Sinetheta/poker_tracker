@@ -5,14 +5,23 @@ updateTimer = (currentTime) ->
     seconds = "0" + seconds
   timer = document.getElementById('timer')
   if timer != null and currentTime >= 0
-    setTimeout((->
-      timer.innerHTML = "#{minutes}:#{seconds}"
-      updateTimer(currentTime-1)
-    ), 1000)
-  else if timer == 0
-    timer.innerHTML = 0
+    if currentTime == 0
+      timer.innerHTML = "0:00"
+      setTimeout((->
+        if timer.style.visibility == "hidden"
+          timer.style.visibility = "visible"
+        else
+          timer.style.visibility = "hidden"
+        updateTimer(0)
+      ), 500)
+    else
+      setTimeout((->
+        timer.innerHTML = "#{minutes}:#{seconds}"
+        updateTimer(currentTime-1)
+      ), 1000)
   else
     console.log("no time or timer")
+
 
 $(document).on "turbolinks:load", ->
   $("#startTimer").on "ajax:success", (e, data, status, xhr) ->

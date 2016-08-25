@@ -1,18 +1,18 @@
 Todo:
 
 We should look at adding accounts and associating them with games so that users can be tracked/scored.
+
 More Javascript can be done to make the timers more useful.
 An "in game" screen with visual information meant to be displayed during the game.
+
 Mark games "completed" and view them in an archive.
 Allow games to be ended and have a winner declared.
 
 Why does the `before_validation on: [:create, :update]` run twice on updates?
-
-Turns out that you don't need to also obj.save when you obj.update_attributes()
-
+It doesn't, unless you also obj.save when you obj.update_attributes()
+But now, it's firing when we update the round
 
 The model is rounding all non-integer game_length values. This is happening before
-validation, so it must be from the form?
-I think the problem must in the schema, game_length might have to be able to
-accept a floating point. I can validate it as an integer, but it might still
-have to be saved in the db as a floating point.
+validation, so it must be from the form? (it's not, it's because of the schema)
+game_length might have to be able to accept a floating point.
+I can validate it as an integer, but it will be saved as a floating point.

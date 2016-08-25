@@ -29,12 +29,10 @@ class Game < ActiveRecord::Base
   end
 
   # Convert game_length from hours to minutes
-  # This is a clunky solution because is breaks if you apply it on :update
-  # Is there a way to handle this in the controller?
+  # Validates to an integer, but is handled as a float in the db
+  # This is done to allow users to enter partial hours
   def convert_game_length
-    puts game_length
-    puts self.game_length
-    self.game_length = (game_length*60.0).to_i
+    self.game_length = (game_length*60).to_i if game_length
   end
 
   # Randomly generate an appropriate name
