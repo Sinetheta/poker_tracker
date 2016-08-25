@@ -26,3 +26,6 @@ updateTimer = (currentTime) ->
 $(document).on "turbolinks:load", ->
   $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
     updateTimer(data.round_length*60)
+  document.getElementById('winnerSubmission').style.display = "none"
+  $("#declareWinner").on "click", (event) ->
+    document.getElementById('winnerSubmission').style.display = "block"

@@ -50,7 +50,7 @@ class GamesController < ApplicationController
 
   private
   def game_params
-    params.require(:game).permit(:name, :players, :chips,
+    params.require(:game).permit(:name, :players, :chips, :winner,
                                  :game_length, :round_length,
                                  :round, :first_small_blind, :smallest_denomination)
   end

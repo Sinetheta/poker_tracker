@@ -1,6 +1,6 @@
 class Game < ActiveRecord::Base
 
-  before_validation :convert_game_length, on: [:create, :update]
+  before_validation :convert_game_length, on: :create
   before_validation :generate_name, :generate_blinds, on: :create
 
   serialize :blinds, Array
@@ -17,7 +17,7 @@ class Game < ActiveRecord::Base
   # Validates to an integer, but is handled as a float in the db
   # This is done to allow users to enter partial hours
   def convert_game_length
-    self.game_length = (game_length*60).to_i if game_length
+    self.game_length = (game_length*60).to_i
   end
 
   # Randomly generate an appropriate name
