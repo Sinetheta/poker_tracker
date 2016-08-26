@@ -46,7 +46,8 @@ class GamesController < ApplicationController
 
   private
   def game_params
-    params.require(:game).permit(:name, :players, :chips, :winner,
+    p params["game"]["players"] = params["game"]["players"].split(",")
+    params.require(:game).permit(:name, :chips, :winner, {:players => []},
                                  :game_length, :round_length,
                                  :round, :first_small_blind, :smallest_denomination)
   end

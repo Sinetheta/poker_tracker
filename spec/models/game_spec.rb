@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Game, :type => :model do
   context "when creating a game" do
     it "generates a name and the blinds" do
-      game = Game.new(players: 7,
+      game = Game.new(players: [1,2,3,4,5,6,7],
                       chips: 2000,
                       game_length: 120,
                       round_length: 15,
