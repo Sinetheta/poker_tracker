@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="page-header span-md-4 offset-md-2">
+    <h2>Edit <%= resource_name.to_s.humanize %></h2>
+  </div>
+
+  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: {class: "form-horizontal center", method: :put}) do |f| %>
+    <%= devise_error_messages! %>
+
+    <div class="form-group">
+      <%= f.label :email, class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.email_field :email, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+      <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :password, class: "col-md-2 control-label", html: {"aria-describedby" => "passwordLabelHelp"} %>
+      <div class="col-md-4">
+        <%= f.password_field :password, autocomplete: "off", class: "form-control", html: {"aria-describedby" => "passwordHelp"} %>
+        <% if @minimum_password_length %>
+          <span id="passwordHelp" class="help-block"><%= @minimum_password_length %> characters minimum</span>
+        <% end %>
+        <span id="passwordLabelHelp" class="help-block">leave blank if you don't want to change it</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :password_confirmation, class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.password_field :password_confirmation, autocomplete: "off", class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :current_password, class: "col-md-2 control-label", html: {"aria-describedby" => "currentPasswordHelp"} %>
+      <div class="col-md-4">
+        <%= f.password_field :current_password, autocomplete: "off", class: "form-control" %>
+        <span id="currentPasswordHelp" class="help-block">we need your current password to confirm your changes</span>
+      </div>
+    </div>
+
+    <div class="col-md-1 col-md-offset-2">
+      <%= f.submit "Update", class: "btn btn-primary" %>
+    </div>
+    <div class="col-md-2">
+      <%= link_to "Cancel my account", registration_path(resource_name), class: "btn btn-default", data: { confirm: "Are you sure?" }, method: :delete %>
+    </div>
+  <% end %>
+</div>

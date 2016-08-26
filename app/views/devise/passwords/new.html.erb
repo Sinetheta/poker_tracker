@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="page-header span-md-4 offset-md-2">
+    <h2>Forgot your password?</h2>
+  </div>
+
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: "form-horizontal center", method: :post}) do |f| %>
+    <%= devise_error_messages! %>
+
+    <div class="form-group">
+      <%= f.label :email, class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.email_field :email, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="col-md-1 col-md-offset-2">
+      <%= f.submit "Send me reset password instructions", class: "btn btn-primary" %>
+    </div>
+  <% end %>

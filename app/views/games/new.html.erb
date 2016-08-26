@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="page-header span5 offset2">
+  <div class="page-header span-md-4">
     <h1>Start a new game</h1>
   </div>
   <%= form_for(@game, html: {class: "form-horizontal center"}) do |f| %>
@@ -47,7 +47,7 @@
         <%= f.number_field :first_small_blind, class: "form-control" %>
       </div>
     </div>
-    <div class="col-md-10 col-md-offset-2">
+    <div class="col-md-4 col-md-offset-2">
       <%= f.submit "Create game", class: "btn btn-primary" %>
     </div>
   <% end %>
