@@ -25,30 +25,23 @@ updateTimer = (currentTime) ->
 String::strip = -> @replace /^\s+|\s+$/g, ""
 
 updatePlayers = (player) ->
-  tableRow = "<tr><td>#{player}</td><td></td></tr>"
-  document.getElementById('players').insertAdjacentHTML('beforeend', tableRow)
+  unless player == ""
+    tableRow = "<tr><td>#{player}</td><td></td></tr>"
+    document.getElementById('players').lastChild.insertAdjacentHTML('beforeend', tableRow)
 
 addPlayer = (player, guest = false) ->
   if guest
     param_type = "guests"
   else
     param_type = "user_ids"
-  param = "<input type='hidden' name='game[#{param_type}][]' value='#{player}' />"
-  document.getElementById('hiddenUsers').insertAdjacentHTML('beforeend', param)
+  unless player == ""
+    param = "<input type='hidden' name='game[#{param_type}][]' value='#{player}' />"
+    document.getElementById('hiddenUsers').insertAdjacentHTML('beforeend', param)
 
 # Show
 $(document).on "turbolinks:load", ->
   $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
     updateTimer(data.round_length*60)
-  winnerSubmission = document.getElementById('winnerSubmission')
-  if winnerSubmission
-    winnerSubmission.style.display = "none"
-  $("#declareWinner").on "click", (event) ->
-    winnerSubmission = document.getElementById('winnerSubmission')
-    if winnerSubmission.style.display == "block"
-      winnerSubmission.style.display = "none"
-    else
-      winnerSubmission.style.display = "block"
 
 # New
 $(document).on "turbolinks:load", ->
@@ -57,24 +50,32 @@ $(document).on "turbolinks:load", ->
   $("#addUser").on "click", (event) ->
     $("#userButtons").show()
     $("#addUser").hide()
+    $("#addGuest").hide()
   $(".userButton").on "click", (event) ->
     addPlayer(this.id)
     updatePlayers(this.innerHTML.split(' ')[1])
     $("##{this.id}").hide()
     $("#userButtons").hide()
-    $("#addUser").show()
+    $("#addGuest").show()
+    if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
+      $("#addUser").show()
   $("#userCancelButton").on "click", (event) ->
     $("#userButtons").hide()
-    $("#addUser").show()
+    if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
+      $("#addUser").show()
+    $("#addGuest").show()
   $("#addGuest").on "click", (event) ->
     $("#guestForm").show()
     $("#guestInput").val("")
+    $("#addUser").hide()
     $("#addGuest").hide()
   $("#guestSubmit").on "click", (event) ->
     updatePlayers name.strip() for name in $("#guestInput").val().split(",")
     addPlayer(name.strip(), guest = true) for name in $("#guestInput").val().split(",")
     $("#guestForm").hide()
     $("#addGuest").show()
+    if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
+      $("#addUser").show()
   $("#guestInput").on "keypress", (event) ->
     if event.keyCode == 13
       $("#guestSubmit").click()
