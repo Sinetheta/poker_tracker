@@ -50,6 +50,24 @@
         <h2><%= "#{@game.winner} is the winner!" %></h2>
       </div>
       <% end %>
+
+      <div class="row">
+        <table class="table table-hover">
+          <tr>
+            <h3>Players</h3>
+          </tr>
+          <% @game.users.each do |user| %>
+            <tr>
+              <td><%= user.email %></td>
+            </tr>
+          <% end %>
+          <% @game.players.each do |player| %>
+            <tr>
+              <td><%= player %></td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
     </div>
 
     <div class="col-md-3">
@@ -57,11 +75,11 @@
         <h1 id="timer"><%= "#{@game.round_length}:00" %></h1>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-xs-6">
           <h2 class="blind">Small</h2>
           <h3 class="blind"><%= @current_blinds[0] %></h3>
         </div>
-        <div class="col-md-6">
+        <div class="col-xs-6">
           <h2 class="blind">Big</h2>
           <h3 class="blind"><%= @current_blinds[1] %></h3>
         </div>

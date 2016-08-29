@@ -22,6 +22,13 @@ updateTimer = (currentTime) ->
   else
     console.log("no time or timer")
 
+String::strip = -> @replace /^\s+|\s+$/g, ""
+
+updatePlayers = (player) ->
+  tableRow = "<tr><td>#{player}</td><td></td></tr>"
+  document.getElementById('players').insertAdjacentHTML('beforeend', tableRow)
+
+# Show
 $(document).on "turbolinks:load", ->
   $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
     updateTimer(data.round_length*60)
@@ -35,14 +42,32 @@ $(document).on "turbolinks:load", ->
     else
       winnerSubmission.style.display = "block"
 
+# New
 $(document).on "turbolinks:load", ->
   $("#userButtons").hide()
+  $("#guestForm").hide()
   $("#addUser").on "click", (event) ->
     $("#userButtons").show()
     $("#addUser").hide()
   $(".userButton").on "click", (event) ->
-    input = "<input type='hidden' name='game[user_ids][]' value='#{this.id}' />"
-    console.log(this.id)
-    document.getElementById('hiddenUsers').insertAdjacentHTML('beforeend', input)
+    param = "<input type='hidden' name='game[user_ids][]' value='#{this.id}' />"
+    document.getElementById('hiddenUsers').insertAdjacentHTML('beforeend', param)
+    updatePlayers(this.innerHTML.split(' ')[1])
+    $("##{this.id}").hide()
     $("#userButtons").hide()
     $("#addUser").show()
+  $("#userCancelButton").on "click", (event) ->
+    $("#userButtons").hide()
+    $("#addUser").show()
+  $("#addGuest").on "click", (event) ->
+    $("#guestForm").show()
+    $("#guestInput").val("")
+    $("#addGuest").hide()
+  $("#guestSubmit").on "click", (event) ->
+    updatePlayers name.strip() for name in $("#guestInput").val().split(",")
+    $("#guestForm").hide()
+    $("#addGuest").show()
+  $("#guestInput").on "keypress", (event) ->
+    if event.keyCode == 13
+      $("#guestSubmit").click()
+      return false
