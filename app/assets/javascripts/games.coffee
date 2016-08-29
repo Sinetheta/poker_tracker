@@ -28,6 +28,14 @@ updatePlayers = (player) ->
   tableRow = "<tr><td>#{player}</td><td></td></tr>"
   document.getElementById('players').insertAdjacentHTML('beforeend', tableRow)
 
+addPlayer = (player, guest = false) ->
+  if guest
+    param_type = "guests"
+  else
+    param_type = "user_ids"
+  param = "<input type='hidden' name='game[#{param_type}][]' value='#{player}' />"
+  document.getElementById('hiddenUsers').insertAdjacentHTML('beforeend', param)
+
 # Show
 $(document).on "turbolinks:load", ->
   $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
@@ -50,8 +58,7 @@ $(document).on "turbolinks:load", ->
     $("#userButtons").show()
     $("#addUser").hide()
   $(".userButton").on "click", (event) ->
-    param = "<input type='hidden' name='game[user_ids][]' value='#{this.id}' />"
-    document.getElementById('hiddenUsers').insertAdjacentHTML('beforeend', param)
+    addPlayer(this.id)
     updatePlayers(this.innerHTML.split(' ')[1])
     $("##{this.id}").hide()
     $("#userButtons").hide()
@@ -65,6 +72,7 @@ $(document).on "turbolinks:load", ->
     $("#addGuest").hide()
   $("#guestSubmit").on "click", (event) ->
     updatePlayers name.strip() for name in $("#guestInput").val().split(",")
+    addPlayer(name.strip(), guest = true) for name in $("#guestInput").val().split(",")
     $("#guestForm").hide()
     $("#addGuest").show()
   $("#guestInput").on "keypress", (event) ->

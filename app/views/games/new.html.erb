@@ -32,9 +32,9 @@
     </div>
 
     <div class="form-group" id="guestForm">
-      <%= f.label :players, "Guests (comma seperated)", class: "col-md-6 control-label" %>
+      <%= f.label :guests, "Guests (comma seperated)", class: "col-md-6 control-label" %>
       <div class="col-md-4">
-        <%= f.text_field :players, class: "form-control", id: "guestInput" %>
+        <input type="text" class="form-control" id="guestInput" />
       </div>
       <div class="col-md-2">
         <button type="button" class="btn btn-primary" id="guestSubmit">Submit</button>

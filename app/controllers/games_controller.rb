@@ -47,9 +47,9 @@ class GamesController < ApplicationController
 
   private
   def game_params
-    params["game"]["players"] = params["game"]["players"].split(",").map {|t| t.strip} if params["game"]["players"]
+    params["game"]["guests"] = params["game"]["guests"].map {|t| t.strip} if params["game"]["guests"]
     params["game"]["user_ids"] = params["game"]["user_ids"].uniq if params["game"]["user_ids"]
-    params.require(:game).permit(:name, :chips, :winner, {:players => []},
+    params.require(:game).permit(:name, :chips, :winner, {:guests => []},
                                  :game_length, :round_length, {:user_ids => []},
                                  :round, :first_small_blind, :smallest_denomination)
   end

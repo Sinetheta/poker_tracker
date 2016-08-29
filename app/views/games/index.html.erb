@@ -14,7 +14,7 @@
       <% @games.each do |game| %>
         <tr>
           <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
-          <td><%= game.players.length+game.users.length %></td>
+          <td><%= game.guests.length+game.users.length %></td>
           <td><%= game.chips %></td>
           <td><%= game.game_length %></td>
           <td>

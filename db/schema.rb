@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 20160829163221) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
-    t.text     "players"
+    t.text     "guests"
     t.integer  "chips"
     t.float    "game_length"
     t.integer  "round_length"
@@ -25,7 +25,6 @@ ActiveRecord::Schema.define(version: 20160829163221) do
     t.text     "blinds"
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
-    t.string   "winner"
   end
 
   create_table "games_users", id: false, force: :cascade do |t|
