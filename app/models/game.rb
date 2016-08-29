@@ -28,7 +28,32 @@ class Game < ActiveRecord::Base
              "Full House",
              "Four of a Kind",
              "Straight Flush",
-             "Royal Flush"]
+             "Royal Flush",
+             "Action Card",
+             "All In",
+             "Ante",
+             "Big Bet",
+             "Bluff",
+             "Check",
+             "Community Card",
+             "Deal",
+             "Dealer's Choice",
+             "Flop",
+             "Fold",
+             "Free Card",
+             "Heads Up",
+             "High-low Split",
+             "In the Money",
+             "The Nuts",
+             "Over the Top",
+             "Play the Board",
+             "Poker Face",
+             "River",
+             "Semi-bluff",
+             "Splash the Pot",
+             "Trips",
+             "Turn",
+             "Under the Gun"]
     self.name = names.sample
   end
 
