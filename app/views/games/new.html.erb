@@ -11,12 +11,31 @@
         <% end %>
       </ul>
     <% end %>
+
+    <div id="hiddenUsers">
+    </div>
+
     <div class="form-group">
-      <%= f.label :players, "Players (comma seperated)", class: "col-md-2 control-label" %>
+      <div class="col-md-8 col-md-offset-2">
+        <button id="addUser" class="btn btn-primary" type="button">Add a User Player</button>
+      </div>
+    </div>
+
+    <div class="form-group" id="userButtons">
+      <div class="col-md-8 col-md-offset-2">
+        <% @users.each do |user| %>
+          <button type="button" class="btn btn-primary userButton" id=<%= user.id %>><%= "Add #{user.email}" %></button>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :players, "Guests (comma seperated)", class: "col-md-2 control-label" %>
       <div class="col-md-4">
         <%= f.text_field :players, class: "form-control" %>
       </div>
     </div>
+
     <div class="form-group">
       <%= f.label :chips, "Chips per player", class: "col-md-2 control-label" %>
       <div class="col-md-4">

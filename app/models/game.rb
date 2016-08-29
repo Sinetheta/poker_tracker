@@ -1,5 +1,8 @@
 class Game < ActiveRecord::Base
 
+  has_and_belongs_to_many :users, :uniq => true
+  before_destroy { users.clear }
+
   before_save :generate_name, :generate_blinds, on: :create
 
   serialize :blinds, Array
@@ -47,7 +50,7 @@ class Game < ActiveRecord::Base
     if errors.empty?
       denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
       denominations.select! {|denom| denom >= self.smallest_denomination}
-      total_chips = players.length*chips
+      total_chips = (players.length+users.length)*chips
       number_of_rounds = ((self.game_length*60)/round_length)+10
       # http://www.maa.org/book/export/html/115405
       k = (Math::log((total_chips*0.05).abs)-Math::log(first_small_blind.abs))/(self.game_length*60)

@@ -22,14 +22,27 @@ updateTimer = (currentTime) ->
   else
     console.log("no time or timer")
 
-
 $(document).on "turbolinks:load", ->
   $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
     updateTimer(data.round_length*60)
-  document.getElementById('winnerSubmission').style.display = "none"
+  winnerSubmission = document.getElementById('winnerSubmission')
+  if winnerSubmission
+    winnerSubmission.style.display = "none"
   $("#declareWinner").on "click", (event) ->
     winnerSubmission = document.getElementById('winnerSubmission')
     if winnerSubmission.style.display == "block"
       winnerSubmission.style.display = "none"
     else
       winnerSubmission.style.display = "block"
+
+$(document).on "turbolinks:load", ->
+  $("#userButtons").hide()
+  $("#addUser").on "click", (event) ->
+    $("#userButtons").show()
+    $("#addUser").hide()
+  $(".userButton").on "click", (event) ->
+    input = "<input type='hidden' name='game[user_ids][]' value='#{this.id}' />"
+    console.log(this.id)
+    document.getElementById('hiddenUsers').insertAdjacentHTML('beforeend', input)
+    $("#userButtons").hide()
+    $("#addUser").show()

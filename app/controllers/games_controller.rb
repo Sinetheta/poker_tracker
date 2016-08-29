@@ -17,6 +17,7 @@ class GamesController < ApplicationController
 
   def new
     @game = Game.new
+    @users = User.all
   end
 
   def edit
@@ -46,9 +47,10 @@ class GamesController < ApplicationController
 
   private
   def game_params
-    p params["game"]["players"] = params["game"]["players"].split(",")
+    params["game"]["players"] = params["game"]["players"].split(",").map {|t| t.strip}
+    params["game"]["user_ids"] = params["game"]["user_ids"].uniq
     params.require(:game).permit(:name, :chips, :winner, {:players => []},
-                                 :game_length, :round_length,
+                                 :game_length, :round_length, {:user_ids => []},
                                  :round, :first_small_blind, :smallest_denomination)
   end
 end
