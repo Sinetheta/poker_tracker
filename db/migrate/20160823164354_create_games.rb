@@ -2,7 +2,7 @@ class CreateGames < ActiveRecord::Migration
   def change
     create_table :games do |t|
       t.string :name
-      t.integer :players
+      t.text :guests
       t.integer :chips
       t.float :game_length
       t.integer :round_length

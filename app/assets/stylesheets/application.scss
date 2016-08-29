@@ -11,7 +11,11 @@
  * file per style scope.
  *
  */
-@import "games";
 
+#rememberBox{
+  padding-bottom: 20px;
+}
+
+@import "games";
 @import "bootstrap-sprockets";
 @import "bootstrap";

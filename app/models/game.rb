@@ -1,13 +1,18 @@
 class Game < ActiveRecord::Base
 
+  has_and_belongs_to_many :users, :uniq => true
+  before_destroy { users.clear }
+
   after_validation :generate_name, :generate_blinds, on: :create
 
+  store :players_out
   serialize :blinds, Array
-  validates :players, :chips,
-            :game_length, :round_length,
+  serialize :guests, Array
+  validates :chips, :game_length, :round_length,
             :first_small_blind, :smallest_denomination, presence: true
-  validates :players, :chips, :round_length,
+  validates :chips, :round_length,
             :first_small_blind, :smallest_denomination, numericality: { only_integer: true, greater_than: 0 }
+  validates :game_length, numericality: { greater_than: 0 }
 
   protected
 
@@ -46,7 +51,7 @@ class Game < ActiveRecord::Base
     if errors.empty?
       denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
       denominations.select! {|denom| denom >= self.smallest_denomination}
-      total_chips = players*chips
+      total_chips = (guests.length+users.length)*chips
       number_of_rounds = ((self.game_length*60)/round_length)+10
       # http://www.maa.org/book/export/html/115405
       k = (Math::log((total_chips*0.05).abs)-Math::log(first_small_blind.abs))/(self.game_length*60)
@@ -70,7 +75,7 @@ class Game < ActiveRecord::Base
       # If duplicate errors occured, adjust round_length to compensate
       if duplicate_errors
         last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
-        adjusted_round_length = round_values((self.game_length*60)/last_blind, [1,2,5,10])
+        adjusted_round_length = round_values(((self.game_length*60)/last_blind).to_i, [1,2,5,10])
         # Promt the user with the option to adjust round_length
         if adjusted_round_length != round_length
           self.round_length = adjusted_round_length

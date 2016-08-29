@@ -1,8 +1,8 @@
 <div class="container">
-  <div class="page-header span5 offset2">
+  <div class="page-header">
     <h1>Start a new game</h1>
   </div>
-  <%= form_for(@game, html: {class: "form-horizontal center"}) do |f| %>
+  <%= form_for(@game, html: {class: "form-horizontal col-md-6"}) do |f| %>
     <% if @game.errors.any? %>
       <ul>
         <p>The game could not be created for the following reasons:</p>
@@ -11,44 +11,76 @@
         <% end %>
       </ul>
     <% end %>
+
+    <div id="hiddenUsers">
+    </div>
+
     <div class="form-group">
-      <%= f.label :players, "Number of players", class: "col-md-2 control-label" %>
-      <div class="col-md-4">
-        <%= f.number_field :players, class: "form-control" %>
+      <div class="col-md-offset-2">
+        <button id="addUser" class="btn btn-primary" type="button">Add a User Player</button>
+        <button id="addGuest" class="btn btn-primary" type="button">Add Guests</button>
       </div>
     </div>
-    <div class="form-group">
-      <%= f.label :chips, "Chips per player", class: "col-md-2 control-label" %>
+
+    <div class="form-group" id="userButtons">
+      <div class="col-md-offset-2">
+        <% @users.each do |user| %>
+          <button type="button" class="btn btn-primary userButton" id=<%= user.id %>><%= "Add #{user.email}" %></button>
+        <% end %>
+        <button type="button" class="btn btn-danger" id="userCancelButton">Cancel</button>
+      </div>
+    </div>
+
+    <div class="form-group" id="guestForm">
+      <%= f.label :guests, "Guests (comma seperated)", class: "col-md-6 control-label" %>
       <div class="col-md-4">
+        <input type="text" class="form-control" id="guestInput" />
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary" id="guestSubmit">Submit</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :chips, "Chips per player", class: "col-md-6 control-label" %>
+      <div class="col-md-6">
         <%= f.number_field :chips, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :game_length, "Game length (hours)", class: "col-md-2 control-label" %>
-      <div class="col-md-4">
+      <%= f.label :game_length, "Game length (hours)", class: "col-md-6 control-label" %>
+      <div class="col-md-6">
         <%= f.number_field :game_length, class: "form-control", step: 0.05 %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :round_length, "Round length (minutes)", class: "col-md-2 control-label" %>
-      <div class="col-md-4">
+      <%= f.label :round_length, "Round length (minutes)", class: "col-md-6 control-label" %>
+      <div class="col-md-6">
         <%= f.number_field :round_length, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :smallest_denomination, "Smallest Denomination", class: "col-md-2 control-label" %>
-      <div class="col-md-4">
+      <%= f.label :smallest_denomination, "Smallest Denomination", class: "col-md-6 control-label" %>
+      <div class="col-md-6">
         <%= f.number_field :smallest_denomination, class: "form-control" %>
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :first_small_blind, "First Small Blind", class: "col-md-2 control-label" %>
-      <div class="col-md-4">
+      <%= f.label :first_small_blind, "First Small Blind", class: "col-md-6 control-label" %>
+      <div class="col-md-6">
         <%= f.number_field :first_small_blind, class: "form-control" %>
       </div>
     </div>
-    <div class="col-md-10 col-md-offset-2">
+    <div class="col-md-offset-2">
       <%= f.submit "Create game", class: "btn btn-primary" %>
     </div>
   <% end %>
+  <div class="col-md-6">
+    <table class="table table-hover" id="players">
+      <tr>
+        <th>Players</th>
+        <th></th>
+      </tr>
+    </table>
+  </div>
 </div>

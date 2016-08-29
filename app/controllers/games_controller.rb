@@ -7,6 +7,10 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
+    @winner = nil
+    if @game.players_out.length == @game.guests.length+@game.users.length-1
+      @winner = (@game.guests+@game.users.map {|user| user.email}).select {|user| !@game.players_out.include?(user)}.first()
+    end
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     @current_blinds = @blinds[@game.round]
     respond_to do |format|
@@ -17,6 +21,7 @@ class GamesController < ApplicationController
 
   def new
     @game = Game.new
+    @users = User.all
   end
 
   def edit
@@ -34,6 +39,10 @@ class GamesController < ApplicationController
 
   def update
     game = Game.find(params[:id])
+    if params[:game][:players_out]
+      players_out_hash = game.players_out.merge(params[:game][:players_out])
+      game.update_attribute(:players_out, players_out_hash)
+    end
     flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
     redirect_to game_path(game)
   end
@@ -46,7 +55,9 @@ class GamesController < ApplicationController
 
   private
   def game_params
-    params.require(:game).permit(:name, :players, :chips, :winner,
+    params["game"]["guests"] = params["game"]["guests"].map {|t| t.strip} if params["game"]["guests"]
+    params["game"]["user_ids"] = params["game"]["user_ids"].uniq if params["game"]["user_ids"]
+    params.require(:game).permit(:name, :chips, {:guests => []}, {:user_ids => []},
                                  :game_length, :round_length,
                                  :round, :first_small_blind, :smallest_denomination)
   end
