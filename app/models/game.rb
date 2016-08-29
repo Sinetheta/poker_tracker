@@ -3,8 +3,9 @@ class Game < ActiveRecord::Base
   has_and_belongs_to_many :users, :uniq => true
   before_destroy { users.clear }
 
-  before_save :generate_name, :generate_blinds, on: :create
+  after_validation :generate_name, :generate_blinds, on: :create
 
+  store :players_out
   serialize :blinds, Array
   serialize :guests, Array
   validates :chips, :game_length, :round_length,

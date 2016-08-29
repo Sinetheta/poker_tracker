@@ -1,4 +1,7 @@
 <div class="container">
+  <% if @game.players_out.length == @game.guests.length+@game.users.length-1 %>
+    
+  <% end %>
   <div class="row">
 
     <div class="col-md-6 offset-md-1">
@@ -37,11 +40,29 @@
           <% @game.users.each do |user| %>
             <tr>
               <td><%= user.email %></td>
+              <td>
+              <% if @game.players_out.keys.include?(user.email) %>
+                <%= "Out on round #{@game.players_out[user.email].to_i + 1}" %>
+              <% elsif @winner && user.email == @winner %>
+                Winner!
+              <% else %>
+                <%= link_to "Set player out", game_path(@game, :game => {:players_out => {user.email => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
+              <% end %>
+              </td>
             </tr>
           <% end %>
           <% @game.guests.each do |player| %>
             <tr>
               <td><%= player %></td>
+              <td>
+              <% if @game.players_out.keys.include?(player) %>
+                <%= "Out on round #{@game.players_out[player].to_i + 1}" %>
+              <% elsif @winner && player == @winner%>
+                Winner!
+              <% else %>
+                <%= link_to "Set player out", game_path(@game, :game => {:players_out => {player => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
+              <% end %>
+              </td>
             </tr>
           <% end %>
         </table>
