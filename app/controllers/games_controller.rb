@@ -8,7 +8,7 @@ class GamesController < ApplicationController
   def show
     @game = Game.find(params[:id])
     @winner = nil
-    @players = (@game.guests+@game.users.map {|user| user.email}).sort
+    @players = (@game.guests+@game.users.map {|user| user.name}).sort
     if @game.players_out.length == @players.length-1
       @winner = @players.find {|user| !@game.players_out.include?(user)}
       @game.update_attribute(:winner, @winner) unless @game.winner
@@ -83,7 +83,7 @@ class GamesController < ApplicationController
     @games = Game.all
     @players = {}
     @games.each do |game|
-      (game.guests+game.users.map {|user| user.email}).each do |player|
+      (game.guests+game.users.map {|user| user.name}).each do |player|
         @players[player] = (@games.select {|game| game.winner == player}).length unless @players.keys.include?(player)
       end
     end
