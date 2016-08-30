@@ -3,6 +3,6 @@ Rails.application.routes.draw do
   root 'games#index'
   get '/archive', to: 'games#archive'
   get '/leaderboard', to: 'games#leaderboard'
-  get '/users/:id/history', to: 'users#history'
+  get '/users/:id/history', to: 'users#history', as: 'user_history'
   resources :games
 end
