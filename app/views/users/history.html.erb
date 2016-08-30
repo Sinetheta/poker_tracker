@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="span5 offset2">
+    <div class="page-header">
+      <h1><%= "#{@user.name}'s History" %></h1>
+    </div>
+
+    <table class="table">
+      <tr>
+        <th>Game Name</th>
+        <th>Game Winner</th>
+        <th>Player Standing</th>
+      </tr>
+      <% @games.each do |game| %>
+        <tr>
+          <th><%= link_to game.name, game_path(game), class: "btn btn-default" %></th>
+          <th><%= game.winner %></th>
+          <th>
+            <% if game.winner == @user.name %>
+              Winner
+            <% else %>
+              <%= "Went out on round #{game.players_out[@user.name].to_i+1}" %>
+            <% end %>
+          </th>
+        </tr>
+      <% end %>
+    </table>
+
+  </div>
+</div>
