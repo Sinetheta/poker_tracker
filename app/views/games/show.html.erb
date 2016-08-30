@@ -46,7 +46,7 @@
               <td>
                 <% if @game.players_out.keys.include?(player) %>
                   <%= "Out on round #{@game.players_out[player].to_i + 1}" %>
-                <% elsif @winner && player == @winner %>
+                <% elsif @game.winner && player == @game.winner %>
                   Winner!
                 <% else %>
                   <%= link_to "Set player out", game_path(@game, :game => {:players_out => {player => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>

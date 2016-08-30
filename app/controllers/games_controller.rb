@@ -7,11 +7,10 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @winner = nil
     @players = (@game.guests+@game.users.map {|user| user.name}).sort
-    if @game.players_out.length == @players.length-1
+    if @game.players_out.length == @players.length-1 && @game.winner == nil
       @winner = @players.find {|user| !@game.players_out.include?(user)}
-      @game.update_attribute(:winner, @winner) unless @game.winner
+      @game.update_attribute(:winner, @winner)
     end
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     @current_blinds = @blinds[@game.round]
