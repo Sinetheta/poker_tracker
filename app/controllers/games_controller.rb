@@ -10,6 +10,7 @@ class GamesController < ApplicationController
     @winner = nil
     if @game.players_out.length == @game.guests.length+@game.users.length-1
       @winner = (@game.guests+@game.users.map {|user| user.email}).select {|user| !@game.players_out.include?(user)}.first()
+      @game.update_attribute(:winner, @winner) unless @game.winner
     end
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     @current_blinds = @blinds[@game.round]
@@ -71,6 +72,10 @@ class GamesController < ApplicationController
     else
       redirect_to new_user_session_path
     end
+  end
+
+  def archive
+    @games = Game.all.select {|game| game.winner != nil}
   end
 
   private

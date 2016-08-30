@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="span5 offset2">
+    <div class="page-header">
+      <h1>Archived Games</h1>
+    </div>
+    <table class="table">
+      <tr>
+        <th>Game name</th>
+        <th>Players</th>
+        <th>Chips (per player)</th>
+        <th>Length of game (hours)</th>
+        <th>Winner</th>
+        <th></th>
+      </tr>
+      <% @games.each do |game| %>
+        <tr>
+          <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
+          <td><%= game.guests.length+game.users.length %></td>
+          <td><%= game.chips %></td>
+          <td><%= game.game_length %></td>
+          <td><%= game.winner %></td>
+          <td>
+            <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
