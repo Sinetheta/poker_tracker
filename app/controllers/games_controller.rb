@@ -82,9 +82,14 @@ class GamesController < ApplicationController
   def leaderboard
     @games = Game.all
     @players = {}
+    # Find a better way to track earnings, in the user model
+    # Make a guest model for tracking guests data
     @games.each do |game|
       (game.guests+game.users.map {|user| user.name}).each do |player|
-        @players[player] = (@games.select {|game| game.winner == player}).length unless @players.keys.include?(player)
+        @players[player] = (@games.select {|game| game.winner == player}).map do |game|
+          number_of_players = game.users.length+game.guests.length
+          (number_of_players-1)*game.buy_in
+        end.sum unless @players.keys.include?(player)
       end
     end
     @players = @players.sort_by {|player, wins| wins}.reverse
@@ -94,8 +99,8 @@ class GamesController < ApplicationController
   def game_params
     params["game"]["guests"] = params["game"]["guests"].map {|t| t.strip} if params["game"]["guests"]
     params["game"]["user_ids"] = params["game"]["user_ids"].uniq if params["game"]["user_ids"]
-    params.require(:game).permit(:name, :chips, {:guests => []}, {:user_ids => []},
-                                 :game_length, :round_length,
-                                 :round, :first_small_blind, :smallest_denomination)
+    params.require(:game).permit({:guests => []}, {:user_ids => []},
+                                 :game_length, :round_length, :buy_in, :round,
+                                 :chips, :first_small_blind, :smallest_denomination)
   end
 end
