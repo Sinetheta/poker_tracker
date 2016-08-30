@@ -1,15 +1,16 @@
 class GamesController < ApplicationController
 
   def index
-    @games = Game.all
+    @games = Game.select {|game| game.winner == nil}
     redirect_to new_game_path if @games.empty?
   end
 
   def show
     @game = Game.find(params[:id])
     @winner = nil
-    if @game.players_out.length == @game.guests.length+@game.users.length-1
-      @winner = (@game.guests+@game.users.map {|user| user.email}).select {|user| !@game.players_out.include?(user)}.first()
+    @players = (@game.guests+@game.users.map {|user| user.email}).sort
+    if @game.players_out.length == @players.length-1
+      @winner = @players.find {|user| !@game.players_out.include?(user)}
       @game.update_attribute(:winner, @winner) unless @game.winner
     end
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}

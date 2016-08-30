@@ -20,7 +20,7 @@
           <td><%= game.game_length %></td>
           <td><%= game.winner %></td>
           <td>
-            <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %>
+            <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete, data: { confirm: "Are you sure?" } %>
           </td>
         </tr>
       <% end %>
