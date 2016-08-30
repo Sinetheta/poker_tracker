@@ -20,37 +20,57 @@ class GamesController < ApplicationController
   end
 
   def new
-    @game = Game.new
-    @users = User.all
+    if user_signed_in?
+      @game = Game.new
+      @users = User.all
+    else
+      redirect_to new_user_session_path
+    end
   end
 
   def edit
-    @game = Game.find(params[:id])
+    if user_signed_in?
+      @game = Game.find(params[:id])
+    else
+      redirect_to new_user_session_path
+    end
   end
 
   def create
-    game = Game.new(game_params)
-    if game.save
-      redirect_to game_path(game)
+    if user_signed_in?
+      game = Game.new(game_params)
+      if game.save
+        redirect_to game_path(game)
+      else
+        redirect_to new_game_path
+      end
     else
-      redirect_to new_game_path
+      redirect_to new_user_session_path
     end
   end
 
   def update
-    game = Game.find(params[:id])
-    if params[:game][:players_out]
-      players_out_hash = game.players_out.merge(params[:game][:players_out])
-      game.update_attribute(:players_out, players_out_hash)
+    if user_signed_in?
+      game = Game.find(params[:id])
+      if params[:game][:players_out]
+        players_out_hash = game.players_out.merge(params[:game][:players_out])
+        game.update_attribute(:players_out, players_out_hash)
+      end
+      flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
+      redirect_to game_path(game)
+    else
+      redirect_to new_user_session_path
     end
-    flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
-    redirect_to game_path(game)
   end
 
   def destroy
-    game = Game.find(params[:id])
-    game.delete
-    redirect_to games_path
+    if user_signed_in?
+      game = Game.find(params[:id])
+      game.delete
+      redirect_to games_path
+    else
+      redirect_to new_user_session_path
+    end
   end
 
   private
