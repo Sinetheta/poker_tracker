@@ -29,18 +29,26 @@ flashTimer = () ->
 
 String::strip = -> @replace /^\s+|\s+$/g, ""
 
-updatePlayers = (player) ->
+updatePlayers = (player, user = null) ->
+  if user
+    button = "<button class='btn btn-danger removeUser' id='removeUser#{user}'>Remove</button>"
+    trid = "usertr#{user}"
+  else
+    button = "<button class='btn btn-danger removeGuest' id='removeGuest#{player}'>Remove</button>"
+    trid = "guesttr#{player}"
   unless player == ""
-    tableRow = "<tr><td>#{player}</td><td></td></tr>"
+    tableRow = "<tr id='#{trid}'><td>#{player}</td><td>#{button}</td></tr>"
     document.getElementById('players').lastChild.insertAdjacentHTML('beforeend', tableRow)
 
 addPlayer = (player, guest = false) ->
   if guest
     param_type = "guests"
+    inputid = "guestin#{player}"
   else
     param_type = "user_ids"
+    inputid = "userin#{player}"
   unless player == ""
-    param = "<input type='hidden' name='game[#{param_type}][]' value='#{player}' />"
+    param = "<input type='hidden' name='game[#{param_type}][]' id='#{inputid}' value='#{player}' />"
     document.getElementById('hiddenUsers').insertAdjacentHTML('beforeend', param)
 
 # Show
@@ -60,10 +68,16 @@ $(document).on "turbolinks:load", ->
     $("#addGuest").hide()
   $(".userButton").on "click", (event) ->
     addPlayer(this.id)
-    updatePlayers(this.innerHTML.split(' ')[1])
+    updatePlayers(this.innerHTML.substring(4), user = this.id)
     $("##{this.id}").hide()
     $("#userButtons").hide()
     $("#addGuest").show()
+    $(".removeUser").on "click", (event) ->
+      user_id = this.id.substring(10)
+      document.getElementById("userin#{user_id}").outerHTML = ""
+      document.getElementById("usertr#{user_id}").outerHTML = ""
+      $("##{user_id}").show()
+      $("#addUser").show()
     if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
       $("#addUser").show()
   $("#userCancelButton").on "click", (event) ->
@@ -83,6 +97,10 @@ $(document).on "turbolinks:load", ->
     $("#addGuest").show()
     if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
       $("#addUser").show()
+    $(".removeGuest").on "click", (event) ->
+      guest_name = this.id.substring(11)
+      document.getElementById("guestin#{guest_name}").outerHTML = ""
+      document.getElementById("guesttr#{guest_name}").outerHTML = ""
   $("#guestInput").on "keypress", (event) ->
     if event.keyCode == 13
       $("#guestSubmit").click()
