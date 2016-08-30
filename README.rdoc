@@ -1,28 +1,13 @@
-== README
+== Poker Tracker
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Poker Tracker is a Ruby on Rails application for tracking poker games.
 
-Things you may want to cover:
+It allows you to have user and guest account that can participate in
+games that user's set up.
 
-* Ruby version
+Games will automatically track the blinds and give you timers for each round.
 
-* System dependencies
+During the game, players can "go out" and when everybody but the winner has gone
+out, the game winner will be declared.
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+The game history is archived, and a leaderboard is calculated.
