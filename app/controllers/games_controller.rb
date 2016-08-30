@@ -79,6 +79,17 @@ class GamesController < ApplicationController
     @games = Game.all.select {|game| game.winner != nil}
   end
 
+  def leaderboard
+    @games = Game.all
+    @players = {}
+    @games.each do |game|
+      (game.guests+game.users.map {|user| user.email}).each do |player|
+        @players[player] = (@games.select {|game| game.winner == player}).length unless @players.keys.include?(player)
+      end
+    end
+    @players = @players.sort_by {|player, wins| wins}.reverse
+  end
+
   private
   def game_params
     params["game"]["guests"] = params["game"]["guests"].map {|t| t.strip} if params["game"]["guests"]

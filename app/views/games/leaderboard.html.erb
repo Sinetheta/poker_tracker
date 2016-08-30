@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="span5 offset2">
+    <div class="page-header">
+      <h1>All Time Wins</h1>
+    </div>
+    <table class="table">
+      <tr>
+        <th>Player</th>
+        <th>Number of Wins</th>
+      </tr>
+      <% @players.each do |player, wins| %>
+        <tr>
+          <td><%= player %></td>
+          <td><%= wins %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
