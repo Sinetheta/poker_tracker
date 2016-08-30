@@ -9,7 +9,9 @@
         <th>Players</th>
         <th>Chips (per player)</th>
         <th>Length of game (hours)</th>
-        <th></th>
+        <% if user_signed_in? %>
+          <th></th>
+        <% end %>
       </tr>
       <% @games.each do |game| %>
         <tr>
@@ -17,10 +19,12 @@
           <td><%= game.guests.length+game.users.length %></td>
           <td><%= game.chips %></td>
           <td><%= game.game_length %></td>
-          <td>
-            <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %>
-            <%= link_to "Edit Game Settings", edit_game_path(game), class: "btn btn-primary" %>
-          </td>
+          <% if user_signed_in? %>
+            <td>
+              <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %>
+              <%= link_to "Edit Game Settings", edit_game_path(game), class: "btn btn-primary" %>
+            </td>
+          <% end %>
         </tr>
       <% end %>
     </table>

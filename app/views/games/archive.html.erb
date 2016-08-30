@@ -19,9 +19,11 @@
           <td><%= game.chips %></td>
           <td><%= game.game_length %></td>
           <td><%= game.winner %></td>
-          <td>
-            <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete, data: { confirm: "Are you sure?" } %>
-          </td>
+          <% if user_signed_in? %>
+            <td>
+              <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete, data: { confirm: "Are you sure?" } %>
+            </td>
+          <% end %>
         </tr>
       <% end %>
     </table>
