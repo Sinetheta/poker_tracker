@@ -14,23 +14,25 @@
         </div>
       </div>
 
-      <div class="row" id="button-row">
-        <div class="col-xs-6">
-          <%= link_to "Start Timer", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary", id: "startTimer" %>
-          <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}), method: :patch, class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
+      <% unless @game.winner %>
+        <div class="row" id="button-row">
+          <div class="col-xs-6">
+            <%= link_to "Start Timer", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary", id: "startTimer" %>
+            <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}), method: :patch, class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
+          </div>
+          <div class="dropdown col-xs-3">
+            <button class="btn btn-primary" type="button" id="roundSelect"
+                                                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              Go to round <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="roundSelect">
+              <% @game.blinds.each_with_index do |blind, i| %>
+                <li><%= link_to "Round #{i+1} [#{blind} - #{blind*2}]", game_path(@game, :game => {round: i}), method: :patch %></li>
+              <% end %>
+            </ul>
+          </div>
         </div>
-        <div class="dropdown col-xs-3">
-          <button class="btn btn-primary" type="button" id="roundSelect"
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-          Go to round <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="roundSelect">
-            <% @game.blinds.each_with_index do |blind, i| %>
-              <li><%= link_to "Round #{i+1} [#{blind} - #{blind*2}]", game_path(@game, :game => {round: i}), method: :patch %></li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
+      <% end %>
 
       <div class="row">
         <table class="table table-hover">
@@ -42,13 +44,13 @@
             <tr>
               <td><%= player %></td>
               <td>
-              <% if @game.players_out.keys.include?(player) %>
-                <%= "Out on round #{@game.players_out[player].to_i + 1}" %>
-              <% elsif @winner && player == @winner %>
-                Winner!
-              <% else %>
-                <%= link_to "Set player out", game_path(@game, :game => {:players_out => {player => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
-              <% end %>
+                <% if @game.players_out.keys.include?(player) %>
+                  <%= "Out on round #{@game.players_out[player].to_i + 1}" %>
+                <% elsif @winner && player == @winner %>
+                  Winner!
+                <% else %>
+                  <%= link_to "Set player out", game_path(@game, :game => {:players_out => {player => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
+                <% end %>
               </td>
             </tr>
           <% end %>
@@ -59,31 +61,54 @@
 
     <div class="col-md-3">
       <div class="timer-container">
-        <h1 id="timer"><%= "#{@game.round_length}:00" %></h1>
+        <h1 id="timer">
+          <% if @game.winner %>
+            Game Over
+          <% else %>
+            <%= "#{@game.round_length}:00" %>
+          <% end %>
+        </h1>
       </div>
-      <div class="row">
-        <div class="col-xs-6">
-          <h2 class="blind">Small</h2>
-          <h3 class="blind"><%= @current_blinds[0] %></h3>
-        </div>
-        <div class="col-xs-6">
-          <h2 class="blind">Big</h2>
-          <h3 class="blind"><%= @current_blinds[1] %></h3>
-        </div>
-      </div>
-      <% upcoming_blinds = @game.blinds.select {|blind| blind > @current_blinds[0]}.take(4) %>
-      <% unless upcoming_blinds.empty? %>
+      <% if @game.winner %>
+        <h3>Blind Structure</h3>
         <table class="table table-hover">
           <tr>
-            <h3>Upcoming Blinds</h3>
+            <th>Round</th>
+            <th>Small</th>
+            <th>Big</th>
           </tr>
-          <% upcoming_blinds.each_with_index do |blind, i| %>
+        <% @blinds.take(@game.round+2).each_with_index do |blinds, i| %>
+          <tr>
+            <td><%= i+1 %></td>
+            <td><%= blinds[0] %></td>
+            <td><%= blinds[1] %></td>
+          </tr>
+        <% end %>
+      <% else %>
+        <div class="row">
+          <div class="col-xs-6">
+            <h2 class="blind">Small</h2>
+            <h3 class="blind"><%= @current_blinds[0] %></h3>
+          </div>
+          <div class="col-xs-6">
+            <h2 class="blind">Big</h2>
+            <h3 class="blind"><%= @current_blinds[1] %></h3>
+          </div>
+        </div>
+        <% upcoming_blinds = @blinds.select {|blind| blind[0] > @current_blinds[0]}.take(4) %>
+        <% unless upcoming_blinds.empty? %>
+          <table class="table table-hover">
             <tr>
-              <td><%= blind %></td>
-              <td><%= blind*2 %></td>
+              <h3>Upcoming Blinds</h3>
             </tr>
-          <% end %>
-        </table>
+            <% upcoming_blinds.each do |small, big| %>
+              <tr>
+                <td><%= small %></td>
+                <td><%= big %></td>
+              </tr>
+            <% end %>
+          </table>
+        <% end %>
       <% end %>
     </div>
 
