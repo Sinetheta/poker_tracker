@@ -65,13 +65,13 @@ $(document).on "turbolinks:load", ->
   $("#addUser").on "click", (event) ->
     $("#userButtons").show()
     $("#addUser").hide()
-    $("#addGuest").hide()
+    $("#addGuest").css('visibility','hidden')
   $(".userButton").on "click", (event) ->
     addPlayer(this.id)
     updatePlayers(this.innerHTML.substring(4), user = this.id)
     $("##{this.id}").hide()
     $("#userButtons").hide()
-    $("#addGuest").show()
+    $("#addGuest").css('visibility','visible')
     $(".removeUser").on "click", (event) ->
       user_id = this.id.substring(10)
       document.getElementById("userin#{user_id}").outerHTML = ""
@@ -84,17 +84,18 @@ $(document).on "turbolinks:load", ->
     $("#userButtons").hide()
     if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
       $("#addUser").show()
-    $("#addGuest").show()
+    $("#addGuest").css('visibility','visible')
   $("#addGuest").on "click", (event) ->
     $("#guestForm").show()
     $("#guestInput").val("")
+    $("#guestInput").focus()
     $("#addUser").hide()
-    $("#addGuest").hide()
+    $("#addGuest").css('visibility','hidden')
   $("#guestSubmit").on "click", (event) ->
     updatePlayers name.strip() for name in $("#guestInput").val().split(",")
     addPlayer(name.strip(), guest = true) for name in $("#guestInput").val().split(",")
     $("#guestForm").hide()
-    $("#addGuest").show()
+    $("#addGuest").css('visibility','visible')
     if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
       $("#addUser").show()
     $(".removeGuest").on "click", (event) ->
