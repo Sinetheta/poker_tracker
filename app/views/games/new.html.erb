@@ -66,7 +66,7 @@
           <%= f.number_field :buy_in, class: "form-control" %>
         </div>
       </div>
-      <div class="col-md-offset-2">
+      <div class="col-md-offset-2 button-row">
         <%= f.submit "Create game", class: "btn btn-primary" %>
       </div>
 
@@ -78,7 +78,7 @@
           <% @users.each do |user| %>
             <button type="button" class="btn btn-primary userButton" id=<%= user.id %>><%= "Add #{user.name}" %></button>
           <% end %>
-          <button type="button" class="btn btn-danger" id="userCancelButton">Cancel</button>
+          <button type="button" class="btn btn-danger" id="userCancelButton">Done</button>
         </div>
       </div>
 

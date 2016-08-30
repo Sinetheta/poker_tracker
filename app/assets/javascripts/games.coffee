@@ -70,15 +70,15 @@ $(document).on "turbolinks:load", ->
     addPlayer(this.id)
     updatePlayers(this.innerHTML.substring(4), user = this.id)
     $("##{this.id}").hide()
-    $("#userButtons").hide()
     $("#addGuest").css('visibility','visible')
+    if (button for button in $("#userButtons").children().children() when button.style.display != "none").length == 1
+      $("#userButtons").hide()
     $(".removeUser").on "click", (event) ->
       user_id = this.id.substring(10)
+      console.log(user_id)
       document.getElementById("userin#{user_id}").outerHTML = ""
       document.getElementById("usertr#{user_id}").outerHTML = ""
       $("##{user_id}").show()
-      $("#addUser").show()
-    if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
       $("#addUser").show()
   $("#userCancelButton").on "click", (event) ->
     $("#userButtons").hide()
