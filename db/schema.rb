@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160830201948) do
+ActiveRecord::Schema.define(version: 20160830215041) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
@@ -30,6 +30,14 @@ ActiveRecord::Schema.define(version: 20160830201948) do
     t.integer  "buy_in"
   end
 
+  create_table "games_guests", id: false, force: :cascade do |t|
+    t.integer "guest_id"
+    t.integer "game_id"
+  end
+
+  add_index "games_guests", ["game_id"], name: "index_games_guests_on_game_id"
+  add_index "games_guests", ["guest_id"], name: "index_games_guests_on_guest_id"
+
   create_table "games_users", id: false, force: :cascade do |t|
     t.integer "user_id"
     t.integer "game_id"
@@ -37,6 +45,13 @@ ActiveRecord::Schema.define(version: 20160830201948) do
 
   add_index "games_users", ["game_id"], name: "index_games_users_on_game_id"
   add_index "games_users", ["user_id"], name: "index_games_users_on_user_id"
+
+  create_table "guests", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "winnings"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -52,6 +67,7 @@ ActiveRecord::Schema.define(version: 20160830201948) do
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
     t.string   "name"
+    t.integer  "winnings"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
