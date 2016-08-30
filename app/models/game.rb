@@ -14,6 +14,9 @@ class Game < ActiveRecord::Base
             :first_small_blind, :smallest_denomination, numericality: { only_integer: true, greater_than: 0 }
   validates :game_length, numericality: { greater_than: 0 }
 
+  scope :in_progress, -> { where(winner: nil) }
+  scope :completed, -> { where("winner IS NOT NULL") }
+
   protected
 
   # Randomly generate an appropriate name

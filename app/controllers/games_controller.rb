@@ -1,7 +1,7 @@
 class GamesController < ApplicationController
 
   def index
-    @games = Game.select {|game| game.winner == nil}
+    @games = Game.in_progress
     redirect_to new_game_path if @games.empty?
   end
 
@@ -76,7 +76,7 @@ class GamesController < ApplicationController
   end
 
   def archive
-    @games = Game.all.select {|game| game.winner != nil}
+    @games = Game.completed
   end
 
   def leaderboard
