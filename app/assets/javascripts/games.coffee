@@ -1,10 +1,10 @@
-updateTimer = (currentTime) ->
+updateTimer = (currentTime, game) ->
   timer = document.getElementById('timer')
   if timer != null and currentTime >= 0
     if currentTime == 0
       timer.innerHTML = "0:00"
       document.getElementById('marimbaAudio').play()
-      flashTimer()
+      updateRound(game)
     else
       minutes = Math.floor(currentTime/60)
       seconds = currentTime % 60
@@ -12,20 +12,35 @@ updateTimer = (currentTime) ->
         seconds = "0" + seconds
       setTimeout((->
         timer.innerHTML = "#{minutes}:#{seconds}"
-        updateTimer(currentTime-1)
+        updateTimer(currentTime-1, game)
       ), 1000)
   else
     console.log("no timer")
 
-flashTimer = () ->
-  timer = document.getElementById('timer')
-  setTimeout((->
-    if timer.style.visibility == "hidden"
-      timer.style.visibility = "visible"
-    else
-      timer.style.visibility = "hidden"
-    flashTimer()
-    ), 500)
+updateRound = (game) ->
+  $.ajax({
+    type: "PATCH"
+    url: "/games/#{game.id}.json",
+    data: { game: { round: game.round+1 } },
+    success: (data) ->
+      document.getElementById('roundDisplay').innerHTML = "Round #{data.round+1}"
+      updateBlinds(data)
+      updateTimer(data.round_length*60, data)
+  })
+
+updateBlinds = (game) ->
+  document.getElementById('smallBlind').innerHTML = game.blinds[game.round]
+  document.getElementById('bigBlind').innerHTML = game.blinds[game.round]*2
+  upcomingBlinds = game.blinds[game.round+1..game.round+4]
+  upcomingBlinds = upcomingBlinds.map (blind) -> "<tr><td>#{blind}</td><td>#{blind*2}</td><tr>"
+  document.getElementById('blindsTable').innerHTML = upcomingBlinds.join("")
+
+# Show
+$(document).on "turbolinks:load", ->
+  $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
+    updateTimer(data.round_length*60, data)
+    document.getElementById('clickAudio').play()
+    $("#startTimer").hide()
 
 String::strip = -> @replace /^\s+|\s+$/g, ""
 
@@ -50,13 +65,6 @@ addPlayer = (player, guest = false) ->
   unless player == ""
     param = "<input type='hidden' name='game[#{param_type}][]' id='#{inputid}' value='#{player}' />"
     document.getElementById('hiddenUsers').insertAdjacentHTML('beforeend', param)
-
-# Show
-$(document).on "turbolinks:load", ->
-  $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
-    updateTimer(data.round_length*60)
-    document.getElementById('clickAudio').play()
-    $("#startTimer").hide()
 
 # New
 $(document).on "turbolinks:load", ->

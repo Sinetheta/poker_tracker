@@ -95,9 +95,12 @@ class GamesController < ApplicationController
       end
 
       flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
-      redirect_to game_path(game)
     else
       redirect_to new_user_session_path
+    end
+    respond_to do |format|
+      format.html { redirect_to game_path(game) }
+      format.json { render json: game }
     end
   end
 

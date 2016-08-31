@@ -10,7 +10,7 @@
           <h1><%= @game.name %></h1>
         </div>
         <div class="col-xs-6">
-          <h1>Round <%= @game.round+1 %></h1>
+          <h1 id="roundDisplay">Round <%= @game.round+1 %></h1>
         </div>
       </div>
 
@@ -101,16 +101,16 @@
         <div class="row">
           <div class="col-xs-6">
             <h2 class="blind">Small</h2>
-            <h3 class="blind"><%= @current_blinds[0] %></h3>
+            <h3 class="blind" id="smallBlind"><%= @current_blinds[0] %></h3>
           </div>
           <div class="col-xs-6">
             <h2 class="blind">Big</h2>
-            <h3 class="blind"><%= @current_blinds[1] %></h3>
+            <h3 class="blind" id="bigBlind"><%= @current_blinds[1] %></h3>
           </div>
         </div>
         <% upcoming_blinds = @blinds.select {|blind| blind[0] > @current_blinds[0]}.take(4) %>
         <% unless upcoming_blinds.empty? %>
-          <table class="table table-hover">
+          <table class="table table-hover" id="blindsTable">
             <tr>
               <h3>Upcoming Blinds</h3>
             </tr>
