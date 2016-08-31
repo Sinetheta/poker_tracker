@@ -35,12 +35,15 @@ class GamesController < ApplicationController
 
   def create
     if user_signed_in?
-      # Handle guest model creation
+      # If we're passed guests during creation
       if params["game"]["guest_ids"]
         params["game"]["guest_ids"].map! do |guest|
+          guest = guest.downcase.capitalize
           record = Guest.find_by_name(guest)
+          # If the guest already exists, store the reference
           if record
             guest = record.id
+          # Otherwise, create the guest and store the reference
           else
             record = Guest.create(name: guest)
             guest = record.id
@@ -62,7 +65,7 @@ class GamesController < ApplicationController
     if user_signed_in?
       game = Game.find(params[:id])
 
-      # Players going out, winner being declared
+      # If we're putting a guest or a user out
       if params[:game][:users_out]
         out_hash = game.users_out.merge(params[:game][:users_out])
         game.update_attribute(:users_out, out_hash)
@@ -71,6 +74,7 @@ class GamesController < ApplicationController
         game.update_attribute(:guests_out, out_hash)
       end
 
+      # After updating the game, see if a winner can be declared
       if game.users_out.length + game.guests_out.length == game.users.length+game.guests.length-1
         user_winner = (game.users.map {|user| user.id.to_s} - game.users_out.keys)[0].to_i
         guest_winner = (game.guests.map {|user| user.id.to_s} - game.guests_out.keys)[0].to_i
