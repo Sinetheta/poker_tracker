@@ -35,6 +35,18 @@ class GamesController < ApplicationController
 
   def create
     if user_signed_in?
+      # Handle guest model creation
+      if params["game"]["guest_ids"]
+        params["game"]["guest_ids"].map! do |guest|
+          record = Guest.find_by_name(guest)
+          if record
+            guest = record.id
+          else
+            record = Guest.create(name: guest)
+            guest = record.id
+          end
+        end
+      end
       game = Game.new(game_params)
       if game.save
         redirect_to game_path(game)
@@ -84,9 +96,6 @@ class GamesController < ApplicationController
 
   private
   def game_params
-    # guests work right now if they are passed as an ID and already exist.
-    # otherwise, guests are not working
-    params["game"]["user_ids"] = params["game"]["user_ids"].uniq if params["game"]["user_ids"]
     params.require(:game).permit({:user_ids => []}, {:guest_ids => []},
                                  :game_length, :round_length, :buy_in, :round,
                                  :chips, :first_small_blind, :smallest_denomination)
