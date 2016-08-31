@@ -7,7 +7,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @players = @game.users
+    @players = @game.users + @game.guests
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     @current_blinds = @blinds[@game.round]
     respond_to do |format|
@@ -61,13 +61,35 @@ class GamesController < ApplicationController
   def update
     if user_signed_in?
       game = Game.find(params[:id])
-      if params[:game][:players_out]
-        players_out_hash = game.players_out.merge(params[:game][:players_out])
-        if players_out_hash.length == game.users.length-1
-          game.winner = (game.users.map {|user| user.id} - players_out_hash.keys.map {|id| id.to_i}).first()
-        end
-        game.update_attribute(:players_out, players_out_hash)
+
+      # Players going out, winner being declared
+      if params[:game][:users_out]
+        out_hash = game.users_out.merge(params[:game][:users_out])
+        game.update_attribute(:users_out, out_hash)
+      elsif params[:game][:guests_out]
+        out_hash = game.guests_out.merge(params[:game][:guests_out])
+        game.update_attribute(:guests_out, out_hash)
       end
+
+      if game.users_out.length + game.guests_out.length == game.users.length+game.guests.length-1
+        user_winner = (game.users.map {|user| user.id.to_s} - game.users_out.keys)[0].to_i
+        guest_winner = (game.guests.map {|user| user.id.to_s} - game.guests_out.keys)[0].to_i
+        if guest_winner
+          game.winner = guest_winner
+          game.winner_type = "guest"
+          winner = Guest.find(guest_winner)
+          winner.winnings += 1
+          winner.save
+        else
+          game.winner = user_winner
+          game.winner_type = "user"
+          winner = User.find(guest_winner)
+          winner.winnings += 1
+          winner.save
+        end
+        game.save()
+      end
+
       flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
       redirect_to game_path(game)
     else
@@ -91,7 +113,7 @@ class GamesController < ApplicationController
 
   def leaderboard
     @games = Game.all
-    @users = User.all
+    @players = User.all + Guest.all
   end
 
   private

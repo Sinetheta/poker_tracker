@@ -7,7 +7,8 @@ class Game < ActiveRecord::Base
 
   after_validation :generate_name, :generate_blinds, on: :create
 
-  store :players_out
+  store :users_out
+  store :guests_out
   serialize :blinds, Array
   validates :chips, :game_length, :round_length,
             :first_small_blind, :smallest_denomination, presence: true

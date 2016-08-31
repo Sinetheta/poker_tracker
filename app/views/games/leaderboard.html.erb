@@ -8,10 +8,10 @@
         <th>Player</th>
         <th>Number of Wins</th>
       </tr>
-      <% @users.each do |user| %>
+      <% @players.each do |player| %>
         <tr>
-          <td><%= user.name %></td>
-          <td><%= user.games.select {|game| game.winner.to_i == user.id}.length %></td>
+          <td><%= player.name %></td>
+          <td><%= player.winnings.to_s %></td>
         </tr>
       <% end %>
     </table>

@@ -42,15 +42,31 @@
           <% @players.each do |player| %>
             <tr>
               <td><%= player.name %></td>
-              <td>
-                <% if @game.players_out.keys.include?(player.id.to_s) %>
-                  <%= "Out on round #{@game.players_out[player.id].to_i + 1}" %>
-                <% elsif @game.winner && player.id == @game.winner.to_i %>
-                  Winner!
-                <% else %>
-                  <%= link_to "Set player out", game_path(@game, :game => {:players_out => {player.id => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
-                <% end %>
-              </td>
+
+              <% if player.class == User %>
+                <% players_out = @game.users_out %>
+                <td>
+                  <% if players_out.keys.include?(player.id.to_s) %>
+                    <%= "Out on round #{players_out[player.id.to_s].to_i + 1}" %>
+                  <% elsif @game.winner_type == "user" && @game.winner == player.id.to_s %>
+                    Winner
+                  <% else %>
+                    <%= link_to "Set player out", game_path(@game, :game => {:users_out => {player.id => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
+                  <% end %>
+                </td>
+              <% elsif player.class == Guest %>
+                <% players_out = @game.guests_out %>
+                <td>
+                  <% if players_out.keys.include?(player.id.to_s) %>
+                    <%= "Out on round #{players_out[player.id.to_s].to_i + 1}" %>
+                  <% elsif @game.winner_type == "guest" && @game.winner == player.id.to_s %>
+                    Winner
+                  <% else %>
+                    <%= link_to "Set player out", game_path(@game, :game => {:guests_out => {player.id => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
+                  <% end %>
+                </td>
+              <% end %>
+
             </tr>
           <% end %>
 

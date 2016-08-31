@@ -15,10 +15,14 @@
       <% @games.each do |game| %>
         <tr>
           <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
-          <td><%= game.users.length %></td>
+          <td><%= game.users.length+game.guests.length %></td>
           <td><%= game.chips %></td>
           <td><%= game.game_length %></td>
-          <td><%= game.winner %></td>
+          <% if game.winner_type == "user" %>
+            <td><%= game.users.find(game.winner).name %></td>
+          <% else %>
+            <td><%= game.guests.find(game.winner).name %></td>
+          <% end %>
           <% if user_signed_in? %>
             <td>
               <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete, data: { confirm: "Are you sure?" } %>
