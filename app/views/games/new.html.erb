@@ -27,14 +27,14 @@
       <div class="form-group">
         <%= f.label :game_length, "Game length", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
-          <%= f.number_field :game_length, class: "form-control", step: 0.05 %>
+          <%= f.number_field :game_length, class: "form-control", step: 0.05, value: 2 %>
           <div class="input-group-addon">hrs</div>
         </div>
       </div>
       <div class="form-group">
         <%= f.label :round_length, "Round length", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
-          <%= f.number_field :round_length, class: "form-control" %>
+          <%= f.number_field :round_length, class: "form-control", value: 15 %>
           <div class="input-group-addon">min</div>
         </div>
       </div>
@@ -42,28 +42,28 @@
         <%= f.label :chips, "Chips per player", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
           <div class="input-group-addon">$</div>
-          <%= f.number_field :chips, class: "form-control" %>
+          <%= f.number_field :chips, class: "form-control", value: 2000 %>
         </div>
       </div>
       <div class="form-group">
         <%= f.label :smallest_denomination, "Smallest Denomination", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
           <div class="input-group-addon">$</div>
-          <%= f.number_field :smallest_denomination, class: "form-control" %>
+          <%= f.number_field :smallest_denomination, class: "form-control", value: 25 %>
         </div>
       </div>
       <div class="form-group">
         <%= f.label :first_small_blind, "First Small Blind", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
           <div class="input-group-addon">$</div>
-          <%= f.number_field :first_small_blind, class: "form-control" %>
+          <%= f.number_field :first_small_blind, class: "form-control", value: 100 %>
         </div>
       </div>
       <div class="form-group">
         <%= f.label :buy_in, "Buy In", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
           <div class="input-group-addon">$</div>
-          <%= f.number_field :buy_in, class: "form-control" %>
+          <%= f.number_field :buy_in, class: "form-control", value: 10 %>
         </div>
       </div>
       <div class="col-md-offset-2 button-row">
