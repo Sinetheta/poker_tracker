@@ -19,11 +19,11 @@
             <% if game.winner.to_i == @user.id %>
               <td>Winner</td>
             <% else %>
-              <td><%= "Went out on round #{game.users_out[@user.id].to_i+1}" %></td>
+              <td><%= "Went out on round #{game.users_out[@user.id.to_s].to_i+1}" %></td>
             <% end %>
           <% else %>
             <td><%= game.guests.find(game.winner).name %></td>
-            <td><%= "Went out on round #{game.users_out[@user.id].to_i+1}" %></td>
+            <td><%= "Went out on round #{game.users_out[@user.id.to_s].to_i+1}" %></td>
           <% end %>
 
         </tr>

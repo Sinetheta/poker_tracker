@@ -38,11 +38,9 @@
           <tr>
             <h3>Players</h3>
           </tr>
-
           <% @players.each do |player| %>
             <tr>
               <td><%= player.name %></td>
-
               <% if player.class == User %>
                 <% players_out = @game.users_out %>
                 <td>
@@ -66,10 +64,8 @@
                   <% end %>
                 </td>
               <% end %>
-
             </tr>
           <% end %>
-
         </table>
       </div>
     </div>
@@ -84,6 +80,7 @@
           <% end %>
         </h1>
       </div>
+
       <% if @game.winner %>
         <h3>Blind Structure</h3>
         <table class="table table-hover">
@@ -100,6 +97,7 @@
           </tr>
         <% end %>
       <% else %>
+
         <div class="row">
           <div class="col-xs-6">
             <h2 class="blind">Small</h2>
@@ -125,7 +123,7 @@
           </table>
         <% end %>
       <% end %>
-    </div>
 
+    </div>
   </div>
 </div>
