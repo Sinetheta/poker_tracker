@@ -21,13 +21,12 @@
             <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}), method: :patch, class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
           </div>
           <div class="dropdown col-xs-3">
-            <button class="btn btn-primary" type="button" id="roundSelect"
-                                                          data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <button class="btn btn-primary" type="button" id="roundSelect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               Go to round <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="roundSelect">
-              <% @game.blinds.each_with_index do |blind, i| %>
-                <li><%= link_to "Round #{i+1} [#{blind} - #{blind*2}]", game_path(@game, :game => {round: i}), method: :patch %></li>
+              <% @blinds.each_with_index do |blinds, i| %>
+                <li><%= link_to "Round #{i+1} [#{blinds[0]} - #{blinds[1]}]", game_path(@game, :game => {round: i}), method: :patch %></li>
               <% end %>
             </ul>
           </div>
@@ -42,14 +41,14 @@
 
           <% @players.each do |player| %>
             <tr>
-              <td><%= player %></td>
+              <td><%= player.name %></td>
               <td>
-                <% if @game.players_out.keys.include?(player) %>
-                  <%= "Out on round #{@game.players_out[player].to_i + 1}" %>
-                <% elsif @game.winner && player == @game.winner %>
+                <% if @game.players_out.keys.include?(player.id.to_s) %>
+                  <%= "Out on round #{@game.players_out[player.id].to_i + 1}" %>
+                <% elsif @game.winner && player.id == @game.winner.to_i %>
                   Winner!
                 <% else %>
-                  <%= link_to "Set player out", game_path(@game, :game => {:players_out => {player => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
+                  <%= link_to "Set player out", game_path(@game, :game => {:players_out => {player.id => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
                 <% end %>
               </td>
             </tr>

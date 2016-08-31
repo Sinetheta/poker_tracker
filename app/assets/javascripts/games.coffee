@@ -42,7 +42,7 @@ updatePlayers = (player, user = null) ->
 
 addPlayer = (player, guest = false) ->
   if guest
-    param_type = "guests"
+    param_type = "guest_ids"
     inputid = "guestin#{player}"
   else
     param_type = "user_ids"
@@ -70,9 +70,9 @@ $(document).on "turbolinks:load", ->
     addPlayer(this.id)
     updatePlayers(this.innerHTML.substring(4), user = this.id)
     $("##{this.id}").hide()
-    $("#addGuest").css('visibility','visible')
     if (button for button in $("#userButtons").children().children() when button.style.display != "none").length == 1
       $("#userButtons").hide()
+      $("#addGuest").css('visibility','visible')
     $(".removeUser").on "click", (event) ->
       user_id = this.id.substring(10)
       console.log(user_id)
@@ -84,7 +84,7 @@ $(document).on "turbolinks:load", ->
     $("#userButtons").hide()
     if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
       $("#addUser").show()
-    $("#addGuest").css('visibility','visible')
+      $("#addGuest").css('visibility','visible')
   $("#addGuest").on "click", (event) ->
     $("#guestForm").show()
     $("#guestInput").val("")

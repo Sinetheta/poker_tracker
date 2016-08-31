@@ -13,12 +13,12 @@
       <% @games.each do |game| %>
         <tr>
           <th><%= link_to game.name, game_path(game), class: "btn btn-default" %></th>
-          <th><%= game.winner %></th>
+          <th><%= game.users.find(game.winner.to_i).name %></th>
           <th>
-            <% if game.winner == @user.name %>
+            <% if game.winner.to_i == @user.id %>
               Winner
             <% else %>
-              <%= "Went out on round #{game.players_out[@user.name].to_i+1}" %>
+              <%= "Went out on round #{game.players_out[@user.id].to_i+1}" %>
             <% end %>
           </th>
         </tr>

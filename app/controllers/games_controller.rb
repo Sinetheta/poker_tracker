@@ -7,11 +7,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @players = (@game.guests+@game.users.map {|user| user.name}).sort
-    if @game.players_out.length == @players.length-1 && @game.winner == nil
-      @winner = @players.find {|user| !@game.players_out.include?(user)}
-      @game.update_attribute(:winner, @winner)
-    end
+    @players = @game.users
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     @current_blinds = @blinds[@game.round]
     respond_to do |format|
@@ -55,6 +51,9 @@ class GamesController < ApplicationController
       game = Game.find(params[:id])
       if params[:game][:players_out]
         players_out_hash = game.players_out.merge(params[:game][:players_out])
+        if players_out_hash.length == game.users.length-1
+          game.winner = (game.users.map {|user| user.id} - players_out_hash.keys.map {|id| id.to_i}).first()
+        end
         game.update_attribute(:players_out, players_out_hash)
       end
       flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
@@ -80,25 +79,15 @@ class GamesController < ApplicationController
 
   def leaderboard
     @games = Game.all
-    @players = {}
-    # Find a better way to track earnings, in the user model
-    # Make a guest model for tracking guests data
-    @games.each do |game|
-      (game.guests+game.users.map {|user| user.name}).each do |player|
-        @players[player] = (@games.select {|game| game.winner == player}).map do |game|
-          number_of_players = game.users.length+game.guests.length
-          (number_of_players-1)*game.buy_in
-        end.sum unless @players.keys.include?(player)
-      end
-    end
-    @players = @players.sort_by {|player, wins| wins}.reverse
+    @users = User.all
   end
 
   private
   def game_params
-    params["game"]["guests"] = params["game"]["guests"].map {|t| t.strip} if params["game"]["guests"]
+    # guests work right now if they are passed as an ID and already exist.
+    # otherwise, guests are not working
     params["game"]["user_ids"] = params["game"]["user_ids"].uniq if params["game"]["user_ids"]
-    params.require(:game).permit({:guests => []}, {:user_ids => []},
+    params.require(:game).permit({:user_ids => []}, {:guest_ids => []},
                                  :game_length, :round_length, :buy_in, :round,
                                  :chips, :first_small_blind, :smallest_denomination)
   end
