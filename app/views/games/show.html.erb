@@ -43,24 +43,24 @@
               <td><%= player.name %></td>
               <% if player.class == User %>
                 <% players_out = @game.users_out %>
-                <td>
+                <td id=<%= "userOutButtonCell#{player.id}" %>>
                   <% if players_out.keys.include?(player.id.to_s) %>
                     <%= "Out on round #{players_out[player.id.to_s].to_i + 1}" %>
                   <% elsif @game.winner_type == "user" && @game.winner == player.id.to_s %>
                     Winner
                   <% else %>
-                    <%= link_to "Set player out", game_path(@game, :game => {:users_out => {player.id => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
+                    <button type="button" userid=<%= player.id %> class="btn btn-primary userOutButton" gameid=<%= @game.id %> round=<%= @game.round %>>Set Player Out</button>
                   <% end %>
                 </td>
               <% elsif player.class == Guest %>
                 <% players_out = @game.guests_out %>
-                <td>
+                <td id=<%= "guestOutButtonCell#{player.id}" %>>
                   <% if players_out.keys.include?(player.id.to_s) %>
                     <%= "Out on round #{players_out[player.id.to_s].to_i + 1}" %>
                   <% elsif @game.winner_type == "guest" && @game.winner == player.id.to_s %>
                     Winner
                   <% else %>
-                    <%= link_to "Set player out", game_path(@game, :game => {:guests_out => {player.id => @game.round}}), method: :patch, class: "btn btn-primary setPlayer"%>
+                    <button type="button" guestid=<%= player.id %> class="btn btn-primary guestOutButton" gameid=<%= @game.id %> round=<%= @game.round %>>Set Player Out</button>
                   <% end %>
                 </td>
               <% end %>

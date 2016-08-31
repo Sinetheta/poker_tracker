@@ -19,7 +19,7 @@ updateTimer = (currentTime, game) ->
 
 updateRound = (game) ->
   $.ajax({
-    type: "PATCH"
+    type: "PATCH",
     url: "/games/#{game.id}.json",
     data: { game: { round: game.round+1 } },
     success: (data) ->
@@ -41,6 +41,28 @@ $(document).on "turbolinks:load", ->
     updateTimer(data.round_length*60, data)
     document.getElementById('clickAudio').play()
     $("#startTimer").hide()
+  $(".userOutButton").on "click", (event) ->
+    gameid = $(this).attr('gameid')
+    userid = $(this).attr('userid')
+    round = $(this).attr('round')
+    $.ajax({
+      type: "PATCH",
+      url: "/games/#{gameid}.json",
+      data: { game: { users_out: { "#{userid}": round } } }
+      success: (data) ->
+        document.getElementById("userOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
+    })
+  $(".guestOutButton").on "click", (event) ->
+    gameid = $(this).attr('gameid')
+    userid = $(this).attr('guestid')
+    round = $(this).attr('round')
+    $.ajax({
+      type: "PATCH",
+      url: "/games/#{gameid}.json",
+      data: { game: { guests_out: { "#{userid}": round } } }
+      success: (data) ->
+        document.getElementById("guestOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
+    })
 
 String::strip = -> @replace /^\s+|\s+$/g, ""
 
