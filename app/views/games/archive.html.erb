@@ -5,28 +5,32 @@
     </div>
 
     <table class="table">
-      <tr>
-        <th>Game name</th>
-        <th>Players</th>
-        <th>Chips (per player)</th>
-        <th>Length of game (hours)</th>
-        <th>Winner</th>
-        <th></th>
-      </tr>
-      <% @games.each do |game| %>
+      <thead>
         <tr>
-          <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
-          <td><%= game.number_of_players %></td>
-          <td><%= game.chips %></td>
-          <td><%= game.game_length %></td>
-          <td><%= game.winner.name %></td>
-          <% if user_signed_in? %>
-            <td>
-              <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete, data: { confirm: "Are you sure?" } %>
-            </td>
-          <% end %>
+          <th>Game name</th>
+          <th>Players</th>
+          <th>Chips (per player)</th>
+          <th>Length of game (hours)</th>
+          <th>Winner</th>
+          <th></th>
         </tr>
-      <% end %>
+      </thead>
+      <tbody>
+        <% @games.each do |game| %>
+          <tr>
+            <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
+            <td><%= game.number_of_players %></td>
+            <td><%= game.chips %></td>
+            <td><%= game.game_length %></td>
+            <td><%= game.winner.name %></td>
+            <% if user_signed_in? %>
+              <td>
+                <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete, data: { confirm: "Are you sure?" } %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
     </table>
 
   </div>
