@@ -42,17 +42,11 @@
           <% end %>
 
           <% @went_out.each do |game| %>
-            <% round_out = game.users_out[@user.id.to_s].to_i %>
-            <% total_chips = (game.guests.length+game.users.length)*game.chips.to_f %>
             <tr>
               <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
-              <% if game.winner_type == "user" %>
-                <td><%= game.users.find(game.winner).name %></td>
-              <% else %>
-                <td><%= game.guests.find(game.winner).name %></td>
-              <% end %>
-              <td><%= "Went out on round #{round_out+1}" %></td>
-              <td><%= "#{((game.blinds[round_out]/total_chips)*100).round(2)}%" %></td>
+              <td><%= game.winner.name %></td>
+              <td><%= "Went out on round #{game.player_out_round(@user)+1}" %></td>
+              <td><%= "#{((game.blinds[game.player_out_round(@user)]/game.total_chips.to_f)*100).round(2)}%" %></td>
             </tr>
           <% end %>
         </tbody>
