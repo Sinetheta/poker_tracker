@@ -76,18 +76,18 @@ class GamesController < ApplicationController
 
       # After updating the game, see if a winner can be declared
       if game.users_out.length + game.guests_out.length == game.users.length+game.guests.length-1
-        user_winner = (game.users.map {|user| user.id.to_s} - game.users_out.keys)[0].to_i
-        guest_winner = (game.guests.map {|user| user.id.to_s} - game.guests_out.keys)[0].to_i
-        if guest_winner
-          game.winner = guest_winner
+        user_winner = game.users.map {|user| user.id.to_s} - game.users_out.keys
+        guest_winner = game.guests.map {|user| user.id.to_s} - game.guests_out.keys
+        if user_winner.empty?
+          game.winner = guest_winner[0].to_i
           game.winner_type = "guest"
-          winner = Guest.find(guest_winner)
+          winner = Guest.find(game.winner)
           winner.winnings += 1
           winner.save
         else
-          game.winner = user_winner
+          game.winner = user_winner[0].to_i
           game.winner_type = "user"
-          winner = User.find(guest_winner)
+          winner = User.find(game.winner)
           winner.winnings += 1
           winner.save
         end
