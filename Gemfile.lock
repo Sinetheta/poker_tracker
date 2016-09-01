@@ -20,6 +20,8 @@ GEM
       erubis (~> 2.7.0)
       rails-dom-testing (~> 1.0, >= 1.0.5)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
+    active_warnings (0.1.5)
+      activemodel (> 4.1.0)
     activejob (4.2.6)
       activesupport (= 4.2.6)
       globalid (>= 0.3.0)
@@ -182,6 +184,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_warnings
   bootstrap-sass (~> 3.3.6)
   byebug
   coffee-rails (~> 4.1.0)

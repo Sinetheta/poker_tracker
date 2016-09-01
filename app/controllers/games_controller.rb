@@ -52,8 +52,10 @@ class GamesController < ApplicationController
       end
       game = Game.new(game_params)
       if game.save
+        flash[:alert] = game.warnings[:duplicates][0]
         redirect_to game_path(game)
       else
+        flash[:alert] = game.errors[:blinds][0]
         redirect_to new_game_path
       end
     else
