@@ -73,6 +73,8 @@ class Game < ActiveRecord::Base
              "Flop", "Fold", "Free Card", "Heads Up", "High-low Split",
              "In the Money", "The Nuts", "Over the Top", "Play the Board", "Poker Face",
              "River", "Semi-bluff", "Splash the Pot", "Trips", "Turn", "Under the Gun"]
+    valid_names = names - Game.all.map {|game| game = game.name}
+    valid_names = names if valid_names.empty?
     self.name = names.sample
   end
 
