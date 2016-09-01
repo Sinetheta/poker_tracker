@@ -4,16 +4,20 @@
       <h1>All Time Wins</h1>
     </div>
     <table class="table">
-      <tr>
-        <th>Player</th>
-        <th>Number of Wins</th>
-      </tr>
-      <% @players.each do |player| %>
+      <thead>
         <tr>
-          <td><%= player.name %></td>
-          <td><%= player.games.select {|game| game.winner_type == player.class.to_s.downcase && game.winner == player.id.to_s}.length %></td>
+          <th>Player</th>
+          <th>Number of Wins</th>
         </tr>
-      <% end %>
+      </thead>
+      <tbody>
+        <% @players.each do |player| %>
+          <tr>
+            <td><%= player.name %></td>
+            <td><%= player.games.select {|game| game.winner_type == player.class.to_s.downcase && game.winner == player.id.to_s}.length %></td>
+          </tr>
+        <% end %>
+      </tbody>
     </table>
   </div>
 </div>
