@@ -68,10 +68,10 @@ class GamesController < ApplicationController
       # If we're putting a guest or a user out
       if params[:game][:users_out]
         out_hash = game.users_out.merge(params[:game][:users_out])
-        game.update_attribute(:users_out, out_hash)
+        game.update_attribute(:users_out, out_hash) unless params[:game][:users_out].keys.include?('undefined')
       elsif params[:game][:guests_out]
         out_hash = game.guests_out.merge(params[:game][:guests_out])
-        game.update_attribute(:guests_out, out_hash)
+        game.update_attribute(:guests_out, out_hash) unless params[:game][:guests_out].keys.include?('undefined')
       end
 
       # After updating the game, see if a winner can be declared
@@ -81,15 +81,9 @@ class GamesController < ApplicationController
         if user_winner.empty?
           game.winner = guest_winner[0].to_i
           game.winner_type = "guest"
-          winner = Guest.find(game.winner)
-          winner.winnings += 1
-          winner.save
         else
           game.winner = user_winner[0].to_i
           game.winner_type = "user"
-          winner = User.find(game.winner)
-          winner.winnings += 1
-          winner.save
         end
         game.save()
       end
