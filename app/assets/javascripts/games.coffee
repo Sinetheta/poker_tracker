@@ -51,6 +51,11 @@ $(document).on "turbolinks:load", ->
       data: { game: { users_out: { "#{userid}": round } } }
       success: (data) ->
         document.getElementById("userOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
+        if data.winner != null
+          if data.winner_type == "user"
+            document.getElementById("userOutButtonCell#{data.winner}").innerHTML = "Winner"
+          else
+            document.getElementById("guestOutButtonCell#{data.winner}").innerHTML = "Winner"
     })
   $(".guestOutButton").on "click", (event) ->
     gameid = $(this).attr('gameid')
@@ -62,6 +67,11 @@ $(document).on "turbolinks:load", ->
       data: { game: { guests_out: { "#{userid}": round } } }
       success: (data) ->
         document.getElementById("guestOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
+        if data.winner != null
+          if data.winner_type == "user"
+            document.getElementById("userOutButtonCell#{data.winner}").innerHTML = "Winner"
+          else
+            document.getElementById("guestOutButtonCell#{data.winner}").innerHTML = "Winner"
     })
 
 String::strip = -> @replace /^\s+|\s+$/g, ""
