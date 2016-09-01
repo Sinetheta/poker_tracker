@@ -109,12 +109,11 @@ class GamesController < ApplicationController
   end
 
   def archive
-    @games = Game.completed
+    @games = Game.completed.includes(:users, :guests)
   end
 
   def leaderboard
-    @games = Game.all
-    @players = User.all + Guest.all
+    @players = User.all.includes(:games) + Guest.all.includes(:games)
   end
 
   private

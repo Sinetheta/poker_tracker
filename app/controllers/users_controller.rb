@@ -2,7 +2,7 @@ class UsersController < ApplicationController
 
   def history
     @user = User.find(params[:id])
-    @games = @user.games.completed
+    @games = @user.games.completed.includes(:users, :guests)
     @won = @games.select {|game| game.winner_type == "user" && game.winner == @user.id.to_s}
     @went_out = @games - @won
     chips_perc = @went_out.map do |game|
