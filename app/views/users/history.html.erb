@@ -4,20 +4,20 @@
       <h1><%= "#{@user.name}'s History" %></h1>
     </div>
 
-    <% if @won.length == 0 && @went_out.length == 0 %>
+    <% if @games.empty? %>
       <p>No history to display.</p>
-    <% else %>
+    <% end %>
 
       <table class="table">
         <tr>
           <th></th>
           <th>Win Rate</th>
           <th>Average Round Out</th>
-          <th>Average Percent of Total Chips</th>
+          <th>Average Percent of Total Chips when going out</th>
         </tr>
         <tr>
           <td></td>
-          <td><%= ((@won.length/(@won.length+@went_out.length).to_f)*100).round(0) %>%</td>
+          <td><%= @won_perc.round(0) %>%</td>
           <td><%= @round_aver.round(2) %></td>
           <td><%= @chips_perc.round(2) %>%</td>
         </tr>
@@ -32,26 +32,23 @@
           </tr>
         </thead>
         <tbody>
-          <% @won.each do |game| %>
-            <tr>
-              <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
-              <td><%= @user.name %></td>
-              <td>Winner</td>
-              <td></td>
-            </tr>
-          <% end %>
 
-          <% @went_out.each do |game| %>
+          <% @games.each do |game| %>
             <tr>
               <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
               <td><%= game.winner.name %></td>
-              <td><%= "Went out on round #{game.player_out_round(@user)+1}" %></td>
-              <td><%= "#{((game.blinds[game.player_out_round(@user)]/game.total_chips.to_f)*100).round(2)}%" %></td>
+              <% if game.winner == @user %>
+                <td>Winner</td>
+                <td></td>
+              <% else %>
+                <td><%= "Went out on round #{game.player_out_round(@user)+1}" %></td>
+                <td><%= "#{((game.blinds[game.player_out_round(@user)]/game.total_chips.to_f)*100).round(2)}%" %></td>
+              <% end %>
             </tr>
           <% end %>
+
         </tbody>
       </table>
 
-    <% end %>
   </div>
 </div>
