@@ -6,7 +6,7 @@ $(".games.show").ready ->
       document.getElementById('clickAudio').play()
       $("#startTimer").hide()
     $(".userOutButton").on "ajax:success", (e, data, status, xhr) ->
-      userid = $(this).attr('userid')
+      userid = $(this).attr('playerid')
       gameid = data.id
       round = data.round
       $.ajax({
@@ -15,11 +15,11 @@ $(".games.show").ready ->
         data: { game: { users_out: { "#{userid}": round } } }
         success: (data) ->
           document.getElementById("userOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
-          if data.winner != null
+          if data.winner_id != null
             location.reload()
       })
     $(".guestOutButton").on "ajax:success", (e, data, status, xhr) ->
-      userid = $(this).attr('guestid')
+      userid = $(this).attr('playerid')
       gameid = data.id
       round = data.round
       $.ajax({
@@ -28,7 +28,7 @@ $(".games.show").ready ->
         data: { game: { guests_out: { "#{userid}": round } } }
         success: (data) ->
           document.getElementById("guestOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
-          if data.winner != null
+          if data.winner_id != null
             location.reload()
       })
 

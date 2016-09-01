@@ -40,38 +40,29 @@
           </tr>
 
           <% @players.each do |player| %>
+            <% if player.class == User
+                 player_type = "user"
+            elsif player.class == Guest
+              player_type = "guest"
+            end %>
             <tr>
               <td><%= player.name %></td>
-              <% if player.class == User %>
-                <% players_out = @game.users_out %>
-                <td id=<%= "userOutButtonCell#{player.id}" %>>
-                  <% if players_out.keys.include?(player.id.to_s) %>
-                    <%= "Out on round #{players_out[player.id.to_s].to_i + 1}" %>
-                  <% elsif @game.winner == player %>
-                    Winner
-                  <% else %>
-                    <%= link_to "Set Player Out", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary userOutButton", userid: player.id %>
-                  <% end %>
-                </td>
-              <% elsif player.class == Guest %>
-                <% players_out = @game.guests_out %>
-                <td id=<%= "guestOutButtonCell#{player.id}" %>>
-                  <% if players_out.keys.include?(player.id.to_s) %>
-                    <%= "Out on round #{players_out[player.id.to_s].to_i + 1}" %>
-                  <% elsif @game.winner == player %>
-                    Winner
-                  <% else %>
-                    <%= link_to "Set Player Out", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary guestOutButton", guestid: player.id %>
-                  <% end %>
-                </td>
-              <% end %>
+              <td id=<%= "#{player_type}OutButtonCell#{player.id}" %>>
+                <% if @game.player_out_round(player) %>
+                  <%= "Out on round #{@game.player_out_round(player)+1}" %>
+                <% elsif @game.winner == player %>
+                  <%= "Winner" %>
+                <% else %>
+                  <%= link_to "Set Player Out", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary #{player_type}OutButton", playerid: player.id %>
+                <% end %>
+              </td>
             </tr>
           <% end %>
 
         </table>
       </div>
-    </div>
 
+    </div>
     <div class="col-md-3">
       <div class="timer-container">
         <h1 id="timer">
@@ -91,40 +82,40 @@
             <th>Small</th>
             <th>Big</th>
           </tr>
-        <% @blinds.take(@game.round+2).each_with_index do |blinds, i| %>
-          <tr>
-            <td><%= i+1 %></td>
-            <td><%= blinds[0] %></td>
-            <td><%= blinds[1] %></td>
-          </tr>
-        <% end %>
-      <% else %>
-
-        <div class="row">
-          <div class="col-xs-6">
-            <h2 class="blind">Small</h2>
-            <h3 class="blind" id="smallBlind"><%= @current_blinds[0] %></h3>
-          </div>
-          <div class="col-xs-6">
-            <h2 class="blind">Big</h2>
-            <h3 class="blind" id="bigBlind"><%= @current_blinds[1] %></h3>
-          </div>
-        </div>
-        <% upcoming_blinds = @blinds.select {|blind| blind[0] > @current_blinds[0]}.take(4) %>
-        <% unless upcoming_blinds.empty? %>
-          <table class="table table-hover" id="blindsTable">
+          <% @blinds.take(@game.round+2).each_with_index do |blinds, i| %>
             <tr>
-              <h3>Upcoming Blinds</h3>
+              <td><%= i+1 %></td>
+              <td><%= blinds[0] %></td>
+              <td><%= blinds[1] %></td>
             </tr>
-            <% upcoming_blinds.each do |small, big| %>
+          <% end %>
+        <% else %>
+
+          <div class="row">
+            <div class="col-xs-6">
+              <h2 class="blind">Small</h2>
+              <h3 class="blind" id="smallBlind"><%= @current_blinds[0] %></h3>
+            </div>
+            <div class="col-xs-6">
+              <h2 class="blind">Big</h2>
+              <h3 class="blind" id="bigBlind"><%= @current_blinds[1] %></h3>
+            </div>
+          </div>
+          <% upcoming_blinds = @blinds.select {|blind| blind[0] > @current_blinds[0]}.take(4) %>
+          <% unless upcoming_blinds.empty? %>
+            <table class="table table-hover" id="blindsTable">
               <tr>
-                <td><%= small %></td>
-                <td><%= big %></td>
+                <h3>Upcoming Blinds</h3>
               </tr>
-            <% end %>
-          </table>
+              <% upcoming_blinds.each do |small, big| %>
+                <tr>
+                  <td><%= small %></td>
+                  <td><%= big %></td>
+                </tr>
+              <% end %>
+            </table>
+          <% end %>
         <% end %>
-      <% end %>
 
     </div>
   </div>

@@ -4,16 +4,12 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @won = Game.winner(@user)
     @went_out = @user.games.completed - @won
-    chips_perc = @went_out.map do |game|
-      round_out = game.users_out[@user.id.to_s].to_i
-      total_chips = (game.guests.length+game.users.length)*game.chips.to_f
-      game = ((game.blinds[round_out]/total_chips)*100)
-    end
-    @chips_perc = chips_perc.inject(0.0) {|sum, game| sum + game } / chips_perc.length
-    round_aver = @went_out. map do |game|
-      game = game.users_out[@user.id.to_s].to_i+1
-    end
-    @round_aver = round_aver.inject(0.0) {|sum, game| sum + game } / round_aver.length
+    @chips_perc = @went_out.map do |game|
+      game = ((game.blinds[game.player_out_round(@user)]/game.total_chips.to_f)*100)
+    end.inject(0.0) {|sum, game| sum + game } / @went_out.length
+    @round_aver = @went_out.map do |game|
+      game = game.player_out_round(@user)+1
+    end.inject(0.0) {|sum, game| sum + game } / @went_out.length
   end
 
 end

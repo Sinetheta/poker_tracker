@@ -28,12 +28,36 @@ class Game < ActiveRecord::Base
     end
   }
 
+  def player_out_round(player)
+    if player.class == User
+      if self.users_out.keys.include?(player.id.to_s)
+        return self.users_out[player.id.to_s].to_i
+      else
+        return nil
+      end
+    elsif player.class == Guest
+      if self.guests_out.keys.include?(player.id.to_s)
+        return self.guests_out[player.id.to_s].to_i
+      else
+        return nil
+      end
+    end
+  end
+
   def winner
     if winner_type == "user"
       self.users.find(self.winner_id)
     elsif winner_type == "guest"
       self.guests.find(self.winner_id)
     end
+  end
+
+  def number_of_players
+    self.users.length + self.guests.length
+  end
+
+  def total_chips
+    self.chips * number_of_players
   end
 
   protected
