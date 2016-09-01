@@ -18,6 +18,10 @@ class Game < ActiveRecord::Base
 
   scope :in_progress, -> { where(winner: nil) }
   scope :completed, -> { where("winner IS NOT NULL") }
+  scope :user_winner, -> { completed.where(winner_type: "user") }
+  scope :guest_winner, -> { completed.where(winner_type: "guest") }
+  scope :user_winner_n, ->(user_id) { user_winner.where(winner: user_id) }
+  scope :guest_winner_n, ->(guest_id) { guest_winner.where(winner: guest_id) }
 
   protected
 
