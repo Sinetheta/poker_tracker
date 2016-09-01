@@ -9,23 +9,29 @@
         <th>Game Name</th>
         <th>Game Winner</th>
         <th>Player Standing</th>
+        <th></th>
       </tr>
-      <% @games.each do |game| %>
+      <% @won.each do |game| %>
         <tr>
-          <th><%= link_to game.name, game_path(game), class: "btn btn-default" %></th>
+          <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
+          <td><%= @user.name %></td>
+          <td>Winner</td>
+          <td></td>
+        </tr>
+      <% end %>
 
+      <% @went_out.each do |game| %>
+        <% round_out = game.users_out[@user.id.to_s].to_i %>
+        <% total_chips = (game.guests.length+game.users.length)*game.chips.to_f %>
+        <tr>
+          <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
           <% if game.winner_type == "user" %>
             <td><%= game.users.find(game.winner).name %></td>
-            <% if game.winner.to_i == @user.id %>
-              <td>Winner</td>
-            <% else %>
-              <td><%= "Went out on round #{game.users_out[@user.id.to_s].to_i+1}" %></td>
-            <% end %>
           <% else %>
             <td><%= game.guests.find(game.winner).name %></td>
-            <td><%= "Went out on round #{game.users_out[@user.id.to_s].to_i+1}" %></td>
           <% end %>
-
+          <td><%= "Went out on round #{round_out+1}" %></td>
+          <td><%= "Small Blind was #{((game.blinds[round_out]/total_chips)*100).round(2)} % of game chip total" %></td>
         </tr>
       <% end %>
     </table>
