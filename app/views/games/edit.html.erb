@@ -5,7 +5,7 @@
   <%= form_for(@game, html: {class: "form-horizontal center"}) do |f| %>
     <% if @game.errors.any? %>
       <ul>
-        <p>The game could not be created for the following reasons:</p>
+        <p>The game could not be updated for the following reasons:</p>
         <% @game.errors.each do |field, error| %>
           <li><%= field %></li>
         <% end %>

@@ -19,11 +19,7 @@
           <td><%= game.users.length+game.guests.length %></td>
           <td><%= game.chips %></td>
           <td><%= game.game_length %></td>
-          <% if game.winner_type == "user" %>
-            <td><%= game.users.find(game.winner).name %></td>
-          <% else %>
-            <td><%= game.guests.find(game.winner).name %></td>
-          <% end %>
+          <td><%= game.winner.name %></td>
           <% if user_signed_in? %>
             <td>
               <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete, data: { confirm: "Are you sure?" } %>

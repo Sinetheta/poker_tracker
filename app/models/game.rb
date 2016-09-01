@@ -16,12 +16,25 @@ class Game < ActiveRecord::Base
             :first_small_blind, :smallest_denomination, numericality: { only_integer: true, greater_than: 0 }
   validates :game_length, numericality: { greater_than: 0 }
 
-  scope :in_progress, -> { where(winner: nil) }
-  scope :completed, -> { where("winner IS NOT NULL") }
+  scope :in_progress, -> { where(winner_id: nil) }
+  scope :completed, -> { where("winner_id IS NOT NULL") }
   scope :user_winner, -> { completed.where(winner_type: "user") }
   scope :guest_winner, -> { completed.where(winner_type: "guest") }
-  scope :user_winner_n, ->(user_id) { user_winner.where(winner: user_id) }
-  scope :guest_winner_n, ->(guest_id) { guest_winner.where(winner: guest_id) }
+  scope :winner, ->(player) {
+    if player.class == User
+      user_winner.where(winner_id: player.id)
+    elsif player.class == Guest
+      guest_winner.where(winner_id: player.id)
+    end
+  }
+
+  def winner
+    if winner_type == "user"
+      self.users.find(self.winner_id)
+    elsif winner_type == "guest"
+      self.guests.find(self.winner_id)
+    end
+  end
 
   protected
 

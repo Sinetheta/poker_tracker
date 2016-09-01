@@ -38,6 +38,7 @@
           <tr>
             <h3>Players</h3>
           </tr>
+
           <% @players.each do |player| %>
             <tr>
               <td><%= player.name %></td>
@@ -46,7 +47,7 @@
                 <td id=<%= "userOutButtonCell#{player.id}" %>>
                   <% if players_out.keys.include?(player.id.to_s) %>
                     <%= "Out on round #{players_out[player.id.to_s].to_i + 1}" %>
-                  <% elsif @game.winner_type == "user" && @game.winner == player.id.to_s %>
+                  <% elsif @game.winner == player %>
                     Winner
                   <% else %>
                     <%= link_to "Set Player Out", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary userOutButton", userid: player.id %>
@@ -57,7 +58,7 @@
                 <td id=<%= "guestOutButtonCell#{player.id}" %>>
                   <% if players_out.keys.include?(player.id.to_s) %>
                     <%= "Out on round #{players_out[player.id.to_s].to_i + 1}" %>
-                  <% elsif @game.winner_type == "guest" && @game.winner == player.id.to_s %>
+                  <% elsif @game.winner == player %>
                     Winner
                   <% else %>
                     <%= link_to "Set Player Out", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary guestOutButton", guestid: player.id %>
@@ -66,6 +67,7 @@
               <% end %>
             </tr>
           <% end %>
+
         </table>
       </div>
     </div>
@@ -73,7 +75,7 @@
     <div class="col-md-3">
       <div class="timer-container">
         <h1 id="timer">
-          <% if @game.winner %>
+          <% if @game.winner_id %>
             Game Over
           <% else %>
             <%= "#{@game.round_length}:00" %>
@@ -81,7 +83,7 @@
         </h1>
       </div>
 
-      <% if @game.winner %>
+      <% if @game.winner_id %>
         <h3>Blind Structure</h3>
         <table class="table table-hover">
           <tr>

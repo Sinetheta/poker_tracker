@@ -79,10 +79,10 @@ class GamesController < ApplicationController
         user_winner = game.users.map {|user| user.id.to_s} - game.users_out.keys
         guest_winner = game.guests.map {|user| user.id.to_s} - game.guests_out.keys
         if user_winner.empty?
-          game.winner = guest_winner[0].to_i
+          game.winner_id = guest_winner[0].to_i
           game.winner_type = "guest"
         else
-          game.winner = user_winner[0].to_i
+          game.winner_id = user_winner[0].to_i
           game.winner_type = "user"
         end
         game.save()

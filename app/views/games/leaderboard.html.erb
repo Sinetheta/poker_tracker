@@ -14,7 +14,7 @@
         <% @players.each do |player| %>
           <tr>
             <td><%= player.name %></td>
-            <td><%= player.games.select {|game| game.winner_type == player.class.to_s.downcase && game.winner == player.id.to_s}.length %></td>
+            <td><%= Game.winner(player).length %></td>
           </tr>
         <% end %>
       </tbody>

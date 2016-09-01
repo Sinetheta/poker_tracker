@@ -2,9 +2,8 @@ class UsersController < ApplicationController
 
   def history
     @user = User.find(params[:id])
-    @games = @user.games.completed.includes(:users, :guests)
-    @won = @games.select {|game| game.winner_type == "user" && game.winner == @user.id.to_s}
-    @went_out = @games - @won
+    @won = Game.winner(@user)
+    @went_out = @user.games.completed - @won
     chips_perc = @went_out.map do |game|
       round_out = game.users_out[@user.id.to_s].to_i
       total_chips = (game.guests.length+game.users.length)*game.chips.to_f
