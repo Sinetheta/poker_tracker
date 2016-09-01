@@ -41,10 +41,10 @@ $(document).on "turbolinks:load", ->
     updateTimer(data.round_length*60, data)
     document.getElementById('clickAudio').play()
     $("#startTimer").hide()
-  $(".userOutButton").on "click", (event) ->
-    gameid = $(this).attr('gameid')
+  $(".userOutButton").on "ajax:success", (e, data, status, xhr) ->
     userid = $(this).attr('userid')
-    round = $(this).attr('round')
+    gameid = data.id
+    round = data.round
     $.ajax({
       type: "PATCH",
       url: "/games/#{gameid}.json",
@@ -52,15 +52,12 @@ $(document).on "turbolinks:load", ->
       success: (data) ->
         document.getElementById("userOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
         if data.winner != null
-          if data.winner_type == "user"
-            document.getElementById("userOutButtonCell#{data.winner}").innerHTML = "Winner"
-          else
-            document.getElementById("guestOutButtonCell#{data.winner}").innerHTML = "Winner"
+          location.reload()
     })
-  $(".guestOutButton").on "click", (event) ->
-    gameid = $(this).attr('gameid')
+  $(".guestOutButton").on "ajax:success", (e, data, status, xhr) ->
     userid = $(this).attr('guestid')
-    round = $(this).attr('round')
+    gameid = data.id
+    round = data.round
     $.ajax({
       type: "PATCH",
       url: "/games/#{gameid}.json",
@@ -68,10 +65,7 @@ $(document).on "turbolinks:load", ->
       success: (data) ->
         document.getElementById("guestOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
         if data.winner != null
-          if data.winner_type == "user"
-            document.getElementById("userOutButtonCell#{data.winner}").innerHTML = "Winner"
-          else
-            document.getElementById("guestOutButtonCell#{data.winner}").innerHTML = "Winner"
+          location.reload()
     })
 
 String::strip = -> @replace /^\s+|\s+$/g, ""

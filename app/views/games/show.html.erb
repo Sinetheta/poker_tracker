@@ -49,7 +49,7 @@
                   <% elsif @game.winner_type == "user" && @game.winner == player.id.to_s %>
                     Winner
                   <% else %>
-                    <button type="button" userid=<%= player.id %> class="btn btn-primary userOutButton" gameid=<%= @game.id %> round=<%= @game.round %>>Set Player Out</button>
+                    <%= link_to "Set Player Out", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary userOutButton", userid: player.id %>
                   <% end %>
                 </td>
               <% elsif player.class == Guest %>
@@ -60,7 +60,7 @@
                   <% elsif @game.winner_type == "guest" && @game.winner == player.id.to_s %>
                     Winner
                   <% else %>
-                    <button type="button" guestid=<%= player.id %> class="btn btn-primary guestOutButton" gameid=<%= @game.id %> round=<%= @game.round %>>Set Player Out</button>
+                    <%= link_to "Set Player Out", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary guestOutButton", guestid: player.id %>
                   <% end %>
                 </td>
               <% end %>
