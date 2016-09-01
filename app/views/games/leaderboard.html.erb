@@ -3,7 +3,7 @@
     <div class="page-header">
       <h1>All Time Wins</h1>
     </div>
-    <table class="table">
+    <table class="table" id="leaderboard">
       <thead>
         <tr>
           <th>Player</th>
@@ -13,8 +13,8 @@
       <tbody>
         <% @players.each do |player| %>
           <tr>
-            <td><%= player.name %></td>
-            <td><%= Game.winner(player).length %></td>
+            <td><%= player[0] %></td>
+            <td><%= player[1] %></td>
           </tr>
         <% end %>
       </tbody>

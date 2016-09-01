@@ -113,7 +113,10 @@ class GamesController < ApplicationController
   end
 
   def leaderboard
-    @players = User.all.includes(:games) + Guest.all.includes(:games)
+    players = (User.all.includes(:games) + Guest.all.includes(:games)).map do |player|
+      player = [player.name, Game.winner(player).length]
+    end
+    @players = players.sort_by {|player| player[1]}.reverse
   end
 
   private
