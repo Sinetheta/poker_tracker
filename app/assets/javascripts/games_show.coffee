@@ -12,7 +12,7 @@ $(".games.show").ready ->
       $.ajax({
         type: "PATCH",
         url: "/games/#{gameid}.json",
-        data: { game: { users_out: { "#{userid}": round } } }
+        data: { game: { players_out: { user: { "#{userid}": round } } } }
         success: (data) ->
           document.getElementById("userOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
           if data.winner_id != null
@@ -25,7 +25,7 @@ $(".games.show").ready ->
       $.ajax({
         type: "PATCH",
         url: "/games/#{gameid}.json",
-        data: { game: { guests_out: { "#{userid}": round } } }
+        data: { game: { players_out: { guest: { "#{userid}": round } } } }
         success: (data) ->
           document.getElementById("guestOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
           if data.winner_id != null

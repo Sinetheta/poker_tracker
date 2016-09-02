@@ -75,24 +75,25 @@ class GamesController < ApplicationController
     if user_signed_in?
       game = Game.find(params[:id])
 
-      # If we're putting a guest or a user out
-      if params[:game][:users_out]
-        out_hash = game.users_out.merge(params[:game][:users_out])
-        game.update_attribute(:users_out, out_hash) unless params[:game][:users_out].keys.include?('undefined')
-      elsif params[:game][:guests_out]
-        out_hash = game.guests_out.merge(params[:game][:guests_out])
-        game.update_attribute(:guests_out, out_hash) unless params[:game][:guests_out].keys.include?('undefined')
+      if params[:game][:players_out]
+        if params[:game][:players_out][:user]
+          params[:game][:players_out] = {game.users.find(params[:game][:players_out][:user].keys.first.to_i) => params[:game][:players_out][:user].values.first.to_i}
+          out_hash = game.players_out.merge(params[:game][:players_out])
+          game.update_attribute(:players_out, out_hash)
+        elsif params[:game][:players_out][:guest]
+          params[:game][:players_out] = {game.guests.find(params[:game][:players_out][:guest].keys.first.to_i) => params[:game][:players_out][:guest].values.first.to_i}
+          out_hash = game.players_out.merge(params[:game][:players_out])
+          game.update_attribute(:players_out, out_hash)
+        end
       end
 
       # After updating the game, see if a winner can be declared
-      if game.users_out.length + game.guests_out.length == game.users.length+game.guests.length-1
-        user_winner = game.users.map {|user| user.id.to_s} - game.users_out.keys
-        guest_winner = game.guests.map {|user| user.id.to_s} - game.guests_out.keys
-        if user_winner.empty?
-          game.winner_id = guest_winner[0].to_i
+      if game.players_out.length == game.number_of_players-1
+        winner = (game.players - game.players_out.keys)[0]
+        game.winner_id = winner.id
+        if winner.class == Guest
           game.winner_type = "guest"
-        else
-          game.winner_id = user_winner[0].to_i
+        elsif winner.class == User
           game.winner_type = "user"
         end
         game.save()

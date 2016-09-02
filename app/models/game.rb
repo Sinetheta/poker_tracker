@@ -9,8 +9,8 @@ class Game < ActiveRecord::Base
 
   after_validation :generate_name, :generate_blinds, on: :create
 
-  serialize :users_out, Hash
-  serialize :guests_out, Hash
+  serialize :players_out, Hash
+
   serialize :blinds, Array
   validates :chips, :game_length, :round_length,
             :first_small_blind, :smallest_denomination, presence: true
@@ -31,18 +31,10 @@ class Game < ActiveRecord::Base
   }
 
   def player_out_round(player)
-    if player.class == User
-      if self.users_out.keys.include?(player.id.to_s)
-        return self.users_out[player.id.to_s].to_i
-      else
-        return nil
-      end
-    elsif player.class == Guest
-      if self.guests_out.keys.include?(player.id.to_s)
-        return self.guests_out[player.id.to_s].to_i
-      else
-        return nil
-      end
+    if self.players_out.keys.include?(player)
+      return self.players_out[player]
+    else
+      return nil
     end
   end
 
@@ -52,6 +44,10 @@ class Game < ActiveRecord::Base
     elsif winner_type == "guest"
       self.guests.find(self.winner_id)
     end
+  end
+
+  def players
+    self.users + self.guests
   end
 
   def number_of_players
