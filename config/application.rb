@@ -2,6 +2,7 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -21,6 +22,21 @@ module PokerTracker
     # config.i18n.default_locale = :de
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
-  end
+		config.active_record.raise_in_transactional_callbacks = true
+
+		# Eager load all value objects, as they may be instantiated from
+		# YAML before the symbol is referenced
+		config.before_initialize do |app|
+			app.config.paths.add 'app/models', :eager_load => true
+		end
+
+		# Reload cached/serialized classes before every request (in development
+		# mode) or on startup (in production mode)
+		config.to_prepare do
+			Dir[ File.expand_path(Rails.root.join("app/models/*.rb")) ].each do |file|
+				require_dependency file
+			end
+		end
+
+	end
 end
