@@ -79,15 +79,14 @@ class GamesController < ApplicationController
         if params[:game][:players_out][:user]
           params[:game][:players_out] = {game.users.find(params[:game][:players_out][:user].keys.first.to_i) => params[:game][:players_out][:user].values.first.to_i}
           out_hash = game.players_out.merge(params[:game][:players_out])
-          game.update_attribute(:players_out, out_hash)
         elsif params[:game][:players_out][:guest]
           params[:game][:players_out] = {game.guests.find(params[:game][:players_out][:guest].keys.first.to_i) => params[:game][:players_out][:guest].values.first.to_i}
           out_hash = game.players_out.merge(params[:game][:players_out])
-          game.update_attribute(:players_out, out_hash)
         end
+        game.update_attribute(:players_out, out_hash)
       end
 
-      # After updating the game, see if a winner can be declared
+      # See if a winner can be declared
       if game.players_out.length == game.number_of_players-1
         winner = (game.players - game.players_out.keys)[0]
         game.winner_id = winner.id

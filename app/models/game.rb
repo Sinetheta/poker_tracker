@@ -10,7 +10,6 @@ class Game < ActiveRecord::Base
   after_validation :generate_name, :generate_blinds, on: :create
 
   serialize :players_out, Hash
-
   serialize :blinds, Array
   validates :chips, :game_length, :round_length,
             :first_small_blind, :smallest_denomination, presence: true
