@@ -7,10 +7,10 @@
     <div class="col-md-6 offset-md-1">
       <div class="row" id="title-row">
         <div class="col-xs-6">
-          <h1><%= @game.name %></h1>
+          <h1 id="game" data-gameid=<%= @game.id %>><%= @game.name %></h1>
         </div>
         <div class="col-xs-6">
-          <h1 id="roundDisplay">Round <%= @game.round+1 %></h1>
+          <h1 id="roundDisplay" data-roundid=<%= @game.round %>>Round <%= @game.round+1 %></h1>
         </div>
       </div>
 
@@ -45,22 +45,15 @@
           </tr>
 
           <% @players.each do |player| %>
-            <% if player.class == User
-                 player_type = "user"
-            elsif player.class == Guest
-              player_type = "guest"
-            end %>
             <tr>
               <td><%= player.name %></td>
-              <td id=<%= "#{player_type}OutButtonCell#{player.id}" %>>
+              <td class="outButtonCell" data-playerid=<%= player.id %> data-playertype=<%= player.class.to_s.downcase %>>
                 <% if @game.player_out_round(player) %>
                   <%= "Out on round #{@game.player_out_round(player)+1}" %>
                 <% elsif @game.winner == player %>
                   <%= "Winner" %>
-                <% else %>
-                  <%= link_to "Set Player Out", game_path(@game),
-                    remote: true, data: {type: "json"},
-                    class: "btn btn-primary #{player_type}OutButton", playerid: player.id unless !user_signed_in? %>
+                <% elsif user_signed_in? %>
+                  <button type="button" class="btn btn-primary outButton" data-playerid=<%= player.id %> data-playertype=<%= player.class.to_s.downcase %>>Set Player Out</button>
                 <% end %>
               </td>
             </tr>

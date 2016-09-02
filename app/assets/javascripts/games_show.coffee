@@ -5,29 +5,16 @@ $(".games.show").ready ->
       updateTimer(data.round_length*60, data)
       document.getElementById('clickAudio').play()
       $("#startTimer").hide()
-    $(".userOutButton").on "ajax:success", (e, data, status, xhr) ->
-      userid = $(this).attr('playerid')
-      gameid = data.id
-      round = data.round
+    $(".outButton").on "click", (event) ->
+      playertype = $(this).data("playertype")
+      playerid = $(this).data("playerid")
+      roundid = $("#roundDisplay").data("roundid")
       $.ajax({
         type: "PATCH",
-        url: "/games/#{gameid}.json",
-        data: { game: { players_out: { user: { "#{userid}": round } } } }
+        url: "/games/#{$("#game").data("gameid")}.json",
+        data: { game: { players_out: { "#{playertype}": { "#{playerid}": roundid } } } }
         success: (data) ->
-          document.getElementById("userOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
-          if data.winner_id != null
-            location.reload()
-      })
-    $(".guestOutButton").on "ajax:success", (e, data, status, xhr) ->
-      userid = $(this).attr('playerid')
-      gameid = data.id
-      round = data.round
-      $.ajax({
-        type: "PATCH",
-        url: "/games/#{gameid}.json",
-        data: { game: { players_out: { guest: { "#{userid}": round } } } }
-        success: (data) ->
-          document.getElementById("guestOutButtonCell#{userid}").innerHTML = "Out on round #{parseInt(round)+1}"
+          event.target.parentElement.innerHTML = "Out on round #{roundid+1}"
           if data.winner_id != null
             location.reload()
       })
@@ -52,6 +39,7 @@ updateTimer = (currentTime, game) ->
     console.log("no timer")
 
 updateRound = (game) ->
+  $("#roundDisplay").data("roundid", game.round+1)
   $.ajax({
     type: "PATCH",
     url: "/games/#{game.id}.json",
