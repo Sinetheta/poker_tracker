@@ -126,8 +126,8 @@ game_default_values = {
 50.times do |i|
   game = Game.create(game_default_values.merge({users: users.shuffle.take(Random.rand(10)), guests: guests.shuffle.take(Random.rand(10)), round: Random.rand(10)}))
   winner = game.players.sample
-  game.players.each do |player|
-    game.players_out = game.players_out.merge({player => Random.rand(game.round+1)}) unless player.id == winner.id
+  game.players.each_with_index do |player, i|
+    game.players_out = game.players_out.merge({player => [Random.rand(game.round+1), i]}) unless player.id == winner.id
   end
   game.winner_id = winner.id
   if winner.class == User

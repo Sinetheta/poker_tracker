@@ -31,7 +31,7 @@ class Game < ActiveRecord::Base
 
   def player_out_round(player)
     if self.players_out.keys.include?(player)
-      return self.players_out[player]
+      return self.players_out[player][0]
     else
       return nil
     end
