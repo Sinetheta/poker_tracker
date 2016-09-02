@@ -18,3 +18,16 @@ users = User.create([
   { name: 'Jordan', email: 'jordan@example.com', password: 'password', password_confirmation: 'password' },
   { name: 'Susan', email: 'susan@example.com', password: 'password', password_confirmation: 'password' },
 ])
+
+game_default_values = {
+  game_length: 2.5,
+  round_length: 15,
+  chips: 2000,
+  smallest_denomination: 1,
+  first_small_blind: 1,
+  buy_in: 10
+}
+
+games = Game.create([
+  game_default_values.merge({users: users, round: 4, users_out: { users.sample.id.to_s => "4" }})
+])

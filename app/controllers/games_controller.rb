@@ -20,6 +20,14 @@ class GamesController < ApplicationController
     if user_signed_in?
       @game = Game.new
       @users = User.all
+      @default_values = {
+        game_length: 2.5,
+        round_length: 15,
+        chips: 2000,
+        smallest_denomination: 1,
+        first_small_blind: 1,
+        buy_in: 10
+      }
     else
       redirect_to new_user_session_path
     end

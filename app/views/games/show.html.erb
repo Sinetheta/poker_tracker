@@ -14,11 +14,15 @@
         </div>
       </div>
 
-      <% unless @game.winner %>
+      <% unless @game.winner_id %>
         <div class="row button-row">
           <div class="col-xs-6">
-            <%= link_to "Start Timer", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary", id: "startTimer" %>
-            <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}), method: :patch, class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
+            <%= link_to "Start Timer", game_path(@game),
+              remote: true, data: {type: "json"},
+              class: "btn btn-primary", id: "startTimer" %>
+            <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}),
+              method: :patch,
+              class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
           </div>
           <div class="dropdown col-xs-3">
             <button class="btn btn-primary" type="button" id="roundSelect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -26,7 +30,8 @@
             </button>
             <ul class="dropdown-menu" aria-labelledby="roundSelect">
               <% @blinds.each_with_index do |blinds, i| %>
-                <li><%= link_to "Round #{i+1} [#{blinds[0]} - #{blinds[1]}]", game_path(@game, :game => {round: i}), method: :patch %></li>
+                <li><%= link_to "Round #{i+1} [#{blinds[0]} - #{blinds[1]}]", game_path(@game, :game => {round: i}),
+                  method: :patch %></li>
               <% end %>
             </ul>
           </div>
@@ -53,7 +58,9 @@
                 <% elsif @game.winner == player %>
                   <%= "Winner" %>
                 <% else %>
-                  <%= link_to "Set Player Out", game_path(@game), remote: true, data: {type: "json"}, class: "btn btn-primary #{player_type}OutButton", playerid: player.id %>
+                  <%= link_to "Set Player Out", game_path(@game),
+                    remote: true, data: {type: "json"},
+                    class: "btn btn-primary #{player_type}OutButton", playerid: player.id %>
                 <% end %>
               </td>
             </tr>
