@@ -29,5 +29,5 @@ game_default_values = {
 }
 
 games = Game.create([
-  game_default_values.merge({users: users, round: 4, users_out: { users.sample.id.to_s => "4" }})
+  game_default_values.merge({users: users, round: 4})
 ])
