@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <% unless @game.winner_id %>
+      <% unless @game.winner_id || !user_signed_in? %>
         <div class="row button-row">
           <div class="col-xs-6">
             <%= link_to "Start Timer", game_path(@game),
@@ -60,7 +60,7 @@
                 <% else %>
                   <%= link_to "Set Player Out", game_path(@game),
                     remote: true, data: {type: "json"},
-                    class: "btn btn-primary #{player_type}OutButton", playerid: player.id %>
+                    class: "btn btn-primary #{player_type}OutButton", playerid: player.id unless !user_signed_in? %>
                 <% end %>
               </td>
             </tr>
