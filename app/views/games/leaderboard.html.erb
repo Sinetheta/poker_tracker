@@ -6,15 +6,17 @@
     <table class="table" id="leaderboard">
       <thead>
         <tr>
-          <th>Player</th>
+          <th>Player <em>(* indicates guest)</em></th>
           <th>Number of Wins</th>
+          <th>Win %</th>
         </tr>
       </thead>
       <tbody>
         <% @players.each do |player| %>
           <tr>
-            <td><%= player[0] %></td>
-            <td><%= player[1] %></td>
+            <td><%= player[:player].name %><%= "*" if player[:player].class == Guest %></td>
+            <td><%= player[:wins] %></td>
+            <td><%= player[:win_perc].round() %>%</td>
           </tr>
         <% end %>
       </tbody>

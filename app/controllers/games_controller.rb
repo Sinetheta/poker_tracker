@@ -125,9 +125,14 @@ class GamesController < ApplicationController
 
   def leaderboard
     players = (User.all.includes(:games) + Guest.all.includes(:games)).map do |player|
-      player = [player.name, Game.winner(player).length]
+      if player.games.empty?
+        player = nil
+      else
+        player = {player: player, wins: Game.winner(player).length, win_perc: (Game.winner(player).length/player.games.length.to_f)*100 }
+      end
     end
-    @players = players.sort_by {|player| player[1]}.reverse
+    players.select! {|player| !player.nil?}
+    @players = players.sort_by {|player| player[:win_perc]}.reverse
   end
 
   private
