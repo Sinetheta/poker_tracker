@@ -55,7 +55,7 @@ class GamesController < ApplicationController
     if players_out
       if players_out[:player_type] == "user"
         player = {game.users.find(players_out[:player_id]) => [players_out[:roundid].to_i, game.players_out.length]}
-      elsif params[:game][:players_out][:player_type] == "guest"
+      elsif players_out[:player_type] == "guest"
         player = {game.guests.find(players_out[:player_id]) => [players_out[:roundid].to_i, game.players_out.length]}
       end
       new_players_out = game.players_out.merge(player)
@@ -64,7 +64,7 @@ class GamesController < ApplicationController
 
     # See if a winner can be declared
     if game.players_out.length == game.number_of_players-1
-      winner = (game.players - game.players_out.keys)[0]
+      winner = (game.players - game.players_out.keys).first()
       game.winner_id = winner.id
       game.winner_type = winner.class.to_s.downcase
       game.save()
