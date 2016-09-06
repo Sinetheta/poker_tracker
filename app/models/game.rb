@@ -117,7 +117,7 @@ class Game < ActiveRecord::Base
       if duplicate_errors > 0
         last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
         if last_blind == 0
-          errors[:blinds] = "Invalid Game Parameters"
+          errors[:blinds] = "Blinds could not be constructed with provided parameters."
         else
           adjusted_round_length = round_values(((self.game_length*60)/last_blind).to_i, [1,2,5,10])
           # Promt the user with the option to adjust round_length
