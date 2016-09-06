@@ -36,16 +36,13 @@ class GamesController < ApplicationController
   end
 
   def create
+    game = Game.new(game_params)
+
     # If we're passed guests during creation
-    if params["game"]["guest_ids"]
-      params["game"]["guest_ids"].map! do |guest|
-        guest = guest.downcase.capitalize
-        record = Guest.find_or_create_by(name: guest)
-        guest = record.id
-      end
+    (params["game"]["guest_ids"] || []).each do |guest|
+      game.guests << Guest.find_or_create_by(name: guest)
     end
 
-    game = Game.new(game_params)
     if game.save
       flash[:alert] = game.warnings[:duplicates][0]
       redirect_to game_path(game)
@@ -59,14 +56,14 @@ class GamesController < ApplicationController
     game = Game.find(params[:id])
 
     if params[:game][:players_out]
-      if params[:game][:players_out][:user]
-        params[:game][:players_out] = {game.users.find(params[:game][:players_out][:user].keys.first.to_i) => [params[:game][:players_out][:user].values.first.to_i, game.players_out.length]}
-        out_hash = game.players_out.merge(params[:game][:players_out])
-      elsif params[:game][:players_out][:guest]
-        params[:game][:players_out] = {game.guests.find(params[:game][:players_out][:guest].keys.first.to_i) => [params[:game][:players_out][:guest].values.first.to_i, game.players_out.length]}
-        out_hash = game.players_out.merge(params[:game][:players_out])
+      if params[:game][:players_out][:player_type] == "user"
+        user = {game.users.find(params[:game][:players_out][:player_id]) => [params[:game][:players_out][:roundid].to_i, game.players_out.length]}
+        players_out = game.players_out.merge(user)
+      elsif params[:game][:players_out][:player_type] == "guest"
+        user = {game.guests.find(params[:game][:players_out][:player_id]) => [params[:game][:players_out][:roundid].to_i, game.players_out.length]}
+        players_out = game.players_out.merge(user)
       end
-      game.update_attribute(:players_out, out_hash)
+      game.update_attribute(:players_out, players_out)
     end
 
     # See if a winner can be declared
@@ -109,7 +106,7 @@ class GamesController < ApplicationController
 
   private
   def game_params
-    params.require(:game).permit({:user_ids => []}, {:guest_ids => []},
+    params.require(:game).permit({:user_ids => []},
                                  :game_length, :round_length, :buy_in, :round,
                                  :chips, :first_small_blind, :smallest_denomination)
   end
@@ -120,5 +117,6 @@ class GamesController < ApplicationController
       redirect_to new_user_session_path
     end
   end
+
 
 end

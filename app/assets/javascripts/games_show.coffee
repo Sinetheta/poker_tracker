@@ -12,7 +12,7 @@ $(".games.show").ready ->
       $.ajax({
         type: "PATCH",
         url: "/games/#{$("#game").data("gameid")}.json",
-        data: { game: { players_out: { "#{playertype}": { "#{playerid}": roundid } } } }
+        data: { game: { players_out: { player_type: playertype, player_id: playerid, roundid: roundid} } }
         success: (data) ->
           event.target.parentElement.innerHTML = "Out on round #{roundid+1}"
           if data.winner_id != null
