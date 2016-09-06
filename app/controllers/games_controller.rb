@@ -9,7 +9,7 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find(params[:id])
-    @players = @game.users + @game.guests
+    @players = @game.players
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     @current_blinds = @blinds[@game.round]
     respond_to do |format|
@@ -40,17 +40,11 @@ class GamesController < ApplicationController
     if params["game"]["guest_ids"]
       params["game"]["guest_ids"].map! do |guest|
         guest = guest.downcase.capitalize
-        record = Guest.find_by_name(guest)
-        # If the guest already exists, store the reference
-        if record
-          guest = record.id
-          # Otherwise, create the guest and store the reference
-        else
-          record = Guest.create(name: guest)
-          guest = record.id
-        end
+        record = Guest.find_or_create_by(name: guest)
+        guest = record.id
       end
     end
+
     game = Game.new(game_params)
     if game.save
       flash[:alert] = game.warnings[:duplicates][0]
@@ -84,6 +78,7 @@ class GamesController < ApplicationController
     end
 
     flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
+
     respond_to do |format|
       format.html { redirect_to game_path(game) }
       format.json { render json: game }
