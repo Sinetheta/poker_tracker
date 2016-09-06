@@ -13,9 +13,9 @@ $(".games.show").ready ->
         type: "PATCH",
         url: "/games/#{$("#game").data("gameid")}.json",
         data: { game: { players_out: { player_type: playertype, player_id: playerid, roundid: roundid} } }
-        success: (data) ->
+        success: (game) ->
           event.target.parentElement.innerHTML = "Out on round #{roundid+1}"
-          if data.winner_id != null
+          if game.winner_id != null
             location.reload()
       })
 
@@ -44,10 +44,10 @@ updateRound = (game) ->
     type: "PATCH",
     url: "/games/#{game.id}.json",
     data: { game: { round: game.round+1 } },
-    success: (data) ->
-      document.getElementById('roundDisplay').innerHTML = "Round #{data.round+1}"
-      updateBlinds(data)
-      updateTimer(data.round_length*60, data)
+    success: (game) ->
+      document.getElementById('roundDisplay').innerHTML = "Round #{game.round+1}"
+      updateBlinds(game)
+      updateTimer(game.round_length*60, game)
   })
 
 updateBlinds = (game) ->
