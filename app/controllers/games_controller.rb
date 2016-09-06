@@ -54,11 +54,11 @@ class GamesController < ApplicationController
     players_out ||= params[:game][:players_out]
     if players_out
       if players_out[:player_type] == "user"
-        player = {game.users.find(players_out[:player_id]) => [players_out[:roundid].to_i, game.players_out.length]}
+        player = game.users.find(players_out[:player_id])
       elsif players_out[:player_type] == "guest"
-        player = {game.guests.find(players_out[:player_id]) => [players_out[:roundid].to_i, game.players_out.length]}
+        player = game.guests.find(players_out[:player_id])
       end
-      new_players_out = game.players_out.merge(player)
+      new_players_out = game.players_out.merge({player => [players_out[:roundid].to_i, game.players_out.length]})
       game.update_attribute(:players_out, new_players_out)
     end
 
