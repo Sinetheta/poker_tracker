@@ -12,10 +12,6 @@ class GamesController < ApplicationController
     @players = @game.players
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     @current_blinds = @blinds[@game.round]
-    respond_to do |format|
-      format.html
-      format.json { render json: @game }
-    end
   end
 
   def new
@@ -56,7 +52,6 @@ class GamesController < ApplicationController
     game = Game.find(params[:id])
 
     players_out ||= params[:game][:players_out]
-
     if players_out
       if players_out[:player_type] == "user"
         user = {game.users.find(players_out[:player_id]) => [players_out[:roundid].to_i, game.players_out.length]}
