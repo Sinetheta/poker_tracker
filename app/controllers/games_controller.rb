@@ -55,15 +55,17 @@ class GamesController < ApplicationController
   def update
     game = Game.find(params[:id])
 
-    if params[:game][:players_out]
-      if params[:game][:players_out][:player_type] == "user"
-        user = {game.users.find(params[:game][:players_out][:player_id]) => [params[:game][:players_out][:roundid].to_i, game.players_out.length]}
-        players_out = game.players_out.merge(user)
+    players_out ||= params[:game][:players_out]
+
+    if players_out
+      if players_out[:player_type] == "user"
+        user = {game.users.find(players_out[:player_id]) => [players_out[:roundid].to_i, game.players_out.length]}
+        new_players_out = game.players_out.merge(user)
       elsif params[:game][:players_out][:player_type] == "guest"
-        user = {game.guests.find(params[:game][:players_out][:player_id]) => [params[:game][:players_out][:roundid].to_i, game.players_out.length]}
-        players_out = game.players_out.merge(user)
+        user = {game.guests.find(players_out[:player_id]) => [players_out[:roundid].to_i, game.players_out.length]}
+        new_players_out = game.players_out.merge(user)
       end
-      game.update_attribute(:players_out, players_out)
+      game.update_attribute(:players_out, new_players_out)
     end
 
     # See if a winner can be declared
