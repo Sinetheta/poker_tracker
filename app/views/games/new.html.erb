@@ -20,6 +20,7 @@
       <div class="form-group">
         <div class="col-md-offset-2">
           <button id="addUser" class="btn btn-primary" type="button">Add a User Player</button>
+          <button id="addingUser" class="btn btn-primary active" type="button">Add a User Player</button>
           <button id="addGuest" class="btn btn-primary" type="button">Add Guests</button>
         </div>
       </div>
@@ -81,9 +82,13 @@
       <div class="form-group" id="userButtons">
         <div>
           <% @users.each do |user| %>
-            <button type="button" class="btn btn-primary userButton" id=<%= user.id %>><%= "Add #{user.name}" %></button>
+            <div class="col-xs-3">
+              <button type="button" class="btn btn-primary userButton" id=<%= user.id %>><%= "Add #{user.name}" %></button>
+            </div>
           <% end %>
-          <button type="button" class="btn btn-danger" id="userCancelButton">Done</button>
+          <div class="col-xs-3">
+            <button type="button" class="btn btn-danger" id="userCancelButton">Done</button>
+          </div>
         </div>
       </div>
 

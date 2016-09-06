@@ -3,8 +3,16 @@ $(document).on "turbolinks:load", ->
   $(".games.new").ready ->
     $("#userButtons").hide()
     $("#guestForm").hide()
+    $("#addingUser").hide()
+    $("#addingUser").on "click", (event) ->
+      $(this).hide()
+      $("#userButtons").hide()
+      if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
+        $("#addUser").show()
+        $("#addGuest").css('visibility','visible')
     $("#addUser").on "click", (event) ->
       $("#userButtons").show()
+      $("#addingUser").show()
       $("#addUser").hide()
       $("#addGuest").css('visibility','hidden')
     $(".userButton").on "click", (event) ->
