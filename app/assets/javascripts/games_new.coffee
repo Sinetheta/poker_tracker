@@ -71,7 +71,7 @@ updatePlayers = (player, user = null) ->
 
 addPlayer = (player, guest = false) ->
   if guest
-    param_type = "guest_ids"
+    param_type = "guests"
     inputid = "guestin#{player}"
   else
     param_type = "user_ids"

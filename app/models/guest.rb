@@ -1,5 +1,5 @@
 class Guest < ActiveRecord::Base
 
-  has_and_belongs_to_many :games, :uniq => true
+  has_many :players
 
 end

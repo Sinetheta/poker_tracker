@@ -2,14 +2,10 @@ class Game < ActiveRecord::Base
 
   include ActiveWarnings
 
-  has_and_belongs_to_many :users, :uniq => true
-  has_and_belongs_to_many :guests, :uniq => true
-  before_destroy { users.clear }
-  before_destroy { guests.clear }
+  has_many :players
 
   after_validation :generate_name, :generate_blinds, on: :create
 
-  serialize :players_out, Hash
   serialize :blinds, Array
   validates :chips, :game_length, :round_length,
             :first_small_blind, :smallest_denomination, presence: true
@@ -17,17 +13,9 @@ class Game < ActiveRecord::Base
             :first_small_blind, :smallest_denomination, numericality: { only_integer: true, greater_than: 0 }
   validates :game_length, numericality: { greater_than: 0 }
 
-  scope :in_progress, -> { where(winner_id: nil) }
-  scope :completed, -> { where("winner_id IS NOT NULL") }
-  scope :user_winner, -> { completed.where(winner_type: "user") }
-  scope :guest_winner, -> { completed.where(winner_type: "guest") }
-  scope :winner, ->(player) {
-    if player.class == User
-      user_winner.where(winner_id: player.id)
-    elsif player.class == Guest
-      guest_winner.where(winner_id: player.id)
-    end
-  }
+  scope :in_progress, -> { where(complete: false) }
+  scope :completed, -> { where(complete: true) }
+  scope :winner, ->(player) { where(winner: player.owner) }
 
   def player_out_round(player)
     if self.players_out.keys.include?(player)
@@ -37,20 +25,16 @@ class Game < ActiveRecord::Base
     end
   end
 
-  def winner
-    if winner_type == "user"
-      self.users.find(self.winner_id)
-    elsif winner_type == "guest"
-      self.guests.find(self.winner_id)
-    end
+  def players_out
+    Player.out_in_game(self)
   end
 
-  def players
-    self.users + self.guests
+  def winner
+    self.players.find_by_winner(true)
   end
 
   def number_of_players
-    self.users.length + self.guests.length
+    self.players.length
   end
 
   def total_chips
@@ -92,10 +76,9 @@ class Game < ActiveRecord::Base
     if errors.empty?
       denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
       denominations.select! {|denom| denom >= self.smallest_denomination}
-      total_chips = self.number_of_players*chips
       number_of_rounds = ((self.game_length*60)/round_length)+10
       # http://www.maa.org/book/export/html/115405
-      k = (Math::log((total_chips*0.05).abs)-Math::log(first_small_blind.abs))/(self.game_length*60)
+      k = (Math::log((self.total_chips*0.05).abs)-Math::log(first_small_blind.abs))/(self.game_length*60)
 
       blinds = []
       round = 0
@@ -112,10 +95,10 @@ class Game < ActiveRecord::Base
         round += 1
       end
       # Filter blinds larger than the pot
-      blinds.select! {|blind| blind < total_chips/3}
+      blinds.select! {|blind| blind < self.total_chips/3}
       # If duplicate errors occured, adjust round_length to compensate
       if duplicate_errors > 0
-        last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
+        last_blind = blinds.find_index(blinds.min_by { |x| ((self.total_chips*0.05)-x).abs })
         if last_blind == 0
           errors[:blinds] = "Blinds could not be constructed with provided parameters."
         else

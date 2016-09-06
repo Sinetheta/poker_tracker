@@ -22,7 +22,7 @@
             <td><%= game.number_of_players %></td>
             <td><%= game.chips %></td>
             <td><%= game.game_length %></td>
-            <td><%= game.winner.name %></td>
+            <td><%= game.winner.owner.name %></td>
             <% if user_signed_in? %>
               <td>
                 <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete, data: { confirm: "Are you sure?" } %>
