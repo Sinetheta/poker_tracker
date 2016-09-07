@@ -39,11 +39,11 @@ def generate_blinds(game_length, round_length, total_chips, smallest_denominatio
   # If duplicate errors occured, adjust round_length to compensate
   if duplicate_errors > 0
     last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
-    if last_blind == 0
-      puts "Blinds could not be constructed with provided parameters."
+    puts last_blind
+    if !last_blind || last_blind == 0
+      blinds = nil
     else
       adjusted_round_length = round_values(((game_length*60)/last_blind).to_i, [1,2,5,10])
-      # Promt the user with the option to adjust round_length
       if adjusted_round_length != round_length
         round_length = adjusted_round_length
       end
