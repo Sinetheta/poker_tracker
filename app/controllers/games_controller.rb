@@ -49,13 +49,16 @@ class GamesController < ApplicationController
       game.players << Player.create(user: User.find(user), game_id: game.id)
     end
 
-    blinds = generate_blinds(game.game_length, game.round_length,
-                             game.total_chips, game.smallest_denomination,
-                             game.first_small_blind)
-    game.blinds = blinds[:blinds]
-    if game.round_length != blinds[:round_length]
-      flash[:alert] = "Round length automatically adjusted"
-      game.round_length = blinds[:round_length]
+    game.blinds = [1]
+    if game.valid?
+      blinds = generate_blinds(game.game_length, game.round_length,
+                              game.total_chips, game.smallest_denomination,
+                              game.first_small_blind)
+      game.blinds = blinds[:blinds]
+      if game.round_length != blinds[:round_length]
+        flash[:alert] = "Round length automatically adjusted"
+        game.round_length = blinds[:round_length]
+      end
     end
 
     if game.save
