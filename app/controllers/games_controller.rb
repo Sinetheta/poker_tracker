@@ -49,8 +49,9 @@ class GamesController < ApplicationController
       game.players << Player.create(user: User.find(user), game_id: game.id)
     end
 
-    blinds = generate_blinds(game.game_length, game.round_length, game.total_chips, game.smallest_denomination, game.first_small_blind)
-
+    blinds = generate_blinds(game.game_length, game.round_length,
+                             game.total_chips, game.smallest_denomination,
+                             game.first_small_blind)
     game.blinds = blinds[:blinds]
     if game.round_length != blinds[:round_length]
       flash[:alert] = "Round length automatically adjusted"
@@ -60,7 +61,11 @@ class GamesController < ApplicationController
     if game.save
       redirect_to game_path(game)
     else
-      flash[:alert] = game.errors[:blinds][0]
+      if game.errors[:blinds]
+        flash[:alert] = "Blinds could not be constructed with provided parameters."
+      else
+        flash[:alert] = game.errors.full_messages
+      end
       redirect_to new_game_path
     end
   end
