@@ -61,11 +61,7 @@ class GamesController < ApplicationController
     if game.save
       redirect_to game_path(game)
     else
-      if game.errors[:blinds]
-        flash[:alert] = "Blinds could not be constructed with provided parameters."
-      else
-        flash[:alert] = game.errors.full_messages
-      end
+      flash[:alert] = game.errors.full_messages
       redirect_to new_game_path
     end
   end

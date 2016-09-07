@@ -12,6 +12,7 @@ class Game < ActiveRecord::Base
   validates :chips, :round_length, :first_small_blind,
             :smallest_denomination, numericality: { only_integer: true, greater_than: 0 }
   validates :game_length, numericality: { greater_than: 0 }
+  validate :enough_players
 
   scope :in_progress, -> { where(complete: false) }
   scope :completed, -> { where(complete: true) }
@@ -45,6 +46,12 @@ class Game < ActiveRecord::Base
   end
 
   protected
+
+  def enough_players
+    unless self.players.length > 1
+      errors.add(:not_enough_players, "Please supply at least 2 players")
+    end
+  end
 
   # Randomly generate an appropriate name
   def generate_name
