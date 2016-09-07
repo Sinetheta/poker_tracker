@@ -133,9 +133,12 @@ game_default_params = {
   guests.shuffle.take(Random.rand(2..10)).each do |guest|
     game.players << Player.create(guest: guest, game_id: game.id)
   end
-  blinds = generate_blinds(game.game_length, game.round_length, game.total_chips, game.smallest_denomination, game.first_small_blind)
-  game.blinds = blinds[:blinds]
-  game.round_length = blinds[:round_length]
+  attributes = GeneratedGameAttributes.new(game.game_length, game.round_length,
+                                        game.total_chips, game.smallest_denomination,
+                                        game.first_small_blind)
+  game.blinds = attributes.blinds
+  game.round_length = attributes.round_length
+  game.name = attributes.name
   game.save()
   game.players.shuffle.take(game.players.length-1).each do |player|
     player.round_out = Random.rand(10)

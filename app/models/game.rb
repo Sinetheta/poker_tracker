@@ -5,8 +5,6 @@ class Game < ActiveRecord::Base
   has_many :players, dependent: :destroy
   before_destroy :remove_player_associations
 
-  after_validation :generate_name, on: :create
-
   serialize :blinds, Array
   validates :chips, :game_length, :round_length, :blinds,
             :first_small_blind, :smallest_denomination, presence: true
@@ -60,17 +58,4 @@ class Game < ActiveRecord::Base
     end
   end
 
-  # Randomly generate an appropriate name
-  def generate_name
-    names = ["High Card", "Ace King", "Pair", "Two Pair", "Three of a Kind",
-             "Straight", "Flush", "Full House", "Four of a Kind", "Straight Flush",
-             "Royal Flush", "Action Card", "All In", "Ante", "Big Bet",
-             "Bluff", "Check", "Community Card", "Deal", "Dealer's Choice",
-             "Flop", "Fold", "Free Card", "Heads Up", "High-low Split",
-             "In the Money", "The Nuts", "Over the Top", "Play the Board", "Poker Face",
-             "River", "Semi-bluff", "Splash the Pot", "Trips", "Turn", "Under the Gun"]
-    valid_names = names - Game.all.map {|game| game = game.name}
-    valid_names = names if valid_names.empty?
-    self.name = names.sample
-  end
 end

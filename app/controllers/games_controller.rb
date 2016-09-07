@@ -39,7 +39,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    game = Game.new(game_params, blinds: [1])
+    game = Game.new(game_params)
 
     # Create the players as part of the game
     (params["game"]["guests"] || []).each do |guest|
@@ -49,14 +49,16 @@ class GamesController < ApplicationController
       game.players << Player.create(user: User.find(user), game_id: game.id)
     end
 
+    game.blinds = [1]
     if game.valid?
-      blinds = generate_blinds(game.game_length, game.round_length,
-                              game.total_chips, game.smallest_denomination,
-                              game.first_small_blind)
-      game.blinds = blinds[:blinds]
-      if game.round_length != blinds[:round_length]
+      attributes = GeneratedGameAttributes.new(game.game_length, game.round_length,
+                                           game.total_chips, game.smallest_denomination,
+                                           game.first_small_blind)
+      game.blinds = attributes.blinds
+      game.name = attributes.name
+      if game.round_length != attributes.round_length
         flash[:alert] = "Round length automatically adjusted"
-        game.round_length = blinds[:round_length]
+        game.round_length = attributes.round_length
       end
     end
 
