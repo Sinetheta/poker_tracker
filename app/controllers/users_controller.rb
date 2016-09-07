@@ -2,18 +2,35 @@ class UsersController < ApplicationController
 
   def history
     @user = User.find(params[:id])
-    @games = @user.games.completed
-    won = Game.winner(@user)
-    went_out = @user.games.completed - won
+    @players = @user.players
 
-    @won_perc = (won.length/(won.length+went_out.length).to_f)*100
+    @games = []
+    @won = []
+    @went_out = []
+    @user.players.each do |player|
+      @games << player.game if player.game.complete == true
+    end
 
-    @chips_perc = went_out.map do |game|
-      game = ((game.blinds[game.player_out_round(@user)]/game.total_chips.to_f)*100)
-    end.inject(0.0) {|sum, game| sum + game } / went_out.length
-    @round_aver = went_out.map do |game|
-      game = game.player_out_round(@user)+1
-    end.inject(0.0) {|sum, game| sum + game } / went_out.length
+    @games.each do |game|
+      if @players.include?(game.winner)
+        @won << game
+      else
+        @went_out << game
+      end
+    end
+
+    @stats = {}
+    @stats[:win_perc] = (@won.length/@games.length.to_f)*100
+
+    @stats[:round_aver] = @went_out.map do |game|
+      player = @players.find_by(game: game)
+      game = player.round_out+1
+    end.inject(0.0) {|sum, game| sum + game } / @went_out.length
+
+    @stats[:chips_perc] = @went_out.map do |game|
+      player = @players.find_by(game: game)
+      game = (game.blinds[player.round_out]/game.total_chips.to_f)*100
+    end.inject(0.0) {|sum, game| sum + game } / @went_out.length
+
   end
-
 end

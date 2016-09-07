@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <% unless @game.winner_id || !user_signed_in? %>
+      <% unless @game.complete || !user_signed_in? %>
         <div class="row button-row">
           <div class="col-xs-6">
             <%= link_to "Start Timer", game_path(@game),
@@ -23,18 +23,18 @@
             <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}),
               method: :patch,
               class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
-          </div>
-          <div class="dropdown col-xs-3">
-            <button class="btn btn-primary" type="button" id="roundSelect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              Go to round <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="roundSelect">
-              <% @blinds.each_with_index do |blinds, i| %>
-                <li><%= link_to "Round #{i+1} [#{blinds[0]} - #{blinds[1]}]", game_path(@game, :game => {round: i}),
-                  method: :patch %></li>
-              <% end %>
-            </ul>
-          </div>
+        </div>
+        <div class="dropdown col-xs-3">
+          <button class="btn btn-primary" type="button" id="roundSelect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Go to round <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="roundSelect">
+            <% @blinds.each_with_index do |blinds, i| %>
+              <li><%= link_to "Round #{i+1} [#{blinds[0]} - #{blinds[1]}]", game_path(@game, :game => {round: i}),
+                method: :patch %></li>
+            <% end %>
+          </ul>
+        </div>
         </div>
       <% end %>
 
@@ -46,15 +46,17 @@
 
           <% @players.each do |player| %>
             <tr>
-              <td><%= player.name %></td>
-              <td class="outButtonCell" data-playerid=<%= player.id %> data-playertype=<%= player.class.to_s.downcase %>>
-                <% if @game.player_out_round(player) %>
-                  <%= "Out on round #{@game.player_out_round(player)+1}" %>
+              <td><%= player.owner.name %></td>
+              <td class="outButtonCell" data-playerid=<%= player.id %>>
+
+                <% if player.round_out %>
+                  <%= "Out on round #{player.round_out+1}" %>
                 <% elsif @game.winner == player %>
                   <%= "Winner" %>
                 <% elsif user_signed_in? %>
-                  <button type="button" class="btn btn-primary outButton" data-playerid=<%= player.id %> data-playertype=<%= player.class.to_s.downcase %>>Set Player Out</button>
+                  <button type="button" class="btn btn-primary outButton" data-playerid=<%= player.id %>>Set Player Out</button>
                 <% end %>
+
               </td>
             </tr>
           <% end %>
@@ -66,7 +68,7 @@
     <div class="col-md-3">
       <div class="timer-container">
         <h1 id="timer">
-          <% if @game.winner_id %>
+          <% if @game.complete %>
             Game Over
           <% else %>
             <%= "#{@game.round_length}:00" %>
@@ -74,7 +76,7 @@
         </h1>
       </div>
 
-      <% if @game.winner_id %>
+      <% if @game.complete %>
         <h3>Blind Structure</h3>
         <table class="table table-hover">
           <tr>

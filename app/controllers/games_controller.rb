@@ -12,6 +12,11 @@ class GamesController < ApplicationController
     @players = @game.players
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     @current_blinds = @blinds[@game.round]
+
+    respond_to do |format|
+      format.html { }
+      format.json { render json: @game }
+    end
   end
 
   def new
@@ -35,8 +40,12 @@ class GamesController < ApplicationController
     game = Game.new(game_params)
 
     # If we're passed guests during creation
-    (params["game"]["guest_ids"] || []).each do |guest|
-      game.guests << Guest.find_or_create_by(name: guest)
+    (params["game"]["guests"] || []).each do |guest|
+      game.players << Player.create(guest: Guest.find_or_create_by(name: guest), game_id: game.id)
+    end
+
+    (params["game"]["user_ids"] || []).each do |user|
+      game.players << Player.create(user: User.find(user), game_id: game.id)
     end
 
     if game.save
@@ -51,23 +60,21 @@ class GamesController < ApplicationController
   def update
     game = Game.find(params[:id])
 
-    players_out ||= params[:game][:players_out]
-    if players_out
-      if players_out[:player_type] == "user"
-        player = game.users.find(players_out[:player_id])
-      elsif players_out[:player_type] == "guest"
-        player = game.guests.find(players_out[:player_id])
-      end
-      new_players_out = game.players_out.merge({player => [players_out[:roundid].to_i, game.players_out.length]})
-      game.update_attribute(:players_out, new_players_out)
+    player_out ||= params[:game][:player_out]
+    if player_out
+      player = game.players.find(player_out.to_i)
+      player.round_out = game.round
+      player.winner = false
+      player.save()
     end
 
     # See if a winner can be declared
     if game.players_out.length == game.number_of_players-1
-      winner = (game.players - game.players_out.keys).first()
-      game.winner_id = winner.id
-      game.winner_type = winner.class.to_s.downcase
+      winner = game.players.find_by(winner: nil)
+      winner.winner = true
+      game.complete = true
       game.save()
+      winner.save()
     end
 
     flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
@@ -85,25 +92,26 @@ class GamesController < ApplicationController
   end
 
   def archive
-    @games = Game.completed.includes(:users, :guests)
+    @games = Game.completed
   end
 
   def leaderboard
-    players = (User.all.includes(:games) + Guest.all.includes(:games)).map do |player|
-      if player.games.empty?
+    all_players = (User.all + Guest.all).map do |user|
+      # If user has never played a game
+      if user.players.empty?
         player = nil
       else
-        player = {player: player, wins: Game.winner(player).length, win_perc: (Game.winner(player).length/player.games.length.to_f)*100 }
+        wins = user.players.where(winner: true).length
+        player = {player: user, wins: wins, win_perc: (wins/user.players.length.to_f)*100 }
       end
     end
-    players.select! {|player| !player.nil?}
-    @players = players.sort_by {|player| player[:win_perc]}.reverse
+    all_players.select! {|player| !player.nil?}
+    @players = all_players.sort_by {|player| player[:win_perc]}.reverse
   end
 
   private
   def game_params
-    params.require(:game).permit({:user_ids => []},
-                                 :game_length, :round_length, :buy_in, :round,
+    params.require(:game).permit(:game_length, :round_length, :buy_in, :round,
                                  :chips, :first_small_blind, :smallest_denomination)
   end
 
@@ -113,6 +121,5 @@ class GamesController < ApplicationController
       redirect_to new_user_session_path
     end
   end
-
 
 end

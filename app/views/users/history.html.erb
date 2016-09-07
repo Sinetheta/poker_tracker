@@ -17,9 +17,9 @@
         </tr>
         <tr>
           <td></td>
-          <td><%= @won_perc.round(0) %>%</td>
-          <td><%= @round_aver.round(2) %></td>
-          <td><%= @chips_perc.round(2) %>%</td>
+          <td><%= @stats[:win_perc].round(0) %>%</td>
+          <td><%= @stats[:round_aver].round(2) %></td>
+          <td><%= @stats[:chips_perc].round(2) %>%</td>
         </tr>
       </table>
       <table class="table table-hover">
@@ -36,13 +36,13 @@
           <% @games.each do |game| %>
             <tr>
               <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
-              <td><%= game.winner.name %></td>
-              <% if game.winner == @user %>
+              <td><%= game.winner.owner.name %></td>
+              <% if @won.include?(game) %>
                 <td>Winner</td>
                 <td></td>
               <% else %>
-                <td><%= "Went out on round #{game.player_out_round(@user)+1}" %></td>
-                <td><%= "#{((game.blinds[game.player_out_round(@user)]/game.total_chips.to_f)*100).round(2)}%" %></td>
+                <td><%= "Went out on round #{@players.find_by(game: game).round_out}" %></td>
+                <td><%= "#{((game.blinds[@players.find_by(game: game).round_out]/game.total_chips.to_f)*100).round(2)}%" %></td>
               <% end %>
             </tr>
           <% end %>
