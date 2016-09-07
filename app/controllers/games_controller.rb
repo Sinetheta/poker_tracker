@@ -39,7 +39,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    game = Game.new(game_params)
+    game = Game.new(game_params, blinds: [1])
 
     # Create the players as part of the game
     (params["game"]["guests"] || []).each do |guest|
@@ -49,7 +49,6 @@ class GamesController < ApplicationController
       game.players << Player.create(user: User.find(user), game_id: game.id)
     end
 
-    game.blinds = [1]
     if game.valid?
       blinds = generate_blinds(game.game_length, game.round_length,
                               game.total_chips, game.smallest_denomination,
