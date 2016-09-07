@@ -1,6 +1,6 @@
 # New
-$(".games.new").ready ->
-  $(document).on "turbolinks:load", ->
+$(document).on "turbolinks:load", ->
+  $(".games.new").ready ->
     $("#userButtons").hide()
     $("#guestForm").hide()
     $("#addUser").on "click", (event) ->

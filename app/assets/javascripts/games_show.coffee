@@ -1,6 +1,6 @@
 # Show
-$(".games.show").ready ->
-  $(document).on "turbolinks:load", ->
+$(document).on "turbolinks:load", ->
+  $(".games.show").ready ->
     $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
       updateTimer(data.round_length*60, data)
       document.getElementById('clickAudio').play()
