@@ -103,7 +103,7 @@ class GamesController < ApplicationController
         owner = nil
       else
         wins = owner.players.where(winner: true).length
-        owner = {player: owner, wins: wins, win_perc: (wins/user.players.length.to_f)*100 }
+        owner = {player: owner, wins: wins, win_perc: (wins/owner.players.length.to_f)*100 }
       end
     end
     all_owners.select! {|owner| !owner.nil?}
