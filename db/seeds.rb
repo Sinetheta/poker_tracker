@@ -114,7 +114,7 @@ guests = Guest.create([
   { name: 'Bernie' }
 ])
 
-game_default_values = {
+game_default_params = {
   game_length: 2.5,
   round_length: 15,
   chips: 2000,
@@ -124,16 +124,24 @@ game_default_values = {
 }
 
 50.times do |i|
-  game = Game.create(game_default_values.merge({users: users.shuffle.take(Random.rand(10)), guests: guests.shuffle.take(Random.rand(10)), round: Random.rand(10)}))
-  winner = game.players.sample
-  game.players.each_with_index do |player, i|
-    game.players_out = game.players_out.merge({player => [Random.rand(game.round+1), i]}) unless player.id == winner.id
+  game = Game.new(game_default_params)
+  users.shuffle.take(Random.rand(2..10)).each do |user|
+    game.players << Player.create(user: user, game_id: game.id)
   end
-  game.winner_id = winner.id
-  if winner.class == User
-    game.winner_type = "user"
-  else
-    game.winner_type = "guest"
+  guests.shuffle.take(Random.rand(2..10)).each do |guest|
+    game.players << Player.create(guest: guest, game_id: game.id)
   end
-  game.save
+  game.save()
+  game.players.shuffle.take(game.players.length-1).each do |player|
+    player.round_out = Random.rand(10)
+    player.position_out = game.players_out.length
+    player.winner = false
+    player.save()
+  end
+  winner = game.players.find_by(winner: nil)
+  winner.winner = true
+  game.complete = true
+  game.round = game.players_out.max_by {|player| player.round_out}.round_out
+  game.save()
+  winner.save()
 end
