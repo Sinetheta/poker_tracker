@@ -3,13 +3,6 @@ $(document).on "turbolinks:load", ->
   $(".games.new").ready ->
     $("#userButtons").hide()
     $("#guestForm").hide()
-    $("#addingUser").hide()
-    $("#addingUser").on "click", (event) ->
-      $(this).hide()
-      $("#userButtons").hide()
-      if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
-        $("#addUser").show()
-        $("#addGuest").css('visibility','visible')
     $("#addUser").on "click", (event) ->
       $("#userButtons").show()
       $("#addingUser").show()
@@ -24,16 +17,15 @@ $(document).on "turbolinks:load", ->
         $("#addGuest").css('visibility','visible')
       $(".removeUser").on "click", (event) ->
         user_id = this.id.substring(10)
-        console.log(user_id)
         document.getElementById("userin#{user_id}").outerHTML = ""
         document.getElementById("usertr#{user_id}").outerHTML = ""
         $("##{user_id}").show()
         $("#addUser").show()
     $("#userCancelButton").on "click", (event) ->
       $("#userButtons").hide()
+      $("#addGuest").css('visibility','visible')
       if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
         $("#addUser").show()
-        $("#addGuest").css('visibility','visible')
     $("#addGuest").on "click", (event) ->
       $("#guestForm").show()
       $("#guestInput").val("")

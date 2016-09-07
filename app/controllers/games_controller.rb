@@ -12,6 +12,11 @@ class GamesController < ApplicationController
     @players = @game.players
     @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
     @current_blinds = @blinds[@game.round]
+
+    respond_to do |format|
+      format.html { }
+      format.json { render json: @game }
+    end
   end
 
   def new
@@ -55,7 +60,6 @@ class GamesController < ApplicationController
   def update
     game = Game.find(params[:id])
 
-
     player_out ||= params[:game][:player_out]
     if player_out
       player = game.players.find(player_out.to_i)
@@ -72,7 +76,6 @@ class GamesController < ApplicationController
       game.save()
       winner.save()
     end
-
 
     flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
 
@@ -93,16 +96,17 @@ class GamesController < ApplicationController
   end
 
   def leaderboard
-    players = (User.all + Guest.all).map do |player|
-      if player.players.empty?
+    all_players = (User.all + Guest.all).map do |user|
+      # If user has never played a game
+      if user.players.empty?
         player = nil
       else
-        wins = player.players.where(winner: true)
-        player = {player: player, wins: wins.length, win_perc: (wins.length/player.players.length.to_f)*100 }
+        wins = user.players.where(winner: true).length
+        player = {player: user, wins: wins, win_perc: (wins/user.players.length.to_f)*100 }
       end
     end
-    players.select! {|player| !player.nil?}
-    @players = players.sort_by {|player| player[:win_perc]}.reverse
+    all_players.select! {|player| !player.nil?}
+    @players = all_players.sort_by {|player| player[:win_perc]}.reverse
   end
 
   private

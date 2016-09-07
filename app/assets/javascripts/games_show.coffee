@@ -15,7 +15,7 @@ $(".games.show").ready ->
         data: { game: { player_out: playerid, round: roundid} }
         success: (game) ->
           event.target.parentElement.innerHTML = "Out on round #{roundid+1}"
-          if game.winner_id != null
+          if game.complete == true
             location.reload()
       })
 
