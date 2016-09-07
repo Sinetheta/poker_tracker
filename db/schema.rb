@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160906225612) do
+ActiveRecord::Schema.define(version: 20160907180518) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
@@ -28,31 +28,12 @@ ActiveRecord::Schema.define(version: 20160906225612) do
     t.boolean  "complete",              default: false
   end
 
-  create_table "games_guests", id: false, force: :cascade do |t|
-    t.integer "guest_id"
-    t.integer "game_id"
-  end
-
-  add_index "games_guests", ["game_id"], name: "index_games_guests_on_game_id"
-  add_index "games_guests", ["guest_id"], name: "index_games_guests_on_guest_id"
-
-  create_table "games_users", id: false, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "game_id"
-  end
-
-  add_index "games_users", ["game_id"], name: "index_games_users_on_game_id"
-  add_index "games_users", ["user_id"], name: "index_games_users_on_user_id"
-
   create_table "guests", force: :cascade do |t|
     t.string   "name"
     t.integer  "winnings",   default: 0
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
-    t.integer  "player_id"
   end
-
-  add_index "guests", ["player_id"], name: "index_guests_on_player_id"
 
   create_table "players", force: :cascade do |t|
     t.integer  "game_id"
@@ -84,11 +65,9 @@ ActiveRecord::Schema.define(version: 20160906225612) do
     t.datetime "updated_at",                          null: false
     t.string   "name"
     t.integer  "winnings",               default: 0
-    t.integer  "player_id"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["player_id"], name: "index_users_on_player_id"
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
 
 end
