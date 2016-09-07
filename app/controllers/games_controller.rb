@@ -89,9 +89,6 @@ class GamesController < ApplicationController
       end
     end
 
-    puts "\n #{game.players_out.length} -- #{game.number_of_players-1} \n"
-
-
     flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
 
     respond_to do |format|
