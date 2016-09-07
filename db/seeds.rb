@@ -7,6 +7,8 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 #
 
+require 'blinds.rb'
+
 users = User.create([
   { name: 'Graham', email: 'graham@example.com', password: 'password', password_confirmation: 'password' },
   { name: 'Chris', email: 'chris@example.com', password: 'password', password_confirmation: 'password' },
@@ -131,6 +133,9 @@ game_default_params = {
   guests.shuffle.take(Random.rand(2..10)).each do |guest|
     game.players << Player.create(guest: guest, game_id: game.id)
   end
+  blinds = generate_blinds(game.game_length, game.round_length, game.total_chips, game.smallest_denomination, game.first_small_blind)
+  game.blinds = blinds[:blinds]
+  game.round_length = blinds[:round_length]
   game.save()
   game.players.shuffle.take(game.players.length-1).each do |player|
     player.round_out = Random.rand(10)

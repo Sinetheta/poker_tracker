@@ -1,5 +1,7 @@
 class GamesController < ApplicationController
 
+  require 'blinds.rb'
+
   before_action :require_login, :except => [:index, :show, :leaderboard, :archive]
 
   def index
@@ -47,8 +49,15 @@ class GamesController < ApplicationController
       game.players << Player.create(user: User.find(user), game_id: game.id)
     end
 
+    blinds = generate_blinds(game.game_length, game.round_length, game.total_chips, game.smallest_denomination, game.first_small_blind)
+
+    game.blinds = blinds[:blinds]
+    if game.round_length != blinds[:round_length]
+      flash[:alert] = "Round length automatically adjusted"
+      game.round_length = blinds[:round_length]
+    end
+
     if game.save
-      flash[:alert] = game.warnings[:duplicates][0]
       redirect_to game_path(game)
     else
       flash[:alert] = game.errors[:blinds][0]
@@ -67,16 +76,18 @@ class GamesController < ApplicationController
       player.position_out = game.players_out.length
       player.winner = false
       player.save()
+      # See if a winner can be declared
+      if game.players_out.length+1 == game.number_of_players-1
+        winner = game.players.find_by(winner: nil)
+        winner.winner = true
+        game.complete = true
+        game.save()
+        winner.save()
+      end
     end
 
-    # See if a winner can be declared
-    if game.players_out.length == game.number_of_players-1
-      winner = game.players.find_by(winner: nil)
-      winner.winner = true
-      game.complete = true
-      game.save()
-      winner.save()
-    end
+    puts "\n #{game.players_out.length} -- #{game.number_of_players-1} \n"
+
 
     flash[:alert] = "Problem updating game" unless game.update_attributes(game_params)
 
