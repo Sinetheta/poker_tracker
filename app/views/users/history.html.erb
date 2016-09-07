@@ -41,8 +41,8 @@
                 <td>Winner</td>
                 <td></td>
               <% else %>
-                <td><%= "Went out on round #{@players.find_by(game: game).round_out}" %></td>
-                <td><%= "#{((game.blinds[@players.find_by(game: game).round_out]/game.total_chips.to_f)*100).round(2)}%" %></td>
+                <td><%= "Went out on round #{game.find_player(@user).round_out}" %></td>
+                <td><%= "#{((game.blinds[game.find_player(@user).round_out]/game.total_chips.to_f)*100).round(2)}%" %></td>
               <% end %>
             </tr>
           <% end %>
