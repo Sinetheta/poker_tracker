@@ -39,11 +39,10 @@ class GamesController < ApplicationController
   def create
     game = Game.new(game_params)
 
-    # If we're passed guests during creation
+    # Create the players as part of the game
     (params["game"]["guests"] || []).each do |guest|
       game.players << Player.create(guest: Guest.find_or_create_by(name: guest), game_id: game.id)
     end
-
     (params["game"]["user_ids"] || []).each do |user|
       game.players << Player.create(user: User.find(user), game_id: game.id)
     end
@@ -60,6 +59,7 @@ class GamesController < ApplicationController
   def update
     game = Game.find(params[:id])
 
+    # Mark a player out
     player_out ||= params[:game][:player_out]
     if player_out
       player = game.players.find(player_out.to_i)
@@ -96,17 +96,17 @@ class GamesController < ApplicationController
   end
 
   def leaderboard
-    all_players = (User.all + Guest.all).map do |user|
+    all_owners = (User.all + Guest.all).map do |owner|
       # If user has never played a game
-      if user.players.empty?
-        player = nil
+      if owner.players.empty?
+        owner = nil
       else
-        wins = user.players.where(winner: true).length
-        player = {player: user, wins: wins, win_perc: (wins/user.players.length.to_f)*100 }
+        wins = owner.players.where(winner: true).length
+        owner = {player: owner, wins: wins, win_perc: (wins/user.players.length.to_f)*100 }
       end
     end
-    all_players.select! {|player| !player.nil?}
-    @players = all_players.sort_by {|player| player[:win_perc]}.reverse
+    all_owners.select! {|owner| !owner.nil?}
+    @players = all_owners.sort_by {|player| player[:win_perc]}.reverse
   end
 
   private

@@ -4,7 +4,7 @@
       <h1><%= "#{@user.name}'s History" %></h1>
     </div>
 
-    <% if @games.empty? %>
+    <% if @game_stats.empty? %>
       <p>No history to display.</p>
     <% else %>
 
@@ -33,16 +33,16 @@
         </thead>
         <tbody>
 
-          <% @games.each do |game| %>
+          <% @game_stats.each do |stats| %>
             <tr>
-              <td><%= link_to game.name, game_path(game), class: "btn btn-default" %></td>
-              <td><%= game.winner.owner.name %></td>
-              <% if @won.include?(game) %>
+              <td><%= link_to stats[:game].name, game_path(stats[:game]), class: "btn btn-default" %></td>
+              <td><%= stats[:game].winner.owner.name %></td>
+              <% if stats[:winner] == true %>
                 <td>Winner</td>
                 <td></td>
               <% else %>
-                <td><%= "Went out on round #{game.find_player(@user).round_out}" %></td>
-                <td><%= "#{((game.blinds[game.find_player(@user).round_out]/game.total_chips.to_f)*100).round(2)}%" %></td>
+                <td><%= "Went out on round #{stats[:round_out]}" %></td>
+                <td><%= "#{((stats[:game].blinds[stats[:round_out]]/stats[:game].total_chips.to_f)*100).round(2)}%" %></td>
               <% end %>
             </tr>
           <% end %>

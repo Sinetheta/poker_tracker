@@ -4,15 +4,18 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @players = @user.players
 
-    @games = []
+    @game_stats = []
     @won = []
     @went_out = []
     @user.players.each do |player|
-      @games << player.game if player.game.complete == true
+      if player.game.complete == true
+        game_stats = {game: player.game, round_out: player.round_out, winner: player.winner}
+        @game_stats << game_stats
+      end
     end
 
-    @games.each do |game|
-      if @players.include?(game.winner)
+    @game_stats.each do |game|
+      if game[:winner] == true
         @won << game
       else
         @went_out << game
@@ -20,14 +23,14 @@ class UsersController < ApplicationController
     end
 
     @stats = {}
-    @stats[:win_perc] = (@won.length/@games.length.to_f)*100
+    @stats[:win_perc] = (@won.length/@game_stats.length.to_f)*100
 
     @stats[:round_aver] = @went_out.map do |game|
-      game = game.find_player(@user).round_out+1
+      game = game[:round_out]
     end.inject(0.0) {|sum, game| sum + game } / @went_out.length
 
     @stats[:chips_perc] = @went_out.map do |game|
-      game = (game.blinds[game.find_player(@user).round_out]/game.total_chips.to_f)*100
+      game = (game[:game].blinds[game[:round_out]]/game[:game].total_chips.to_f)*100
     end.inject(0.0) {|sum, game| sum + game } / @went_out.length
 
   end

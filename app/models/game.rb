@@ -16,10 +16,10 @@ class Game < ActiveRecord::Base
   scope :in_progress, -> { where(complete: false) }
   scope :completed, -> { where(complete: true) }
 
-  def find_player(owner)
-    if user.class == User
+  def find_player_by_owner(owner)
+    if owner.class == User
       self.players.find_by(user_id: owner.id)
-    elsif user.class == Guest
+    elsif owner.class == Guest
       self.players.find_by(guest_id: owner.id)
     end
   end
