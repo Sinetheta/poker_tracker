@@ -1,6 +1,6 @@
 class GamesController < ApplicationController
 
-  require 'blinds.rb'
+  require 'generated_game_attributes.rb'
 
   before_action :require_login, :except => [:index, :show, :leaderboard, :archive]
 
@@ -51,9 +51,7 @@ class GamesController < ApplicationController
 
     game.blinds = [1]
     if game.valid?
-      attributes = GeneratedGameAttributes.new(game.game_length, game.round_length,
-                                           game.total_chips, game.smallest_denomination,
-                                           game.first_small_blind)
+      attributes = GeneratedGameAttributes.new(game)
       game.blinds = attributes.blinds
       game.name = attributes.name
       if game.round_length != attributes.round_length
@@ -125,7 +123,7 @@ class GamesController < ApplicationController
 
   private
   def game_params
-    params.require(:game).permit(:game_length, :round_length, :buy_in, :round,
+    params.require(:game).permit(:game_length, :round_length, :buy_in, :round, :name,
                                  :chips, :first_small_blind, :smallest_denomination)
   end
 

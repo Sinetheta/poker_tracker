@@ -16,8 +16,6 @@ gem 'coffee-rails', '~> 4.1.0'
 
 # Rounding for round_to and floor_to
 gem 'rounding'
-# A gem for creating model warning like errors
-gem 'active_warnings'
 
 # Bootstrap
 gem 'sprockets-rails', :require => 'sprockets/railtie'

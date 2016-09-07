@@ -7,7 +7,7 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 #
 
-require 'blinds.rb'
+require 'generated_game_attributes.rb'
 
 users = User.create([
   { name: 'Graham', email: 'graham@example.com', password: 'password', password_confirmation: 'password' },
@@ -133,9 +133,7 @@ game_default_params = {
   guests.shuffle.take(Random.rand(2..10)).each do |guest|
     game.players << Player.create(guest: guest, game_id: game.id)
   end
-  attributes = GeneratedGameAttributes.new(game.game_length, game.round_length,
-                                        game.total_chips, game.smallest_denomination,
-                                        game.first_small_blind)
+  attributes = GeneratedGameAttributes.new(game)
   game.blinds = attributes.blinds
   game.round_length = attributes.round_length
   game.name = attributes.name

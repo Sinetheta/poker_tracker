@@ -1,7 +1,5 @@
 class Game < ActiveRecord::Base
 
-  include ActiveWarnings
-
   has_many :players, dependent: :destroy
   before_destroy :remove_player_associations
 

@@ -4,11 +4,12 @@ class GeneratedGameAttributes
   attr_reader :round_length
   attr_reader :name
 
-  def initialize(game_length, round_length, total_chips, smallest_denomination, first_small_blind)
+  def initialize(game)
     @blinds = []
     @round_length = round_length
     @name = generate_name
-    generate_blinds(game_length, round_length, total_chips, smallest_denomination, first_small_blind)
+    generate_blinds(game.game_length, game.round_length, game.total_chips,
+                    game.smallest_denomination, game.first_small_blind)
   end
 
   def round_values(n, denominations)
