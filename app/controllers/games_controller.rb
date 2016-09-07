@@ -97,7 +97,7 @@ class GamesController < ApplicationController
       if player.players.empty?
         player = nil
       else
-        wins = Game.winner(player)
+        wins = player.players.where(winner: true)
         player = {player: player, wins: wins.length, win_perc: (wins.length/player.players.length.to_f)*100 }
       end
     end

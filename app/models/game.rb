@@ -15,15 +15,6 @@ class Game < ActiveRecord::Base
 
   scope :in_progress, -> { where(complete: false) }
   scope :completed, -> { where(complete: true) }
-  scope :winner, ->(player) { where(winner: player.owner) }
-
-  def player_out_round(player)
-    if self.players_out.keys.include?(player)
-      return self.players_out[player][0]
-    else
-      return nil
-    end
-  end
 
   def players_out
     Player.out_in_game(self)
