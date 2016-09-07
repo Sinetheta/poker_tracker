@@ -64,6 +64,7 @@ class GamesController < ApplicationController
     if player_out
       player = game.players.find(player_out.to_i)
       player.round_out = game.round
+      player.position_out = game.players_out.length
       player.winner = false
       player.save()
     end

@@ -9,8 +9,8 @@ class Game < ActiveRecord::Base
   serialize :blinds, Array
   validates :chips, :game_length, :round_length,
             :first_small_blind, :smallest_denomination, presence: true
-  validates :chips, :round_length,
-            :first_small_blind, :smallest_denomination, numericality: { only_integer: true, greater_than: 0 }
+  validates :chips, :round_length, :first_small_blind,
+            :smallest_denomination, numericality: { only_integer: true, greater_than: 0 }
   validates :game_length, numericality: { greater_than: 0 }
 
   scope :in_progress, -> { where(complete: false) }
@@ -25,11 +25,15 @@ class Game < ActiveRecord::Base
   end
 
   def players_out
-    Player.out_in_game(self)
+    self.players.select {|player| player.winner == false}
   end
 
   def winner
     self.players.find_by_winner(true)
+  end
+
+  def runner_up
+    self.players_out.max_by {|player| player.position_out}
   end
 
   def number_of_players
