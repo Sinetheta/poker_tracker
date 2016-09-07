@@ -103,7 +103,7 @@ class GamesController < ApplicationController
 
   def destroy
     game = Game.find(params[:id])
-    game.delete
+    game.destroy
     redirect_to games_path
   end
 

@@ -2,7 +2,8 @@ class Game < ActiveRecord::Base
 
   include ActiveWarnings
 
-  has_many :players
+  has_many :players, dependent: :destroy
+  before_destroy :remove_player_associations
 
   after_validation :generate_name, on: :create
 
@@ -50,6 +51,12 @@ class Game < ActiveRecord::Base
   def enough_players
     unless self.players.length > 1
       errors.add(:not_enough_players, "Please supply at least 2 players")
+    end
+  end
+
+  def remove_player_associations
+    self.players.each do |player|
+      player.owner.players.delete(player.id)
     end
   end
 
