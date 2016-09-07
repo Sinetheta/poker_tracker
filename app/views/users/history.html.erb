@@ -18,7 +18,7 @@
         <tr>
           <td></td>
           <td><%= @stats[:win_perc].round(0) %>%</td>
-          <td><%= @stats[:round_aver].round(2) %></td>
+          <td><%= @stats[:round_out_aver].round(2) %></td>
           <td><%= @stats[:chips_perc].round(2) %>%</td>
         </tr>
       </table>
@@ -42,7 +42,7 @@
                 <td></td>
               <% else %>
                 <td><%= "Went out on round #{stats[:round_out]}" %></td>
-                <td><%= "#{((stats[:game].blinds[stats[:round_out]]/stats[:game].total_chips.to_f)*100).round(2)}%" %></td>
+                <td><%= "#{stats[:chips_perc].round(2)}%" %></td>
               <% end %>
             </tr>
           <% end %>
