@@ -6,7 +6,6 @@ $(".games.show").ready ->
       document.getElementById('clickAudio').play()
       $("#startTimer").hide()
     $(".outButton").on "click", (event) ->
-      playertype = $(this).data("playertype")
       playerid = $(this).data("playerid")
       roundid = $("#roundDisplay").data("roundid")
       $.ajax({
@@ -25,7 +24,7 @@ updateTimer = (currentTime, game) ->
     if currentTime == 0
       timer.innerHTML = "0:00"
       document.getElementById('marimbaAudio').play()
-      updateRound(game)
+      incRound(game)
     else
       minutes = Math.floor(currentTime/60)
       seconds = currentTime % 60
@@ -38,13 +37,13 @@ updateTimer = (currentTime, game) ->
   else
     console.log("no timer")
 
-updateRound = (game) ->
-  $("#roundDisplay").data("roundid", game.round+1)
+incRound = (game) ->
   $.ajax({
     type: "PATCH",
     url: "/games/#{game.id}.json",
     data: { game: { round: game.round+1 } },
     success: (game) ->
+      $("#roundDisplay").data("roundid", game.round)
       document.getElementById('roundDisplay').innerHTML = "Round #{game.round+1}"
       updateBlinds(game)
       updateTimer(game.round_length*60, game)

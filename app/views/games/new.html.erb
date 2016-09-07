@@ -82,7 +82,7 @@
         <div id="userButtons">
           <% @users.each do |user| %>
             <div class="col-xs-3">
-              <button type="button" class="btn btn-primary userButton" id=<%= user.id %>><%= "Add #{user.name}" %></button>
+              <button type="button" class="btn btn-primary userButton" data-userid=<%= user.id %>><%= "Add #{user.name}" %></button>
             </div>
           <% end %>
           <div class="col-xs-3">

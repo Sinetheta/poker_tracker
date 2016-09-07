@@ -1,6 +1,6 @@
 # New
-$(document).on "turbolinks:load", ->
-  $(".games.new").ready ->
+$(".games.new").ready ->
+  $(document).on "turbolinks:load", ->
     $("#userButtons").hide()
     $("#guestForm").hide()
     $("#addUser").on "click", (event) ->
@@ -9,9 +9,9 @@ $(document).on "turbolinks:load", ->
       $("#addUser").hide()
       $("#addGuest").css('visibility','hidden')
     $(".userButton").on "click", (event) ->
-      addPlayer(this.id)
-      updatePlayers(this.innerHTML.substring(4), user = this.id)
-      $("##{this.id}").hide()
+      addPlayer($(this).data("userid"))
+      updatePlayers(this.innerHTML.substring(4), user = $(this).data("userid"))
+      $(this).hide()
       if (button for button in $("#userButtons").children().children() when button.style.display != "none").length == 1
         $("#userButtons").hide()
         $("#addGuest").css('visibility','visible')
