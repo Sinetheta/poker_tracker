@@ -2,31 +2,45 @@
   <div class="page-header span5 offset2">
     <h1>Edit game</h1>
   </div>
-  <%= form_for(@game, html: {class: "form-horizontal center"}) do |f| %>
-    <% if @game.errors.any? %>
-      <ul>
-        <p>The game could not be updated for the following reasons:</p>
-        <% @game.errors.each do |field, error| %>
-          <li><%= field %></li>
-        <% end %>
-      </ul>
-    <% end %>
-    <div class="form-group">
-      <%= f.label :round_length, "Round length (minutes)", class: "col-md-2 control-label" %>
-      <div class="col-md-4">
-        <%= f.number_field :round_length, class: "form-control" %>
+  <%= form_for(@game, html: {class: "form-horizontal"}) do |f| %>
+    <div class="form-horizontal col-md-6">
+
+      <% if @game.errors.any? %>
+        <ul>
+          <p>The game could not be updated for the following reasons:</p>
+          <% @game.errors.each do |field, error| %>
+            <li><%= field %></li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <div class="form-group">
+        <%= f.label :game_length, "Game length", class: "col-md-6 control-label" %>
+        <div class="col-md-6 input-group">
+          <%= f.number_field :game_length, class: "form-control", step: 0.05, id: "gameLength", disabled: "true" %>
+          <div class="input-group-addon">hrs</div>
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <div class="col-md-2">
-        <%= f.label :blinds, "Update Blinds", class: "control-label" %>
+
+      <div class="form-group">
+        <%= f.label :round_length, "Round length", class: "col-md-6 control-label" %>
+        <div class="col-md-6 input-group">
+          <%= f.number_field :round_length, class: "form-control" %>
+          <div class="input-group-addon">min</div>
+        </div>
       </div>
-      <div class="col-md-4">
-        <%= f.check_box :blinds, class: "checkbox" %>
+
+      <div class="form-group">
+        <%= f.label :blinds, "Update Blinds", class: "col-md-6 control-label" %>
+        <div class="col-md-6">
+          <%= f.check_box :blinds, class: "checkbox", id: "blinds" %>
+        </div>
       </div>
-    </div>
-    <div class="col-md-10 col-md-offset-2">
-      <%= f.submit "Update game", class: "btn btn-primary" %>
+
+      <div class="col-md-offset-2 button-row">
+        <%= f.submit "Update game", class: "btn btn-primary" %>
+      </div>
+
     </div>
   <% end %>
 </div>

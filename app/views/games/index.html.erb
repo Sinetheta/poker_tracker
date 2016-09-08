@@ -25,7 +25,6 @@
             <% if user_signed_in? %>
               <td>
                 <%= link_to "Delete Game", game_path(game), class: "btn btn-danger", method: :delete %>
-                <%= link_to "Edit Round Length", edit_game_path(game), class: "btn btn-primary" %>
               </td>
             <% end %>
           </tr>
