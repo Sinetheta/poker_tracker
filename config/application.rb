@@ -22,21 +22,32 @@ module PokerTracker
     # config.i18n.default_locale = :de
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
-		config.active_record.raise_in_transactional_callbacks = true
+    config.active_record.raise_in_transactional_callbacks = true
 
-		# Eager load all value objects, as they may be instantiated from
-		# YAML before the symbol is referenced
-		config.before_initialize do |app|
-			app.config.paths.add 'app/models', :eager_load => true
-		end
+    # Eager load all value objects, as they may be instantiated from
+    # YAML before the symbol is referenced
+    config.before_initialize do |app|
+      app.config.paths.add 'app/models', :eager_load => true
+    end
 
-		# Reload cached/serialized classes before every request (in development
-		# mode) or on startup (in production mode)
-		config.to_prepare do
-			Dir[ File.expand_path(Rails.root.join("app/models/*.rb")) ].each do |file|
-				require_dependency file
-			end
-		end
+    # Reload cached/serialized classes before every request (in development
+    # mode) or on startup (in production mode)
+    config.to_prepare do
+      Dir[ File.expand_path(Rails.root.join("app/models/*.rb")) ].each do |file|
+        require_dependency file
+      end
+    end
 
-	end
+    config.generators do |g|
+      g.test_framework :rspec,
+        :fixtures => true,
+        :view_specs => false,
+        :helper_specs => false,
+        :routing_specs => false,
+        :controller_specs => true,
+        :request_specs => true
+      g.fixture_replacement :factory_girl, :dir => "spec/factories"
+    end
+
+  end
 end
