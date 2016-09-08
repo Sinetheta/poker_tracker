@@ -104,7 +104,7 @@ class GamesController < ApplicationController
   end
 
   def archive
-    @games = Game.completed
+    @games = Game.completed.includes(:players => [:user, :guest])
   end
 
   def leaderboard
