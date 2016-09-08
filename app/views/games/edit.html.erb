@@ -17,6 +17,14 @@
         <%= f.number_field :round_length, class: "form-control" %>
       </div>
     </div>
+    <div class="form-group">
+      <div class="col-md-2">
+        <%= f.label :blinds, "Update Blinds", class: "control-label" %>
+      </div>
+      <div class="col-md-4">
+        <%= f.check_box :blinds, class: "checkbox" %>
+      </div>
+    </div>
     <div class="col-md-10 col-md-offset-2">
       <%= f.submit "Update game", class: "btn btn-primary" %>
     </div>
