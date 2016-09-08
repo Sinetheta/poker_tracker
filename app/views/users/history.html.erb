@@ -4,7 +4,7 @@
       <h1><%= "#{@user.name}'s History" %></h1>
     </div>
 
-    <% if @game_stats.empty? %>
+    <% if @players.empty? %>
       <p>No history to display.</p>
     <% else %>
 
@@ -17,9 +17,9 @@
         </tr>
         <tr>
           <td></td>
-          <td><%= @stats[:win_perc].round(0) %>%</td>
-          <td><%= @stats[:round_out_aver].round(2) %></td>
-          <td><%= @stats[:chips_perc].round(2) %>%</td>
+          <td><%= @stats.win_perc.round(0) %>%</td>
+          <td><%= @stats.round_out_average.round(2) %></td>
+          <td><%= @stats.chips_out_perc.round(2) %>%</td>
         </tr>
       </table>
       <table class="table table-hover">
@@ -33,16 +33,17 @@
         </thead>
         <tbody>
 
-          <% @game_stats.each do |stats| %>
+          <% @players.each do |player| %>
             <tr>
-              <td><%= link_to stats[:game].name, game_path(stats[:game]), class: "btn btn-default" %></td>
-              <td><%= stats[:game].winner.owner.name %></td>
-              <% if stats[:winner] == true %>
+              <td><%= link_to player.game.name, game_path(player.game), class: "btn btn-default" %></td>
+              <td><%= player.game.winner.owner.name %></td>
+              <% player_stats = @stats.player_stats(player) %>
+              <% if player_stats[:winner] == true %>
                 <td>Winner</td>
                 <td></td>
               <% else %>
-                <td><%= "Went out on round #{stats[:round_out]}" %></td>
-                <td><%= "#{stats[:chips_perc].round(2)}%" %></td>
+                <td><%= "Went out on round #{player_stats[:round_out]+1}" %></td>
+                <td><%= "#{player_stats[:chips_perc].round(2)}%" %></td>
               <% end %>
             </tr>
           <% end %>
