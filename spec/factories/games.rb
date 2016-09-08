@@ -1,13 +1,29 @@
 require 'faker'
+require 'generated_game_attributes.rb'
 
+# Lets generate blinds in here
 FactoryGirl.define do
   factory :game do |f|
-    f.chips 2000
-    f.game_length 2.5
-    f.round_length 15
-    f.first_small_blind 1
-    f.smallest_denomination 1
+    denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
+    smallest_denomination = denominations.sample
+    f.chips { Faker::Number.between(1, 100000) }
+    f.game_length { Faker::Number.decimal(1, 1) }
+    f.round_length { Faker::Number.between(1, 60) }
+    f.smallest_denomination smallest_denomination
+    f.first_small_blind { denominations.select {|denom| denom >= smallest_denomination}.sample }
+    f.players {
+      players = []
+      Faker::Number.between(2, 20).times { players << create(:player) }
+      players
+    }
     f.blinds [1]
-    f.players {[Player.create(user: create(:user)), Player.create(guest: create(:guest))]}
+    f.after(:create) { |game|
+      attributes = GeneratedGameAttributes.new(game)
+      game.blinds = attributes.blinds
+      game.name = attributes.name
+      if game.round_length != attributes.round_length
+        game.round_length = attributes.round_length
+      end
+    }
   end
 end
