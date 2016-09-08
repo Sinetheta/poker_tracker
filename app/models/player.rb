@@ -3,6 +3,8 @@ class Player < ActiveRecord::Base
   belongs_to :user
   belongs_to :guest
 
+  validate :guest_or_user
+
   scope :wins, -> { where(winner:true) }
 
   def owner
@@ -12,4 +14,13 @@ class Player < ActiveRecord::Base
       self.guest
     end
   end
+
+  private
+
+  def guest_or_user
+    unless guest.nil? ^ user.nil?
+      errors.add(:guest_or_user, "Must belong to either a guest or a user")
+    end
+  end
+
 end
