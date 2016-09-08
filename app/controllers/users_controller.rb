@@ -2,7 +2,7 @@ class UsersController < ApplicationController
 
   def history
     @user = User.find(params[:id])
-    @players = @user.players.includes(:game => [:players])
+    @players = @user.players.includes(game: {players: [:user, :guest]})
 
     @stats = UserStats.new(@players)
   end

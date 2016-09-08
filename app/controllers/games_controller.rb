@@ -108,12 +108,12 @@ class GamesController < ApplicationController
   end
 
   def leaderboard
-    all_owners = (User.all + Guest.all).map do |owner|
+    all_owners = (User.all.includes(:players) + Guest.all.includes(:players)).map do |owner|
       # If user has never played a game
       if owner.players.empty?
         owner = nil
       else
-        wins = owner.players.where(winner: true).length
+        wins = owner.players.select {|player| player.winner == true}.length
         owner = {player: owner, wins: wins, win_perc: (wins/owner.players.length.to_f)*100 }
       end
     end
