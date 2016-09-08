@@ -4,6 +4,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     players = @user.players
 
+
     @game_stats = []
     won = []
     went_out = []
@@ -11,7 +12,8 @@ class UsersController < ApplicationController
       if player.game.complete == true
         game_stats = {game: player.game, round_out: player.round_out, winner: player.winner}
         if game_stats[:round_out]
-          game_stats[:chips_perc] = (player.game.blinds[player.round_out]/player.game.total_chips.to_f)*100
+          game_stats[:round_out] += 1
+          game_stats[:chips_perc] = (player.game.blinds[player.round_out+1]/player.game.total_chips.to_f)*100
         end
         @game_stats << game_stats
       end
