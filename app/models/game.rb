@@ -16,9 +16,9 @@ class Game < ActiveRecord::Base
 
   def find_player_by_owner(owner)
     if owner.class == User
-      self.players.find_by(user_id: owner.id)
+      self.players.find {|player| player.user_id == owner.id}
     elsif owner.class == Guest
-      self.players.find_by(guest_id: owner.id)
+      self.players.find {|player| player.guest_id == owner.id}
     end
   end
 
@@ -27,7 +27,7 @@ class Game < ActiveRecord::Base
   end
 
   def winner
-    self.players.find_by_winner(true)
+    self.players.find {|player| player.winner == true}
   end
 
   def runner_up
