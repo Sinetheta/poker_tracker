@@ -17,7 +17,8 @@
       <div class="form-group">
         <%= f.label :game_length, "Game length", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
-          <%= f.number_field :game_length, class: "form-control", step: 0.05, id: "gameLength", disabled: "true" %>
+          <%= f.number_field :game_length, class: "form-control", step: 0.05,
+            id: "gameLength", disabled: "true" %>
           <div class="input-group-addon">hrs</div>
         </div>
       </div>
@@ -39,6 +40,7 @@
 
       <div class="col-md-offset-2 button-row">
         <%= f.submit "Update game", class: "btn btn-primary" %>
+        <%= link_to "Back to game", game_path(@game), class: "btn btn-primary" %>
       </div>
 
     </div>
