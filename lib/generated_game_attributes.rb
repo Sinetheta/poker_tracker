@@ -48,32 +48,24 @@ class GeneratedGameAttributes
 
     blinds = []
     round = 0
-    duplicate_errors = 0
+    duplicate_errors = false
 
-    while blinds.length < number_of_rounds && duplicate_errors < 10
+    while blinds.last == nil || blinds.last < total_chips/3
       time = round_length*round
       small_blind = round_values(first_small_blind*(Math::E**(k*time)), denominations)
       if small_blind == blinds[-1]
-        duplicate_errors += 1
+        duplicate_errors ||= true
       else
         blinds << small_blind
       end
       round += 1
     end
-    # Filter blinds larger than the pot
-    blinds.select! {|blind| blind < total_chips/3}
-    # If duplicate errors occured, adjust round_length to compensate
-    if duplicate_errors > 0
-      last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
-      puts last_blind
-      if !last_blind || last_blind == 0
-        blinds = nil
-      else
-        adjusted_round_length = round_values(((game_length*60)/last_blind).to_i, [1,2,5,10])
-        if adjusted_round_length != round_length
-          round_length = adjusted_round_length
-        end
-      end
+    last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
+    if last_blind == 0
+      round_length = (game_length*60).to_i
+    elsif (game_length*60).to_i > (last_blind*round_length)
+      stretch = (game_length*60).to_i - (last_blind*round_length)
+      round_length += blinds.length.divmod(stretch)[0]
     end
     @blinds = blinds
     @round_length = round_length
