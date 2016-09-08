@@ -48,14 +48,11 @@ class GeneratedGameAttributes
 
     blinds = []
     round = 0
-    duplicate_errors = false
 
     while blinds.last == nil || blinds.last < total_chips/3
       time = round_length*round
       small_blind = round_values(first_small_blind*(Math::E**(k*time)), denominations)
-      if small_blind == blinds[-1]
-        duplicate_errors ||= true
-      else
+      if small_blind != blinds[-1]
         blinds << small_blind
       end
       round += 1
