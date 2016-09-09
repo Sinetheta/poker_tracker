@@ -27,4 +27,8 @@ describe Game do
     expect(build(:game, :smallest_denomination => 25, :first_small_blind => 10)).not_to be_valid
   end
 
+  it "cannot have a chips count less than twice the first small blind" do
+    expect(build(:game, :smallest_denomination => 1, :first_small_blind => 500, :chips => 999)).not_to be_valid
+  end
+
 end

@@ -13,6 +13,7 @@ class Game < ActiveRecord::Base
   validates :game_length, numericality: { greater_than: 0 }
   validate :first_blind_not_less_than_smallest_denomination
   validate :round_not_longer_than_game
+  validate :chips_enough_to_start
   validate :enough_players
 
   after_validation :generate_attributes, on: :create
@@ -81,6 +82,12 @@ class Game < ActiveRecord::Base
   def first_blind_not_less_than_smallest_denomination
     unless self.first_small_blind >= self.smallest_denomination
       errors.add(:first_blind_too_small, "Specify a first small blind greater than or equal to your smallest denomination")
+    end
+  end
+
+  def chips_enough_to_start
+    unless self.chips >= self.first_small_blind*2
+      errors.add(:not_enough_chips, "Specify enough chips so that players can afford the first big blind")
     end
   end
 
