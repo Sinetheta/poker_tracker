@@ -1,5 +1,4 @@
 require 'faker'
-require 'generated_game_attributes.rb'
 
 # Lets generate blinds in here
 FactoryGirl.define do
@@ -16,15 +15,6 @@ FactoryGirl.define do
       players = []
       (Random.rand(20)+2).times { players << create(:player) }
       players
-    }
-    f.blinds [1]
-    f.before(:create) { |game|
-      attributes = GeneratedGameAttributes.new(game)
-      game.blinds = attributes.blinds
-      game.name = attributes.name
-      if game.round_length != attributes.round_length
-        game.round_length = attributes.round_length
-      end
     }
   end
 end
