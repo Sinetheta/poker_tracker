@@ -10,4 +10,8 @@ describe Game do
   it "has some players" do
     expect(create(:game).players.length).to be >= 2
   end
+  it "has enough rounds to reach it's length" do
+    game = create(:game)
+    expect(game.round_length * game.blinds.length).to be >= (game.game_length*60)
+  end
 end
