@@ -75,10 +75,7 @@ class GamesController < ApplicationController
     player_out ||= params[:game][:player_out]
     if player_out
       player = game.players.find(player_out.to_i)
-      player.round_out = game.round
-      player.position_out = game.players_out.length
-      player.winner = false
-      player.save()
+      player.go_out()
       # See if a winner can be declared
       if game.players_out.length+1 == game.number_of_players-1
         winner = game.players.find_by(winner: nil)
