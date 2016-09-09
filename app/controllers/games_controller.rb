@@ -66,13 +66,7 @@ class GamesController < ApplicationController
       player = game.players.find(player_out.to_i)
       player.go_out
       # See if a winner can be declared
-      if game.players_out.length+1 == game.number_of_players-1
-        winner = game.players.find_by(winner: nil)
-        winner.winner = true
-        game.complete = true
-        game.save()
-        winner.save()
-      end
+      game.declare_winner
     end
 
     if game.update_attributes(game_params)
