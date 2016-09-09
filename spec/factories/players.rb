@@ -9,4 +9,14 @@ FactoryGirl.define do
     end
     f.game_id { Faker::Number.number(1) }
   end
+
+  factory :user_player, class: Player do |f|
+    f.user { create(:user) }
+    f.game_id { Faker::Number.number(1) }
+  end
+
+  factory :guest_player, class: Player do |f|
+    f.guest { create(:guest) }
+    f.game_id { Faker::Number.number(1) }
+  end
 end

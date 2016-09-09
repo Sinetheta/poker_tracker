@@ -4,6 +4,7 @@ class Player < ActiveRecord::Base
   belongs_to :guest
 
   validate :guest_or_user
+  validates :game_id, presence: true
 
   scope :wins, -> { where(winner:true) }
 
