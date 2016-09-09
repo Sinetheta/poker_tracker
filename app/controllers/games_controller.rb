@@ -1,7 +1,5 @@
 class GamesController < ApplicationController
 
-  require 'generated_game_attributes.rb'
-
   before_action :require_login, :except => [:index, :show, :leaderboard, :archive]
 
   def index
@@ -47,17 +45,6 @@ class GamesController < ApplicationController
     end
     (params["game"]["user_ids"] || []).each do |user|
       game.players << Player.create(user: User.find(user), game_id: game.id)
-    end
-
-    game.blinds = [1]
-    if game.valid?
-      attributes = GeneratedGameAttributes.new(game)
-      game.blinds = attributes.blinds
-      game.name = attributes.name
-      if game.round_length != attributes.round_length
-        flash[:alert] = "Round length automatically adjusted"
-        game.round_length = attributes.round_length
-      end
     end
 
     if game.save

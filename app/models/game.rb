@@ -1,5 +1,7 @@
 class Game < ActiveRecord::Base
 
+  require 'generated_game_attributes.rb'
+
   has_many :players, dependent: :destroy
   before_destroy :remove_player_associations
 
@@ -12,6 +14,8 @@ class Game < ActiveRecord::Base
   validate :first_blind_not_less_than_smallest_denomination
   validate :round_not_longer_than_game
   validate :enough_players
+
+  after_validation :generate_attributes, on: :create
 
   scope :in_progress, -> { where(complete: false) }
   scope :completed, -> { where(complete: true) }
@@ -45,6 +49,13 @@ class Game < ActiveRecord::Base
   end
 
   protected
+
+  def generate_attributes
+    attributes = GeneratedGameAttributes.new(self)
+    self.blinds = attributes.blinds
+    self.name = attributes.name
+    self.round_length = attributes.round_length
+  end
 
   def enough_players
     unless self.players.length > 1
