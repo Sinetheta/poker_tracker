@@ -10,22 +10,21 @@ $(document).on "turbolinks:load", ->
       $("#addGuest").css('visibility','hidden')
     $(".userButton").on "click", (event) ->
       addPlayer($(this).data("userid"))
-      updatePlayers(this.innerHTML.substring(4), user = $(this).data("userid"))
+      updatePlayers($(this).data("username"), user = $(this).data("userid"))
       $(this).hide()
       if (button for button in $("#userButtons").children().children() when button.style.display != "none").length == 1
         $("#userButtons").hide()
         $("#addGuest").css('visibility','visible')
       $(".removeUser").on "click", (event) ->
-        user_id = this.id.substring(10)
-        document.getElementById("userin#{user_id}").outerHTML = ""
-        document.getElementById("usertr#{user_id}").outerHTML = ""
-        $("##{user_id}").show()
+        user_id = $(this).data("userid")
+        $("#userin#{user_id}").remove()
+        $("#usertr#{user_id}").remove()
+        $("button[data-userid=#{user_id}]").show()
         $("#addUser").show()
     $("#userCancelButton").on "click", (event) ->
       $("#userButtons").hide()
       $("#addGuest").css('visibility','visible')
-      if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
-        $("#addUser").show()
+      $("#addUser").show()
     $("#addGuest").on "click", (event) ->
       $("#guestForm").show()
       $("#guestInput").val("")
@@ -40,9 +39,9 @@ $(document).on "turbolinks:load", ->
       if (button for button in $("#userButtons").children().children() when button.style.display != "none").length != 1
         $("#addUser").show()
       $(".removeGuest").on "click", (event) ->
-        guest_name = this.id.substring(11)
-        document.getElementById("guestin#{guest_name}").outerHTML = ""
-        document.getElementById("guesttr#{guest_name}").outerHTML = ""
+        guest_name = $(this).data("guestname")
+        $("#guestin#{guest_name}").remove()
+        $("#guesttr#{guest_name}").remove()
     $("#guestInput").on "keypress", (event) ->
       if event.keyCode == 13
         $("#guestSubmit").click()
@@ -52,10 +51,10 @@ String::strip = -> @replace /^\s+|\s+$/g, ""
 
 updatePlayers = (player, user = null) ->
   if user
-    button = "<button class='btn btn-danger removeUser' id='removeUser#{user}'>Remove</button>"
+    button = "<button class='btn btn-danger removeUser' data-userid='#{user}'>Remove</button>"
     trid = "usertr#{user}"
   else
-    button = "<button class='btn btn-danger removeGuest' id='removeGuest#{player}'>Remove</button>"
+    button = "<button class='btn btn-danger removeGuest' data-guestname='#{player}'>Remove</button>"
     trid = "guesttr#{player}"
   unless player == ""
     tableRow = "<tr id='#{trid}'><td>#{player}</td><td>#{button}</td></tr>"
