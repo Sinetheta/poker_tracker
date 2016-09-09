@@ -1,5 +1,7 @@
 class GamesController < ApplicationController
 
+  require 'generated_game_attributes.rb'
+
   before_action :require_login, :except => [:index, :show, :leaderboard, :archive]
 
   def index
@@ -41,10 +43,10 @@ class GamesController < ApplicationController
 
     # Create the players as part of the game
     (params["game"]["guests"] || []).each do |guest|
-      game.players << Player.create(guest: Guest.find_or_create_by(name: guest), game_id: game.id)
+      game.players << Player.create(guest: Guest.find_or_create_by(name: guest))
     end
     (params["game"]["user_ids"] || []).each do |user|
-      game.players << Player.create(user: User.find(user), game_id: game.id)
+      game.players << Player.create(user: User.find(user))
     end
 
     if game.save
@@ -62,7 +64,7 @@ class GamesController < ApplicationController
     player_out ||= params[:game][:player_out]
     if player_out
       player = game.players.find(player_out.to_i)
-      player.go_out()
+      player.go_out
       # See if a winner can be declared
       if game.players_out.length+1 == game.number_of_players-1
         winner = game.players.find_by(winner: nil)

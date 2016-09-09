@@ -18,13 +18,9 @@ describe Player do
     expect(build(:player, :user => create(:user), :guest => create(:guest))).not_to be_valid
   end
 
-  it "has a game_id" do
-    expect(build(:player, :game_id => nil)).not_to be_valid
-  end
-
-  it "references the game with it's game_id" do
+  it "references the game it's created with" do
     game = create(:game)
-    player = create(:player, :game_id => game.id)
+    player = game.players.sample
     expect(player.game).to eq(game)
   end
 
