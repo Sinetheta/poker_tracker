@@ -9,6 +9,8 @@ class Game < ActiveRecord::Base
   validates :chips, :round_length, :first_small_blind,
             :smallest_denomination, numericality: { only_integer: true, greater_than: 0 }
   validates :game_length, numericality: { greater_than: 0 }
+  validate :first_blind_not_less_than_smallest_denomination
+  validate :round_not_longer_than_game
   validate :enough_players
 
   scope :in_progress, -> { where(complete: false) }
@@ -47,6 +49,18 @@ class Game < ActiveRecord::Base
   def enough_players
     unless self.players.length > 1
       errors.add(:not_enough_players, "Please supply at least 2 players")
+    end
+  end
+
+  def round_not_longer_than_game
+    unless self.round_length <= (self.game_length*60).to_i
+      errors.add(:round_too_long, "Specify a round length less than or equal to your game length")
+    end
+  end
+
+  def first_blind_not_less_than_smallest_denomination
+    unless self.first_small_blind >= self.smallest_denomination
+      errors.add(:first_blind_too_small, "Specify a first small blind greater than or equal to your smallest denomination")
     end
   end
 

@@ -6,18 +6,19 @@ FactoryGirl.define do
   factory :game do |f|
     denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
     smallest_denomination = denominations.sample
-    f.chips { Faker::Number.between(1, 100000) }
-    f.game_length { Faker::Number.decimal(1, 1) }
-    f.round_length { Faker::Number.between(1, 60) }
+    game_length = (Random.rand(480)+1)*0.05
+    f.chips { Random.rand(100000)+1 }
+    f.game_length game_length
+    f.round_length { Random.rand(game_length*60).to_i+1 }
     f.smallest_denomination smallest_denomination
     f.first_small_blind { denominations.select {|denom| denom >= smallest_denomination}.sample }
     f.players {
       players = []
-      Faker::Number.between(2, 20).times { players << create(:player) }
+      (Random.rand(20)+2).times { players << create(:player) }
       players
     }
     f.blinds [1]
-    f.after(:create) { |game|
+    f.before(:create) { |game|
       attributes = GeneratedGameAttributes.new(game)
       game.blinds = attributes.blinds
       game.name = attributes.name
