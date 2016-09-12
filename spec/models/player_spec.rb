@@ -2,8 +2,12 @@ require 'rails_helper'
 
 describe Player do
 
-  it "has a valid factory" do
-    expect(create(:player)).to be_valid
+  it "has a valid user factory" do
+    expect(create(:user_player)).to be_valid
+  end
+
+  it "has a valid guest factory" do
+    expect(create(:guest_player)).to be_valid
   end
 
   it "can be owned by a user" do
