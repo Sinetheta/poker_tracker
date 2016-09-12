@@ -13,18 +13,14 @@ class GeneratedGameAttributes
   end
 
   def round_values(n, denominations)
-    # Round to the closest denomination if within 10%
-    closest_denom = denominations.min_by { |x| (n-x).abs }
-    if (n-closest_denom).abs/closest_denom <= 0.1
-      return n.round_to(closest_denom)
-    end
+    puts "Before rounding: #{n}"
     # Round to a roughly reasonable denomination
-    denominations.sort.each_with_index do |denomination, i|
+    denominations.sort.each do |denomination|
       if n < denomination*10
-        return n.round_to(denomination)
+        return n.floor_to(denomination)
       end
     end
-    return n.round_to(denominations[-1])
+    return n.floor_to(denominations[-1])
   end
 
   # Randomly generate an appropriate name
@@ -45,6 +41,8 @@ class GeneratedGameAttributes
     number_of_rounds = ((game_length*60)/round_length)+10
     # http://www.maa.org/book/export/html/115405
     k = (Math::log(total_chips*0.05)-Math::log(first_small_blind))/(game_length*60)
+    
+    puts "k = #{k}"
 
     if k < 0
       blinds = [first_small_blind]
@@ -55,9 +53,13 @@ class GeneratedGameAttributes
       while blinds.last == nil || blinds.last < total_chips/3
         time = round_length*round
         small_blind = round_values(first_small_blind*(Math::E**(k*time)), denominations)
+        puts "After rounding #{small_blind}"
         small_blind = 1 if small_blind == 0
         if small_blind != blinds[-1]
           blinds << small_blind
+        # Special case for a repeat 1 blind
+        elsif small_blind == 1
+          blinds << 2
         end
         round += 1
       end
