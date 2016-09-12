@@ -31,4 +31,10 @@ describe Game do
     expect(build(:game, :smallest_denomination => 1, :first_small_blind => 500, :chips => 999)).not_to be_valid
   end
 
+  it "cannot have a total chips count less than 20 times the first_small_blind" do
+    game = build(:game, :chips => 1000, :first_small_blind => 501)
+    10.times { game.players << create(:user_player) }
+    expect(game).not_to be_valid
+  end
+
 end

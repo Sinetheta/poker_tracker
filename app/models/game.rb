@@ -15,6 +15,7 @@ class Game < ActiveRecord::Base
   validate :round_not_longer_than_game
   validate :chips_enough_to_start
   validate :enough_players
+  validate :enough_total_chips
 
   after_validation :generate_attributes, on: :create
 
@@ -70,7 +71,13 @@ class Game < ActiveRecord::Base
 
   def enough_players
     unless self.players.length > 1
-      errors.add(:not_enough_players, "Please supply at least 2 players")
+      errors.add(:not_enough_players, "Specify at least 2 players")
+    end
+  end
+
+  def enough_total_chips
+    unless self.chips * self.players.length > 20 * first_small_blind
+      errors.add(:not_enough_chips, "Specify at least 20 times your first small blind in total chips")
     end
   end
 
