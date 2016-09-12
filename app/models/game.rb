@@ -50,8 +50,9 @@ class Game < ActiveRecord::Base
   end
 
   def declare_winner
-    if self.players_out == game.number_of_players-1
-      players.find_by(winner: nil).winner = true
+    if self.players_out.length == self.number_of_players-1
+      winner = self.players.find_by(winner: nil)
+      winner.winner = true
       self.complete = true
       self.save
       winner.save

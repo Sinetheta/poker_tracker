@@ -65,6 +65,8 @@ class GamesController < ApplicationController
     if player_out
       player = game.players.find(player_out.to_i)
       player.go_out
+      # Refresh the game with the player gone out
+      game = Game.find(params[:id])
       # See if a winner can be declared
       game.declare_winner
     end
