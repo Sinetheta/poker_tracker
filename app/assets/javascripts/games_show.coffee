@@ -1,8 +1,13 @@
 # Show
 $(document).on "turbolinks:load", ->
   $(".games.show").ready ->
+    $("#pauseTimer").hide()
+    $("#pauseTimer").on "click", (event) ->
+      pauseTimer(window.timer)
     $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
-      updateTimer(data.round_length*60, data)
+      $("#pauseTimer").show()
+      window.game = data
+      updateTimer(data.round_length*60)
       document.getElementById('clickAudio').play()
       $("#startTimer").hide()
     $(".outButton").on "click", (event) ->
@@ -13,40 +18,53 @@ $(document).on "turbolinks:load", ->
         url: "/games/#{$("#game").data("gameid")}.json",
         data: { game: { player_out: playerid, round: roundid} }
         success: (game) ->
-          event.target.parentElement.innerHTML = "Out on round #{roundid+1}"
+          window.game = game
+          event.target.parentElement.innerHTML = "Out on round #{game.round+1}"
           if game.complete == true
             location.reload()
       })
 
-updateTimer = (currentTime, game) ->
+pauseTimer = ()->
+  if window.timer
+    clearTimeout(window.timer)
+    window.timer = null
+    $("#pauseTimer").html("Resume Timer")
+  else
+    updateTimer($("#timer").data("currentTime"))
+    $("#pauseTimer").html("Pause Timer")
+
+updateTimer = (currentTime) ->
   timer = document.getElementById('timer')
   if timer != null and currentTime >= 0
     if currentTime == 0
       timer.innerHTML = "0:00"
       document.getElementById('marimbaAudio').play()
-      incRound(game)
+      incRound()
     else
+      $("#timer").data("currentTime", currentTime)
       minutes = Math.floor(currentTime/60)
       seconds = currentTime % 60
       if seconds < 10
         seconds = "0" + seconds
-      setTimeout((->
+      window.timer = setTimeout((->
         timer.innerHTML = "#{minutes}:#{seconds}"
         updateTimer(currentTime-1, game)
       ), 1000)
   else
     console.log("no timer")
 
-incRound = (game) ->
+incRound = () ->
+  console.log(window.game)
   $.ajax({
     type: "PATCH",
-    url: "/games/#{game.id}.json",
-    data: { game: { round: game.round+1 } },
+    url: "/games/#{window.game.id}.json",
+    data: { game: { round: window.game.round+1 } },
     success: (game) ->
+      window.game = game
       $("#roundDisplay").data("roundid", game.round)
       document.getElementById('roundDisplay').innerHTML = "Round #{game.round+1}"
       updateBlinds(game)
-      updateTimer(game.round_length*60, game)
+      updateTimer(game.round_length*60)
   })
 
 updateBlinds = (game) ->
