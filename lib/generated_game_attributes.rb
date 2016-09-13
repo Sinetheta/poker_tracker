@@ -1,3 +1,21 @@
+class ExponentialSecant
+
+  # Assumes a y intercept at (0, x0)
+  def initialize(a, y0, x1, y1)
+    @k = (Math::log(y1.abs)-Math::log(y0.abs))/x1
+    @s = (Math::acos(1/((y1-y0)+1))/x1)
+    # s is not being calculated to the accuracy we need, fudging here
+    @s = @s*1.01
+    @y0 = y0
+    @a = a
+  end
+
+  def calculate_at_x(x)
+    ((1-@a)*(@y0*(Math::E**(@k*x))))+(@a*((1/(Math::cos(@s*x))-1+@y0)))
+  end
+
+end
+
 class GeneratedGameAttributes
 
   attr_reader :blinds
@@ -39,33 +57,29 @@ class GeneratedGameAttributes
   end
 
   def generate_blinds(game_length, round_length, total_chips, smallest_denomination, first_small_blind)
-    # A larger a will decrease change the curve to be less steep to start
+    # A larger (a) will decrease change the curve to be less steep to start
     a = 0.7
 
     denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
     denominations.select! {|denom| denom >= smallest_denomination}
-    number_of_rounds = ((game_length*60)/round_length)+10
 
-    m = first_small_blind
-    t = game_length*60
-    n = total_chips*0.05
-
-    k = (Math::log(n)-Math::log(m))/t
-    s = Math::PI/(2.01*t)
-
-    if k < 0
+    # If the first blind is above 5% of total chips, make a single round game
+    if total_chips*0.05 < first_small_blind
       blinds = [first_small_blind]
       round_length = (game_length*60).to_i
     else
+      blinds_function = ExponentialSecant.new(a, first_small_blind, (game_length*60).to_i, (total_chips*0.05).to_i)
       blinds = []
       round = 0
       duplicates = 0
-      while blinds.last == nil || blinds.last < total_chips/3
+      while blinds.empty? || blinds.last < total_chips/3
         time = round_length*round
-        y = ((1-a)*(m*(Math::E**(k*time))))+(a*(1/(Math::cos(s*time))))
-        small_blind = round_values(y, denominations)
+        small_blind = round_values(blinds_function.calculate_at_x(time), denominations)
         small_blind = 1 if small_blind == 0
-        if blinds.last != nil && small_blind < blinds.last
+        # If we get a blind less than the last one, set a max blind
+        # Note: This will only happen with functions that have an asymptote.
+        # A blind less than the last means we've passed over the asymptote
+        if !blinds.empty? && small_blind < blinds.last
           small_blind = total_chips/3
         end
         if small_blind != blinds[-1]
@@ -76,13 +90,17 @@ class GeneratedGameAttributes
         round += 1
       end
 
+      blinds.pop
+      blinds << round_values(total_chips/3, denominations)
+
       # Handle duplicates by insertion
+      # Find the largest gaps, proportionally
       spaces = blinds.each_cons(2).each_with_index.map do |b, i|
         if b[1]-b[0] >= 2
           [b[1]/b[0].to_f, i]
         end
       end
-      spaces.reject! {|space| space.nil? }.sort_by! {|space| space[0]}.reverse!
+      spaces = spaces.reject {|space| space.nil? }.sort_by {|space| space[0]}.reverse
       spaces.map! {|space| space[1]}
       if spaces.length < duplicates
         blinds = nil
@@ -96,16 +114,16 @@ class GeneratedGameAttributes
 
     end
 
+    # Find the index of the blind that should end the game
     last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
-    puts "Blinds: #{blinds}, Last Blind: #{last_blind+1}, #{blinds[last_blind]}"
-    puts "#{ (game_length*60).to_i } < #{((last_blind+1)*round_length)}"
+
+    # If the last blind comes up after the game should end
     if (game_length*60).to_i < ((last_blind+1)*round_length)
       crunch = ((last_blind+1)*round_length) - (game_length*60).to_i
       round_length -= crunch.divmod(last_blind+1)[0]
-      puts "#{crunch} -- #{round_length}"
+
     end
     @blinds = blinds.sort
     @round_length = round_length
-    puts "Round Length: #{@round_length}"
   end
 end
