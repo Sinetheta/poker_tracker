@@ -1,5 +1,10 @@
 # Show
 $(document).on "turbolinks:load", ->
+  $(window).on "turbolinks:before-render", (event) ->
+    if $(".games.show")[0]
+      saveTimer()
+  $(window).on "beforeunload", (event) ->
+    saveTimer()
   $(".games.show").ready ->
     $.ajax({
       type: "GET",
@@ -45,11 +50,6 @@ $(document).on "turbolinks:load", ->
           if game.complete == true
             location.reload()
       })
-    $(window).on "turbolinks:before-render", (event) ->
-      if $(".games.show")[0]
-        saveTimer()
-    $(window).on "beforeunload", (event) ->
-      saveTimer()
 
 saveTimer = () ->
   if $("#timer").data("currentTime")
@@ -58,7 +58,6 @@ saveTimer = () ->
       url: "/games/#{window.game.id}.json"
       data: { game: { saved_timer: $("#timer").data("currentTime") } }
       success: (game) ->
-        console.log("time saved")
     })
 
 pauseTimer = () ->
@@ -87,8 +86,6 @@ updateTimer = (currentTime) ->
         timer.innerHTML = "#{minutes}:#{seconds}"
         updateTimer(currentTime-1, game)
       ), 1000)
-  else
-    console.log("no timer")
 
 incRound = () ->
   $.ajax({
