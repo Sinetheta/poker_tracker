@@ -33,7 +33,7 @@
       </div>
 
       <div class="form-group">
-        <%= f.label :round_length, "Round length", class: "col-md-6 control-label" %>
+        <%= f.label :round_length, "Target round length", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
           <%= f.number_field :round_length, class: "form-control", value: @default_values[:round_length] %>
           <div class="input-group-addon">min</div>
@@ -53,14 +53,6 @@
         <div class="col-md-6 input-group">
           <div class="input-group-addon">$</div>
           <%= f.number_field :smallest_denomination, class: "form-control", value: @default_values[:smallest_denomination] %>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <%= f.label :first_small_blind, "First Small Blind", class: "col-md-6 control-label" %>
-        <div class="col-md-6 input-group">
-          <div class="input-group-addon">$</div>
-          <%= f.number_field :first_small_blind, class: "form-control", value: @default_values[:first_small_blind] %>
         </div>
       </div>
 

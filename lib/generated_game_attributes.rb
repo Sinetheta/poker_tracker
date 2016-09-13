@@ -21,13 +21,16 @@ class GeneratedGameAttributes
   attr_reader :blinds
   attr_reader :round_length
   attr_reader :name
+  attr_reader :first_small_blind
 
   def initialize(game)
+    @denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
+    @denominations.select! {|denom| denom >= game.smallest_denomination}
     @blinds = []
-    @round_length = round_length
+    @round_length = game.round_length
     @name = generate_name
-    generate_blinds(game.game_length, game.round_length, game.total_chips,
-                    game.smallest_denomination, game.first_small_blind)
+    @first_small_blind = generate_small_blind(game.chips)
+    generate_blinds(game.game_length, @round_length, game.total_chips, @first_small_blind)
   end
 
   def round_values(n, denominations)
@@ -44,6 +47,10 @@ class GeneratedGameAttributes
     return n.floor_to(denominations[-1])
   end
 
+  def generate_small_blind(chips)
+    round_values(chips*0.015, @denominations)
+  end
+
   # Randomly generate an appropriate name
   def generate_name
     names = ["High Card", "Ace King", "Pair", "Two Pair", "Three of a Kind",
@@ -56,12 +63,11 @@ class GeneratedGameAttributes
     names.sample
   end
 
-  def generate_blinds(game_length, round_length, total_chips, smallest_denomination, first_small_blind)
+  def generate_blinds(game_length, round_length, total_chips, first_small_blind)
+    # Compensate for duplicates
+    round_length += 5
     # A larger (a) will decrease change the curve to be less steep to start
     a = 0.7
-
-    denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
-    denominations.select! {|denom| denom >= smallest_denomination}
 
     # If the first blind is above 5% of total chips, make a single round game
     if total_chips*0.05 < first_small_blind
@@ -74,7 +80,7 @@ class GeneratedGameAttributes
       duplicates = 0
       while blinds.empty? || blinds.last < total_chips/3
         time = round_length*round
-        small_blind = round_values(blinds_function.calculate_at_x(time), denominations)
+        small_blind = round_values(blinds_function.calculate_at_x(time), @denominations)
         small_blind = 1 if small_blind == 0
         # If we get a blind less than the last one, set a max blind
         # Note: This will only happen with functions that have an asymptote.
@@ -91,7 +97,7 @@ class GeneratedGameAttributes
       end
 
       blinds.pop
-      blinds << round_values(total_chips/3, denominations)
+      blinds << round_values(total_chips/3, @denominations)
 
       # Handle duplicates by insertion
       # Find the largest gaps, proportionally
@@ -107,23 +113,12 @@ class GeneratedGameAttributes
       else
         spaces = spaces.take(duplicates)
         spaces.map do |space|
-          blinds << round_values(((blinds[space+1]-blinds[space])/2.0)+blinds[space], denominations)
+          blinds << round_values(((blinds[space+1]-blinds[space])/2.0)+blinds[space], @denominations)
         end
       end
-      blinds.sort!
-
+      blinds
     end
 
-    # Find the index of the blind that should end the game
-    last_blind = blinds.find_index(blinds.min_by { |x| ((total_chips*0.05)-x).abs })
-
-    # If the last blind comes up after the game should end
-    if (game_length*60).to_i < ((last_blind+1)*round_length)
-      crunch = ((last_blind+1)*round_length) - (game_length*60).to_i
-      round_length -= crunch.divmod(last_blind+1)[0]
-
-    end
-    @blinds = blinds.sort
-    @round_length = round_length
+    @blinds = blinds.sort.uniq
   end
 end
