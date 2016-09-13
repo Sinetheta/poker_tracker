@@ -22,9 +22,9 @@
               remote: true, data: {type: "json"},
               class: "btn btn-primary", id: "startTimer" %>
 
-            <%= link_to "Next Round", game_path(@game, :game => {round: @game.round+1}),
-              method: :patch,
-              class: "btn btn-primary" unless @game.round+1 == @game.blinds.length %>
+            <%= link_to "Next Round", game_path(@game),
+              remote: true, data: {type: "json"},
+              class: "btn btn-primary", id: "nextRound" %>
 
           </div>
           <div class="dropdown col-xs-3">

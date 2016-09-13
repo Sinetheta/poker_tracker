@@ -10,6 +10,9 @@ $(document).on "turbolinks:load", ->
       updateTimer(data.round_length*60)
       document.getElementById('clickAudio').play()
       $("#startTimer").hide()
+    $("#nextRound").on "ajax:success", (e, data, status, xhr) ->
+      window.game = data
+      incRound()
     $(".outButton").on "click", (event) ->
       playerid = $(this).data("playerid")
       roundid = $("#roundDisplay").data("roundid")
