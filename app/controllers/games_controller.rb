@@ -117,7 +117,7 @@ class GamesController < ApplicationController
 
   private
   def game_params
-    params.require(:game).permit(:game_length, :round_length, :buy_in, :round, :name,
+    params.require(:game).permit(:game_length, :round_length, :buy_in, :round, :name, :saved_timer,
                                  :chips, :first_small_blind, :smallest_denomination)
   end
 

@@ -3,16 +3,27 @@ $(document).on "turbolinks:load", ->
   $(".games.show").ready ->
     $.ajax({
       type: "GET",
-      url: "/games/#{$("#game").data("gameid")}.json",
+      url: "/games/#{$("#gameTitle").data("gameid")}.json",
       success: (game) ->
         window.game = game
+        if window.game.saved_timer
+          minutes = Math.floor(game.saved_timer/60)
+          seconds = game.saved_timer % 60
+          if seconds < 10
+            seconds = "0" + seconds
+          $("#timer").html("#{minutes}:#{seconds}")
+        else
+          $("#timer").html("#{game.round_length}:00")
     })
     $("#pauseTimer").hide()
     $("#pauseTimer").on "click", (event) ->
       pauseTimer(window.timer)
     $("#startTimer").on "click", (event) ->
       $("#pauseTimer").show()
-      updateTimer(window.game.round_length*60)
+      if window.game.saved_timer
+        updateTimer(window.game.saved_timer)
+      else
+        updateTimer(window.game.round_length*60)
       document.getElementById('clickAudio').play()
       $("#startTimer").hide()
     $("#nextRound").on "click", (event) ->
@@ -26,7 +37,7 @@ $(document).on "turbolinks:load", ->
       roundid = $("#roundDisplay").data("roundid")
       $.ajax({
         type: "PATCH",
-        url: "/games/#{$("#game").data("gameid")}.json",
+        url: "/games/#{window.game.id}.json",
         data: { game: { player_out: playerid, round: roundid} }
         success: (game) ->
           window.game = game
@@ -34,8 +45,23 @@ $(document).on "turbolinks:load", ->
           if game.complete == true
             location.reload()
       })
+    $(window).on "turbolinks:before-render", (event) ->
+      if $(".games.show")[0]
+        saveTimer()
+    $(window).on "beforeunload", (event) ->
+      saveTimer()
 
-pauseTimer = ()->
+saveTimer = () ->
+  if $("#timer").data("currentTime")
+    $.ajax({
+      type: "PATCH"
+      url: "/games/#{window.game.id}.json"
+      data: { game: { saved_timer: $("#timer").data("currentTime") } }
+      success: (game) ->
+        console.log("time saved")
+    })
+
+pauseTimer = () ->
   if window.timer
     clearTimeout(window.timer)
     window.timer = null
