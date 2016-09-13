@@ -64,21 +64,20 @@ class GeneratedGameAttributes
   end
 
   def generate_blinds(game_length, round_length, total_chips, first_small_blind)
-    # Compensate for duplicates
-    round_length += 5
+
     # A larger (a) will decrease change the curve to be less steep to start
     a = 0.7
 
     # If the first blind is above 5% of total chips, make a single round game
-    if total_chips*0.05 < first_small_blind
+    if total_chips/20.0 < first_small_blind
       blinds = [first_small_blind]
       round_length = (game_length*60).to_i
     else
-      blinds_function = ExponentialSecant.new(a, first_small_blind, (game_length*60).to_i, (total_chips*0.05).to_i)
+      blinds_function = ExponentialSecant.new(a, first_small_blind, (game_length*60).to_i, (total_chips/10.0).to_i)
       blinds = []
       round = 0
       duplicates = 0
-      while blinds.empty? || blinds.last < total_chips/3
+      while blinds.empty? || blinds.last < total_chips/10
         time = round_length*round
         small_blind = round_values(blinds_function.calculate_at_x(time), @denominations)
         small_blind = 1 if small_blind == 0
@@ -97,7 +96,7 @@ class GeneratedGameAttributes
       end
 
       blinds.pop
-      blinds << round_values(total_chips/3, @denominations)
+      blinds << round_values(total_chips/10, @denominations)
 
       # Handle duplicates by insertion
       # Find the largest gaps, proportionally
