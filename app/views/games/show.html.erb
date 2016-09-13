@@ -18,14 +18,8 @@
         <div class="row button-row">
           <div class="col-xs-6">
             <button type="button" class="btn btn-primary" id="pauseTimer">Pause Timer</button>
-            <%= link_to "Start Timer", game_path(@game),
-              remote: true, data: {type: "json"},
-              class: "btn btn-primary", id: "startTimer" %>
-
-            <%= link_to "Next Round", game_path(@game),
-              remote: true, data: {type: "json"},
-              class: "btn btn-primary", id: "nextRound" %>
-
+            <button type="button" class="btn btn-primary" id="startTimer">Start Timer</button>
+            <button type="button" class="btn btn-primary" id="nextRound">Next Round</button>
           </div>
           <div class="dropdown col-xs-3">
             <button class="btn btn-primary" type="button" id="roundSelect" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

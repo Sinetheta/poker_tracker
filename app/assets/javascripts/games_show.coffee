@@ -1,17 +1,25 @@
 # Show
 $(document).on "turbolinks:load", ->
   $(".games.show").ready ->
+    $.ajax({
+      type: "GET",
+      url: "/games/#{$("#game").data("gameid")}.json",
+      success: (game) ->
+        window.game = game
+    })
     $("#pauseTimer").hide()
     $("#pauseTimer").on "click", (event) ->
       pauseTimer(window.timer)
-    $("#startTimer").on "ajax:success", (e, data, status, xhr) ->
+    $("#startTimer").on "click", (event) ->
       $("#pauseTimer").show()
-      window.game = data
-      updateTimer(data.round_length*60)
+      updateTimer(window.game.round_length*60)
       document.getElementById('clickAudio').play()
       $("#startTimer").hide()
-    $("#nextRound").on "ajax:success", (e, data, status, xhr) ->
-      window.game = data
+    $("#nextRound").on "click", (event) ->
+      if window.timer
+        clearTimeout(window.timer)
+        window.timer
+        $("#pauseTimer").html("Pause Timer")
       incRound()
     $(".outButton").on "click", (event) ->
       playerid = $(this).data("playerid")
@@ -57,7 +65,6 @@ updateTimer = (currentTime) ->
     console.log("no timer")
 
 incRound = () ->
-  console.log(window.game)
   $.ajax({
     type: "PATCH",
     url: "/games/#{window.game.id}.json",
