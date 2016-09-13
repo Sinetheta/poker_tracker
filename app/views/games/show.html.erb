@@ -7,7 +7,7 @@
     <div class="col-md-6 offset-md-1">
       <div class="row" id="title-row">
         <div class="col-xs-6">
-          <h1 id="game" data-gameid=<%= @game.id %>><%= @game.name %></h1>
+          <h1 id="gameTitle" data-gameid=<%= @game.id %>><%= @game.name %></h1>
         </div>
         <div class="col-xs-6">
           <h1 id="roundDisplay" data-roundid=<%= @game.round %>>Round <%= @game.round+1 %></h1>
@@ -68,8 +68,6 @@
         <h1 id="timer">
           <% if @game.complete %>
             Game Over
-          <% else %>
-            <%= "#{@game.round_length}:00" %>
           <% end %>
         </h1>
       </div>
