@@ -32,12 +32,12 @@ class Blinds
 
   def round_values(n, denominations)
     closest_denom = denominations.min_by { |x| (n-x).abs }
-    if (n-closest_denom).abs/closest_denom <= 0.1
+    if (n-closest_denom).abs/closest_denom.to_f <= 0.1
       return n.round_to(closest_denom)
     end
     # Round to a roughly reasonable denomination
     denominations.sort.each do |denomination|
-      if n < denomination*10
+      if n <= denomination*10
         return n.floor_to(denomination)
       end
     end
@@ -104,5 +104,10 @@ class Blinds
     else
       round_values(((blinds[space[1]+1]-blinds[space[1]])/2.0)+blinds[space[1]], @denominations)
     end
+  end
+
+  # Insert or remove blinds in order to achieve desired game_length.
+  def insert_or_remove_blinds
+   # Not yet implemented
   end
 end
