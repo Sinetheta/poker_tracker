@@ -48,7 +48,7 @@ class Game < ActiveRecord::Base
     self.chips * number_of_players
   end
 
-  def declare_winner
+  def attempt_declare_winner
     if self.players_out.length == self.number_of_players-1
       winner = self.players.find_by(winner: nil)
       winner.winner = true
@@ -61,9 +61,24 @@ class Game < ActiveRecord::Base
   protected
 
   def generate_blinds
-    blinds = Blinds.new(self)
-    self.first_small_blind = blinds.first_small_blind
-    self.blinds = blinds.blinds
+    blinds_generator = Blinds.new(self)
+    self.first_small_blind = blinds_generator.first_small_blind
+    self.blinds = blinds_generator.blinds
+    game_end_blind = self.blinds.each_with_index.min_by {|blind, i| (self.total_chips*0.05 - blind).abs}
+    game_end = game_end_blind[1]*self.round_length
+    game_off_by = game_end-(self.game_length*60)
+    if game_off_by.abs > self.round_length
+      if game_off_by < 0
+        game_off_by.divmod(self.round_length)[0].abs.times do
+          self.blinds << blinds_generator.blind_to_insert(self.blinds, (self.chips*self.players.length))
+          blinds.reject! {|blind| blind.nil?}
+          blinds.sort!
+          blinds.uniq!
+        end
+      else
+        puts "Long by #{game_off_by.divmod(self.round_length)[0]} rounds"
+      end
+    end
   end
 
   def generate_name

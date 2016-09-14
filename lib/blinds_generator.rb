@@ -55,56 +55,54 @@ class Blinds
     # A larger (a) will decrease change the curve to be less steep to start
     a = 0.7
 
-    # If the first blind is above 5% of total chips, make a single round game
-    if total_chips/20.0 < first_small_blind
-      blinds = [first_small_blind]
-      round_length = (game_length*60).to_i
-    else
-      blinds_function = ExponentialSecant.new(a, first_small_blind, (game_length*60).to_i, (total_chips/10.0).to_i)
-      blinds = []
-      round = 0
-      duplicates = 0
-      while blinds.empty? || blinds.last < total_chips/10
-        time = round_length*round
-        small_blind = round_values(blinds_function.calculate_at_x(time), @denominations)
-        small_blind = 1 if small_blind == 0
-        # If we get a blind less than the last one, set a max blind
-        # Note: This will only happen with functions that have an asymptote.
-        # A blind less than the last means we've passed over the asymptote
-        if !blinds.empty? && small_blind < blinds.last
-          small_blind = total_chips/3
-        end
-        if small_blind != blinds[-1]
-          blinds << small_blind
-        else
-          duplicates += 1
-        end
-        round += 1
+    blinds_function = ExponentialSecant.new(a, first_small_blind, (game_length*60).to_i, (total_chips/10.0).to_i)
+    blinds = []
+    round = 0
+    duplicates = 0
+    while blinds.empty? || blinds.last < total_chips/10
+      time = round_length*round
+      small_blind = round_values(blinds_function.calculate_at_x(time), @denominations)
+      small_blind = 1 if small_blind == 0
+      # If we get a blind less than the last one, set a max blind
+      # Note: This will only happen with functions that have an asymptote.
+      # A blind less than the last means we've passed over the asymptote
+      if !blinds.empty? && small_blind < blinds.last
+        small_blind = total_chips/10
       end
-
-      blinds.pop
-      blinds << round_values(total_chips/10, @denominations)
-
-      # Handle duplicates by insertion
-      # Find the largest gaps, proportionally
-      spaces = blinds.each_cons(2).each_with_index.map do |b, i|
-        if b[1]-b[0] >= 2
-          [b[1]/b[0].to_f, i]
-        end
-      end
-      spaces = spaces.reject {|space| space.nil? }.sort_by {|space| space[0]}.reverse
-      spaces.map! {|space| space[1]}
-      if spaces.length < duplicates
-        blinds = nil
+      if small_blind != blinds[-1]
+        blinds << small_blind
       else
-        spaces = spaces.take(duplicates)
-        spaces.map do |space|
-          blinds << round_values(((blinds[space+1]-blinds[space])/2.0)+blinds[space], @denominations)
-        end
+        duplicates += 1
       end
-      blinds
+      round += 1
     end
 
-    @blinds = blinds.sort.uniq unless blinds.nil?
+    blinds.pop
+    blinds << round_values(total_chips/10, @denominations)
+
+    unless blinds.empty?
+      duplicates.times do
+        blinds << blind_to_insert(blinds, total_chips)
+        blinds.reject! { |blind| blind.nil? }
+        blinds.sort!
+      end
+    end
+
+    @blinds = blinds.sort.uniq unless blinds.empty?
+  end
+
+  def blind_to_insert(blinds, total_chips)
+    spaces = blinds.select {|blind| blind <= total_chips*0.05 }.each_cons(2).each_with_index.map do |b, i|
+      if b[1]-b[0] >= 2
+        [b[1]/b[0].to_f, i]
+      end
+    end
+    spaces.reject! {|space| space.nil? }
+    space = spaces.max_by {|space| space[0]}
+    if space.nil?
+      return nil
+    else
+      round_values(((blinds[space[1]+1]-blinds[space[1]])/2.0)+blinds[space[1]], [1,5,10,25,50,100,250,500,1000,2000,5000])
+    end
   end
 end
