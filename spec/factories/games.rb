@@ -5,7 +5,7 @@ FactoryGirl.define do
     f.smallest_denomination { denominations.sample }
     f.game_length { (Random.rand(96)+4)*0.25 }
     f.chips { Random.rand(10000)+1+(2*smallest_denomination) }
-    f.round_length { Random.rand((game_length*60).to_i)+10 }
+    f.round_length { Random.rand((game_length*60).to_i)+1 }
     f.players do
       players = []
       (Random.rand(20)+6).times do
