@@ -46,13 +46,13 @@ class Blinds
 
   def generate_first_small_blind(chips)
     first_small_blind = round_values(chips*0.015, @denominations)
-    first_small_blind = 1 if first_small_blind == 0
+    first_small_blind = @denominations.first if first_small_blind == 0
     first_small_blind
   end
 
   def generate_blinds(game_length, round_length, total_chips, first_small_blind)
 
-    # A larger (a) will decrease change the curve to be less steep to start
+    # A smaller (a) will decrease change the curve to be less steep to start
     a = 0.7
 
     blinds_function = ExponentialSecant.new(a, first_small_blind, (game_length*60).to_i, (total_chips/10.0).to_i)
@@ -61,6 +61,7 @@ class Blinds
     duplicates = 0
     while blinds.empty? || blinds.last < total_chips/10
       time = round_length*round
+      unrounded << blinds_function.calculate_at_x(time)
       small_blind = round_values(blinds_function.calculate_at_x(time), @denominations)
       small_blind = 1 if small_blind == 0
       # If we get a blind less than the last one, set a max blind
@@ -106,7 +107,7 @@ class Blinds
     end
   end
 
-  # Insert or remove blinds in order to achieve desired game_length.
+  # Insert or remove blinds in order to achieve desired game_length
   def insert_or_remove_blinds
    # Not yet implemented
   end
