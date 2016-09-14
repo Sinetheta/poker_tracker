@@ -22,26 +22,10 @@
       </div>
 
       <div class="form-group">
-        <%= f.label :game_length, "Game length", class: "col-md-6 control-label" %>
-        <div class="col-md-6 input-group">
-          <%= f.number_field :game_length, class: "form-control", step: 0.05,
-            id: "gameLength", disabled: "true" %>
-          <div class="input-group-addon">hrs</div>
-        </div>
-      </div>
-
-      <div class="form-group">
         <%= f.label :round_length, "Round length", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
           <%= f.number_field :round_length, class: "form-control" %>
           <div class="input-group-addon">min</div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <%= f.label :blinds, "Update Blinds", class: "col-md-6 control-label" %>
-        <div class="col-md-6">
-          <%= f.check_box :blinds, class: "checkbox", id: "blinds" %>
         </div>
       </div>
 

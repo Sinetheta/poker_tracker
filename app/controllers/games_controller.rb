@@ -65,26 +65,18 @@ class GamesController < ApplicationController
       player.go_out
       # Refresh the game with the player gone out
       game = Game.find(params[:id])
-      # See if a winner can be declared
-      game.declare_winner
+      game.attempt_declare_winner
     end
 
-    if game.update_attributes(game_params)
-      if params[:game][:blinds] == "1"
-        attributes = GeneratedGameAttributes.new(game)
-        game.blinds = attributes.blinds
-        if game.round_length != attributes.round_length
-          flash[:alert] = "Round length automatically adjusted"
-          game.round_length = attributes.round_length
-        end
-        flash[:alert] = game.errors.full_messages unless game.save
-      end
+    if game.save
+      redirect_to game_path(game)
     else
-      flash[:alert] = "Problem updating game"
+      flash[:alert] = game.errors.full_messages
+      redirect_to new_game_path
     end
 
     respond_to do |format|
-      format.html { redirect_to game_path(game) }
+      format.html {  }
       format.json { render json: game }
     end
   end
