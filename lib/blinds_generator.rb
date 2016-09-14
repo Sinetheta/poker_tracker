@@ -1,13 +1,14 @@
 class ExponentialSecant
 
   # Assumes a y intercept at (0, x0)
-  def initialize(a, y0, x1, y1)
+  def initialize(y0, x1, y1)
+    # A smaller (a) will decrease change the curve to be less steep to start
+    @a = 0.7
     @k = (Math::log(y1.abs)-Math::log(y0.abs))/x1
     @s = (Math::acos(1/((y1-y0)+1))/x1)
     # s is not being calculated to the accuracy we need, fudging here
     @s = @s*1.01
     @y0 = y0
-    @a = a
   end
 
   def calculate_at_x(x)
@@ -23,11 +24,13 @@ class Blinds
   attr_reader :first_small_blind
 
   def initialize(game)
+    @blind_at_game_end = (game.total_chips*0.05).to_i
     @denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
     @denominations.select! {|denom| denom >= game.smallest_denomination}
     @first_small_blind = generate_first_small_blind(game.chips)
     @blinds = [@first_small_blind]
-    generate_blinds(game.game_length, game.round_length, game.total_chips, @first_small_blind)
+    @total_chips = game.total_chips
+    generate_blinds(game.game_length, game.round_length)
   end
 
   def round_values(n, denominations)
@@ -45,30 +48,26 @@ class Blinds
   end
 
   def generate_first_small_blind(chips)
-    first_small_blind = round_values(chips*0.015, @denominations)
+    first_small_blind = round_values(chips*0.01, @denominations)
     first_small_blind = @denominations.first if first_small_blind == 0
     first_small_blind
   end
 
-  def generate_blinds(game_length, round_length, total_chips, first_small_blind)
+  def generate_blinds(game_length, round_length)
 
-    # A smaller (a) will decrease change the curve to be less steep to start
-    a = 0.7
-
-    blinds_function = ExponentialSecant.new(a, first_small_blind, (game_length*60).to_i, (total_chips/10.0).to_i)
+    blinds_function = ExponentialSecant.new(@first_small_blind, (game_length*60).to_i, @blind_at_game_end)
     blinds = []
     round = 0
     duplicates = 0
-    while blinds.empty? || blinds.last < total_chips/10
+    while blinds.empty? || blinds.last < @blind_at_game_end
       time = round_length*round
-      unrounded << blinds_function.calculate_at_x(time)
       small_blind = round_values(blinds_function.calculate_at_x(time), @denominations)
       small_blind = 1 if small_blind == 0
       # If we get a blind less than the last one, set a max blind
       # Note: This will only happen with functions that have an asymptote.
       # A blind less than the last means we've passed over the asymptote
       if !blinds.empty? && small_blind < blinds.last
-        small_blind = total_chips/10
+        small_blind = @blind_at_game_end
       end
       if small_blind != blinds[-1]
         blinds << small_blind
@@ -79,11 +78,11 @@ class Blinds
     end
 
     blinds.pop
-    blinds << round_values(total_chips/10, @denominations)
+    blinds << round_values(@blind_at_game_end, @denominations)
 
     unless blinds.empty?
       duplicates.times do
-        blinds << blind_to_insert(blinds, total_chips)
+        blinds << blind_to_insert(blinds)
         blinds.reject! { |blind| blind.nil? }
         blinds.sort!
       end
@@ -92,9 +91,9 @@ class Blinds
     @blinds = blinds.sort.uniq unless blinds.empty?
   end
 
-  def blind_to_insert(blinds, total_chips)
-    spaces = blinds.select {|blind| blind <= total_chips*0.05 }.each_cons(2).each_with_index.map do |b, i|
-      if b[1]-b[0] >= 2
+  def blind_to_insert(blinds)
+    spaces = blinds.select {|blind| blind <= @blind_at_game_end }.each_cons(2).each_with_index.map do |b, i|
+      if b[1]-b[0] >= 2*@first_small_blind
         [b[1]/b[0].to_f, i]
       end
     end
