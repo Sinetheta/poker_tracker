@@ -11,7 +11,9 @@ $(document).on "turbolinks:load", ->
       url: "/games/#{$("#gameTitle").data("gameid")}.json",
       success: (game) ->
         window.game = game
-        if window.game.saved_timer
+        if game.complete
+          $("#timer").html("Game Over")
+        else if window.game.saved_timer
           minutes = Math.floor(game.saved_timer/60)
           seconds = game.saved_timer % 60
           if seconds < 10
