@@ -68,15 +68,19 @@ class GamesController < ApplicationController
       game.attempt_declare_winner
     end
 
-    if game.save
-      redirect_to game_path(game)
-    else
+    # Clear saved_timer if changing round_length
+    if params[:game][:round_length] && game.saved_timer
+      game.saved_timer = nil
+    end
+
+    game.update_attributes(game_params)
+
+    unless game.save
       flash[:alert] = game.errors.full_messages
-      redirect_to new_game_path
     end
 
     respond_to do |format|
-      format.html {  }
+      format.html { redirect_to game_path(game) }
       format.json { render json: game }
     end
   end
