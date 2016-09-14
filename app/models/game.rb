@@ -67,8 +67,10 @@ class Game < ActiveRecord::Base
     game_end_blind = self.blinds.each_with_index.min_by {|blind, i| (self.total_chips*0.05 - blind).abs}
     game_end = game_end_blind[1]*self.round_length
     game_off_by = game_end-(self.game_length*60)
-    if game_off_by.abs > self.round_length
+    puts "Game off by #{game_off_by}"
+    if game_off_by.abs >= self.round_length
       if game_off_by < 0
+        puts "Game short, attempting to extend"
         game_off_by.divmod(self.round_length)[0].abs.times do
           self.blinds << blinds_generator.blind_to_insert(self.blinds, (self.chips*self.players.length))
           blinds.reject! {|blind| blind.nil?}
@@ -76,7 +78,9 @@ class Game < ActiveRecord::Base
           blinds.uniq!
         end
       else
-        puts "Long by #{game_off_by.divmod(self.round_length)[0]} rounds"
+        game_off_by.divmod(self.round_length)[0].times do
+          self.blinds.delete_at(self.blinds.each_cons(3).each_with_index.sort_by {|b, i| b[2]/b[0].to_f}.first()[1]+1)
+        end
       end
     end
   end

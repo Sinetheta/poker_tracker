@@ -102,7 +102,7 @@ class Blinds
     if space.nil?
       return nil
     else
-      round_values(((blinds[space[1]+1]-blinds[space[1]])/2.0)+blinds[space[1]], [1,5,10,25,50,100,250,500,1000,2000,5000])
+      round_values(((blinds[space[1]+1]-blinds[space[1]])/2.0)+blinds[space[1]], @denominations)
     end
   end
 end
