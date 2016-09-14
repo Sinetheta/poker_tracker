@@ -19,7 +19,7 @@ class UserStats
     @round_out_average = nil
     @chips_out_perc = nil
     @win_perc = nil
-    lifetime_stats()
+    lifetime_stats() unless players.empty?
   end
 
   # Assign lifetime stats
