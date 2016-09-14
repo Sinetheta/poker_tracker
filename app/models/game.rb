@@ -1,6 +1,7 @@
 class Game < ActiveRecord::Base
 
-  require 'generated_game_attributes.rb'
+  require 'blinds_generator.rb'
+  require 'name_generator.rb'
 
   has_many :players, dependent: :destroy
   before_destroy :remove_player_associations
@@ -14,7 +15,7 @@ class Game < ActiveRecord::Base
   validate :round_not_longer_than_game
   validate :enough_players
 
-  after_validation :generate_attributes, on: :create
+  after_validation :generate_blinds, :generate_name, on: :create
 
   scope :in_progress, -> { where(complete: false) }
   scope :completed, -> { where(complete: true) }
@@ -59,11 +60,15 @@ class Game < ActiveRecord::Base
 
   protected
 
-  def generate_attributes
-    attributes = GeneratedGameAttributes.new(self)
-    self.blinds = attributes.blinds
-    self.name = attributes.name
-    self.first_small_blind = attributes.first_small_blind
+  def generate_blinds
+    blinds = Blinds.new(self)
+    self.first_small_blind = blinds.first_small_blind
+    self.blinds = blinds.blinds
+  end
+
+  def generate_name
+    pokername = PokerName.new()
+    self.name = pokername.name
   end
 
   def enough_players

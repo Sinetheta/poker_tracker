@@ -16,21 +16,18 @@ class ExponentialSecant
 
 end
 
-class GeneratedGameAttributes
+class Blinds
 
   attr_reader :blinds
-  attr_reader :round_length
   attr_reader :name
   attr_reader :first_small_blind
 
   def initialize(game)
     @denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
     @denominations.select! {|denom| denom >= game.smallest_denomination}
-    @blinds = []
-    @round_length = game.round_length
-    @name = generate_name
-    @first_small_blind = generate_small_blind(game.chips)
-    generate_blinds(game.game_length, @round_length, game.total_chips, @first_small_blind)
+    @first_small_blind = generate_first_small_blind(game.chips)
+    @blinds = [@first_small_blind]
+    generate_blinds(game.game_length, game.round_length, game.total_chips, @first_small_blind)
   end
 
   def round_values(n, denominations)
@@ -47,20 +44,10 @@ class GeneratedGameAttributes
     return n.floor_to(denominations[-1])
   end
 
-  def generate_small_blind(chips)
-    round_values(chips*0.015, @denominations)
-  end
-
-  # Randomly generate an appropriate name
-  def generate_name
-    names = ["High Card", "Ace King", "Pair", "Two Pair", "Three of a Kind",
-             "Straight", "Flush", "Full House", "Four of a Kind", "Straight Flush",
-             "Royal Flush", "Action Card", "All In", "Ante", "Big Bet",
-             "Bluff", "Check", "Community Card", "Deal", "Dealer's Choice",
-             "Flop", "Fold", "Free Card", "Heads Up", "High-low Split",
-             "In the Money", "The Nuts", "Over the Top", "Play the Board", "Poker Face",
-             "River", "Semi-bluff", "Splash the Pot", "Trips", "Turn", "Under the Gun"]
-    names.sample
+  def generate_first_small_blind(chips)
+    first_small_blind = round_values(chips*0.015, @denominations)
+    first_small_blind = 1 if first_small_blind == 0
+    first_small_blind
   end
 
   def generate_blinds(game_length, round_length, total_chips, first_small_blind)
@@ -118,6 +105,6 @@ class GeneratedGameAttributes
       blinds
     end
 
-    @blinds = blinds.sort.uniq
+    @blinds = blinds.sort.uniq unless blinds.nil?
   end
 end

@@ -1,7 +1,5 @@
 class GamesController < ApplicationController
 
-  require 'generated_game_attributes.rb'
-
   before_action :require_login, :except => [:index, :show, :leaderboard, :archive]
 
   def index
