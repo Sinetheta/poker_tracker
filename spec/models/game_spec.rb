@@ -23,18 +23,4 @@ describe Game do
     expect(build(:game, :game_length => 1, :round_length => 61)).not_to be_valid
   end
 
-  it "cannot have a first_small_blind less than smallest_denomination" do
-    expect(build(:game, :smallest_denomination => 25, :first_small_blind => 10)).not_to be_valid
-  end
-
-  it "cannot have a chips count less than twice the first small blind" do
-    expect(build(:game, :smallest_denomination => 1, :first_small_blind => 500, :chips => 999)).not_to be_valid
-  end
-
-  it "cannot have a total chips count less than 20 times the first_small_blind" do
-    game = build(:game, :chips => 1000, :first_small_blind => 501)
-    10.times { game.players << create(:user_player) }
-    expect(game).not_to be_valid
-  end
-
 end
