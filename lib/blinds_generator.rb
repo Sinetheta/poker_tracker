@@ -24,49 +24,42 @@ class Blinds
   attr_reader :first_small_blind
 
   def initialize(game)
-    @blind_at_game_end = (game.total_chips*0.05).to_i
     @denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
     @denominations.select! {|denom| denom >= game.smallest_denomination}
+    @possible_blinds = [1,2,3,4,5,6,7,8,10,15,20,25,30,35,40,50,60,70,80,100,
+                        125,150,175,200,250,300,350,400,500,600,700,800,1000,
+                        1250,1500,1750,2000,2250,2500,3000,3500,4000,5000,
+                        6000,7000,8000,9000,10000,12000,14000,16000,18000,
+                        20000,25000,30000,35000,40000,45000,50000]
+    @possible_blinds.select! {|blind| blind >= game.smallest_denomination}
+    @blind_at_game_end = poker_value((game.total_chips*0.05))
     @first_small_blind = generate_first_small_blind(game.chips)
     @blinds = [@first_small_blind]
     @total_chips = game.total_chips
     generate_blinds(game.game_length, game.round_length)
   end
 
-  def round_values(n, denominations)
-    closest_denom = denominations.min_by { |x| (n-x).abs }
-    if (n-closest_denom).abs/closest_denom.to_f <= 0.1
-      return n.round_to(closest_denom)
-    end
-    # Round to a roughly reasonable denomination
-    denominations.sort.each do |denomination|
-      if n <= denomination*10
-        return n.floor_to(denomination)
-      end
-    end
-    return n.floor_to(denominations[-1])
+  def poker_value(n)
+    @possible_blinds.min_by { |x| (n-x).abs }
   end
 
   def generate_first_small_blind(chips)
-    first_small_blind = round_values(chips*0.01, @denominations)
-    first_small_blind = @denominations.first if first_small_blind == 0
-    first_small_blind
+    poker_value(chips*0.01)
   end
 
   def generate_blinds(game_length, round_length)
 
     blinds_function = ExponentialSecant.new(@first_small_blind, (game_length*60).to_i, @blind_at_game_end)
-    blinds = []
+    blinds = @blinds
     round = 0
     duplicates = 0
-    while blinds.empty? || blinds.last < @blind_at_game_end
+    while blinds.empty? || blinds.last < (@blind_at_game_end*2)
       time = round_length*round
-      small_blind = round_values(blinds_function.calculate_at_x(time), @denominations)
-      small_blind = 1 if small_blind == 0
+      small_blind = poker_value(blinds_function.calculate_at_x(time))
       # If we get a blind less than the last one, set a max blind
       # Note: This will only happen with functions that have an asymptote.
       # A blind less than the last means we've passed over the asymptote
-      if !blinds.empty? && small_blind < blinds.last
+      if small_blind < blinds.last
         small_blind = @blind_at_game_end
       end
       if small_blind != blinds[-1]
@@ -78,17 +71,15 @@ class Blinds
     end
 
     blinds.pop
-    blinds << round_values(@blind_at_game_end, @denominations)
+    blinds << @blind_at_game_end*2
 
-    unless blinds.empty?
-      duplicates.times do
-        blinds << blind_to_insert(blinds)
-        blinds.reject! { |blind| blind.nil? }
-        blinds.sort!
-      end
+    duplicates.times do
+      blinds << blind_to_insert(blinds)
+      blinds.reject! { |blind| blind.nil? }
+      blinds.sort!
     end
 
-    @blinds = blinds.sort.uniq unless blinds.empty?
+    @blinds = blinds.sort.uniq
   end
 
   def blind_to_insert(blinds)
@@ -102,7 +93,7 @@ class Blinds
     if space.nil?
       return nil
     else
-      round_values(((blinds[space[1]+1]-blinds[space[1]])/2.0)+blinds[space[1]], @denominations)
+      poker_value(((blinds[space[1]+1]-blinds[space[1]])/2.0)+blinds[space[1]])
     end
   end
 
