@@ -21,6 +21,7 @@ class BlindsGenerator
 
   attr_reader :blinds
   attr_reader :first_small_blind
+  attr_reader :round_length
 
   def initialize(game)
     @denominations = [1,5,10,25,50,100,250,500,1000,2000,5000]
@@ -31,11 +32,12 @@ class BlindsGenerator
                         6000,7000,8000,9000,10000,11000,12000,14000,16000,18000,
                         20000,25000,30000,35000,40000,45000,50000]
     @possible_blinds.select! {|blind| blind >= game.smallest_denomination}
+    @possible_round_lengths = [5, 10, 15, 20, 30, 45, 60, 90, 120]
+    @round_length = @possible_round_lengths.min_by {|length| (length-game.round_length).abs}
     @blind_at_game_end = poker_value((game.total_chips*0.05))
     @first_small_blind = generate_first_small_blind(game.chips)
     @blinds = [@first_small_blind]
     @total_chips = game.total_chips
-    @round_length = game.round_length
     @game_length = (game.game_length*60).to_i
     generate_blinds()
   end
@@ -54,6 +56,7 @@ class BlindsGenerator
     blinds = @blinds
     round = 0
     duplicates = 0
+
     while blinds.last < (@blind_at_game_end*2)
       time = @round_length*round
       small_blind = poker_value(blinds_function.calculate_at_x(time))
@@ -83,6 +86,7 @@ class BlindsGenerator
 
     @blinds = blinds.sort.uniq
     insert_or_remove_blinds()
+    adjust_round_length()
   end
 
   def blind_to_insert
@@ -102,7 +106,7 @@ class BlindsGenerator
 
   # Insert or remove blinds in order to achieve desired game_length
   def insert_or_remove_blinds
-    measured_game_length = @blinds.index(@blind_at_game_end)*@round_length
+    measured_game_length = (@blinds.select {|blind| blind <=@blind_at_game_end}.length-1)*@round_length
     time_off_by = measured_game_length-@game_length
     if time_off_by.abs >= @round_length
       if time_off_by < 0
@@ -119,4 +123,25 @@ class BlindsGenerator
       end
     end
   end
+
+  # Adjust round_length if game_length still not reached
+  def adjust_round_length
+    blinds_before_game_end = @blinds.select {|blind| blind <=@blind_at_game_end}.length-1
+    measured_game_length = blinds_before_game_end*@round_length
+    time_off_by = measured_game_length-@game_length
+    if time_off_by < 0
+      while time_off_by.abs > @round_length && @round_length != @possible_round_lengths.last && time_off_by < 0
+        @round_length = @possible_round_lengths[@possible_round_lengths.index(@round_length)+1]
+        measured_game_length = blinds_before_game_end*@round_length
+        time_off_by = measured_game_length-@game_length
+      end
+    else
+      while time_off_by.abs > @round_length && @round_length != @possible_round_lengths.first && time_off_by > 0
+        @round_length = @possible_round_lengths[@possible_round_lengths.index(@round_length)-1]
+        measured_game_length = blinds_before_game_end*@round_length
+        time_off_by = measured_game_length-@game_length
+      end
+    end
+  end
+
 end

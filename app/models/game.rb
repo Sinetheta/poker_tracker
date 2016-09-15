@@ -64,6 +64,7 @@ class Game < ActiveRecord::Base
     blinds_generator = BlindsGenerator.new(self)
     self.first_small_blind = blinds_generator.first_small_blind
     self.blinds = blinds_generator.blinds
+    self.round_length = blinds_generator.round_length
   end
 
   def generate_name
