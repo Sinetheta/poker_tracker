@@ -86,16 +86,48 @@ RSpec.describe GamesController, type: :controller do
     end
   end
 
-  describe "POST create" do
-    it "creates a game if params are valid" do
+  describe "GET edit" do
+    before :each do
+      @game = create(:game)
+    end
+
+    it "renders the edit template if logged in" do
       sign_in create(:user)
-      post :create, :game => attributes_for(:game, players: []).merge({:guests => ["Bob", "Joe"]})
-      expect(response).to redirect_to(game_path(1))
+      get :edit, :id => @game.id
+      expect(response).to render_template("edit")
+    end
+
+    it "redirects to the sign in page if not logged in" do
+      get :edit, :id => @game.id
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "assigns @game" do
+      sign_in create(:user)
+      get :edit, :id => @game.id
+      expect(assigns(:game)).to eq(@game)
+    end
+
+  end
+
+  describe "POST create" do
+    it "creates a new game if supplied at least 2 players" do
+      @user = create(:user)
+      sign_in @user
+      post :create, :game => attributes_for(:game, players: []).merge({:guests => ["Bob"], :user_ids => [@user.id]})
+      expect(assigns(:game)).to eq(Game.last())
+    end
+
+    it "redirects to the path of a created game" do
+      @user = create(:user)
+      sign_in @user
+      post :create, :game => attributes_for(:game, players: []).merge({:guests => ["Bob", "Joe"], :user_ids => [@user.id]})
+      expect(response).to redirect_to(game_path(assigns(:game).id))
     end
 
     it "redirects to new_game_path if params are invalid" do
       sign_in create(:user)
-      post :create, :game => attributes_for(:game, players: []).merge({:guests => []})
+      post :create, :game => attributes_for(:game, players: []).merge({:guests => [], :user_ids => []})
       expect(response).to redirect_to(new_game_path)
     end
   end

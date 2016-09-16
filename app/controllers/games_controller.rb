@@ -37,20 +37,20 @@ class GamesController < ApplicationController
   end
 
   def create
-    game = Game.new(game_params)
+    @game = Game.new(game_params)
 
     # Create the players as part of the game
     (params["game"]["guests"] || []).each do |guest|
-      game.players << Player.create(guest: Guest.find_or_create_by(name: guest))
+      @game.players << Player.create(guest: Guest.find_or_create_by(name: guest))
     end
     (params["game"]["user_ids"] || []).each do |user|
-      game.players << Player.create(user: User.find(user))
+      @game.players << Player.create(user: User.find(user))
     end
 
-    if game.save
-      redirect_to game_path(game)
+    if @game.save
+      redirect_to game_path(@game)
     else
-      flash[:alert] = game.errors.full_messages
+      flash[:alert] = @game.errors.full_messages
       redirect_to new_game_path
     end
   end
