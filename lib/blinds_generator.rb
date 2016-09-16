@@ -39,7 +39,12 @@ class BlindsGenerator
     @blinds = [@first_small_blind]
     @total_chips = game.total_chips
     @game_length = (game.game_length*60).to_i
-    generate_blinds()
+    puts "Generating blinds for game: #{game.inspect}"
+    if @first_small_blind >= @blind_at_game_end
+      @round_length = @game_length
+    else
+      generate_blinds()
+    end
   end
 
   def poker_value(n)
@@ -59,7 +64,8 @@ class BlindsGenerator
 
     while blinds.last < (@blind_at_game_end*2)
       time = @round_length*round
-      small_blind = poker_value(blinds_function.calculate_at_x(time))
+      small_blind = blinds_function.calculate_at_x(time)
+      small_blind = poker_value(small_blind)
       # If we get a blind less than the last one, set a max blind
       # Note: This will only happen with functions that have an asymptote.
       # A blind less than the last means we've passed over the asymptote
