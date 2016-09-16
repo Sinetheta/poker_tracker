@@ -59,13 +59,9 @@ class GamesController < ApplicationController
     game = Game.find(params[:id])
 
     # Mark a player out
-    player_out ||= params[:game][:player_out]
-    if player_out
-      player = game.players.find(player_out.to_i)
-      player.go_out
-      # Refresh the game with the player gone out
-      game = Game.find(params[:id])
-      game.attempt_declare_winner
+    if player_out = params[:game][:player_out]
+      player_out = game.players.find(player_out.to_i)
+      game.set_player_out(player_out)
     end
 
     # Clear saved_timer if changing round_length

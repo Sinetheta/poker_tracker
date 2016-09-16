@@ -48,9 +48,17 @@ class Game < ActiveRecord::Base
     self.chips * number_of_players
   end
 
+  def set_player_out(player)
+    player.winner = false
+    player.round_out = self.round
+    player.position_out = self.players_out.length
+    player.save
+    attempt_declare_winner
+  end
+
   def attempt_declare_winner
     if self.players_out.length == self.number_of_players-1
-      winner = self.players.find_by(winner: nil)
+      winner = (self.players - self.players_out)[0]
       winner.winner = true
       self.complete = true
       self.save
