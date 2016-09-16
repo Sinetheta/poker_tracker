@@ -35,17 +35,46 @@ RSpec.describe GamesController, type: :controller do
 
   describe "PATCH update" do
     before :each do
-      @game = create(:game, :players => [create(:player), create(:player), create(:player)])
-      @game.round_length = 15
-      @game.save
+      @player1 = create(:player)
+      @player2 = create(:player)
+      @player3 = create(:player)
+      @game = create(:game, :players => [@player1, @player2, @player3])
     end
 
     it "updates round_length when passed as a param" do
       sign_in create(:user)
-
+      @game.round_length = 15
+      @game.save
       expect {
         patch :update, :id => @game.id, :game => {:round_length => 20}
+        @game.reload
       }.to change { @game.round_length }.from(15).to(20)
+    end
+
+    it "sets a player out when passed as a param" do
+      sign_in create(:user)
+      expect {
+        patch :update, :id => @game.id, :game => {:player_out => @player1.id}
+        @player1.reload
+      }.to change { @player1.winner }.from(nil).to(false)
+    end
+
+    it "sets the last player to be the winner when all but one player is set out" do
+      sign_in create(:user)
+      expect {
+        patch :update, :id => @game.id, :game => {:player_out => @player1.id}
+        patch :update, :id => @game.id, :game => {:player_out => @player2.id}
+        @player3.reload
+      }.to change { @player3.winner }.from(nil).to(true)
+    end
+
+    it "sets the game to be complete when all but one player is set out" do
+      sign_in create(:user)
+      expect {
+        patch :update, :id => @game.id, :game => {:player_out => @player1.id}
+        patch :update, :id => @game.id, :game => {:player_out => @player2.id}
+        @game.reload
+      }.to change { @game.complete }.from(false).to(true)
     end
 
   end
