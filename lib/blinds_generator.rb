@@ -39,7 +39,7 @@ class BlindsGenerator
     @blinds = [@first_small_blind]
     @total_chips = game.total_chips
     @game_length = (game.game_length*60).to_i
-    puts "Generating blinds for game: #{game.inspect}"
+    #puts "Generating blinds for game: #{game.inspect}"
     if @first_small_blind >= @blind_at_game_end
       @round_length = @game_length
     else
@@ -117,8 +117,7 @@ class BlindsGenerator
     if time_off_by.abs >= @round_length
       if time_off_by < 0
         time_off_by.abs.divmod(@round_length)[0].times do
-          @blinds << blind_to_insert()
-          @blinds.reject! { |blind| blind.nil? }
+          @blinds << blind_to_insert() unless blind_to_insert().nil?
           @blinds.sort!
           @blinds.uniq!
         end
@@ -135,6 +134,7 @@ class BlindsGenerator
     blinds_before_game_end = @blinds.select {|blind| blind <=@blind_at_game_end}.length-1
     measured_game_length = blinds_before_game_end*@round_length
     time_off_by = measured_game_length-@game_length
+    #puts "Time off by before #{time_off_by}"
     if time_off_by < 0
       while time_off_by.abs > @round_length && @round_length != @possible_round_lengths.last && time_off_by < 0
         @round_length = @possible_round_lengths[@possible_round_lengths.index(@round_length)+1]
@@ -148,6 +148,7 @@ class BlindsGenerator
         time_off_by = measured_game_length-@game_length
       end
     end
+    #puts "Time off by after #{time_off_by}, Longest/shortest possible round? #{@round_length == @possible_round_lengths.first || @round_length == @possible_round_lengths.last}"
   end
 
 end
