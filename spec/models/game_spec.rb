@@ -14,10 +14,46 @@ describe Game do
     expect(create(:game).players.length).to be >= 2
   end
 
-  it "has enough rounds to reach it's length" do
-    game = create(:game)
-    expect(game.round_length * game.blinds.length).to be >= (game.game_length*60)
+  describe "putting players out" do
+    before :each do
+      @game = create(:game, :players => [create(:player), create(:player), create(:player)])
+      @game.round = Random.rand(@game.blinds.length)
+      @game.save
+      @first_out = @game.players.sample
+      @second_out = (@game.players - [@first_out]).sample
+    end
+
+    it "will set a player to be out" do
+      @game.set_player_out(@first_out)
+      expect(@game.players_out).to include(@first_out)
+    end
+
+    it "will set a player's round_out to the current game round" do
+      @game.set_player_out(@first_out)
+      expect(@game.players.find(@first_out.id).round_out).to eq(@game.round)
+    end
+
+    it "will cause the one remaining player to become a winner" do
+      @game.set_player_out(@first_out)
+      @game.set_player_out(@second_out)
+      winner = (@game.players - [@first_out, @second_out])[0]
+      expect(winner.winner).to be true
+    end
+
+    it "will become a completed game when all but one player have gone out" do
+      expect {
+        @game.set_player_out(@first_out)
+        @game.set_player_out(@second_out)
+      }.to change { @game.complete }.from(false).to(true)
+    end
+
   end
+
+  #it "has blinds that will reach 5% of total chips within 1 round of game_length" do
+  #  game = create(:game)
+  #  blinds_before_game_end = game.blinds.select {|blind| blind <= game.total_chips*0.05}
+  #  expect(((blinds_before_game_end.length-1)*game.round_length) - (game.game_length*60)).to be <= (game.round_length)
+  #end
 
   it "cannot have a round_length greater then it's game_length" do
     expect(build(:game, :game_length => 1, :round_length => 61)).not_to be_valid

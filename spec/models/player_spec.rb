@@ -28,23 +28,5 @@ describe Player do
     expect(player.game).to eq(game)
   end
 
-  describe "when going out" do
-    before :each do
-      @game = create(:game)
-      @game.round = Random.rand(@game.blinds.length)
-      @first_out = @game.players.sample
-      @second_out = (@game.players - [@first_out]).sample
-      @first_out.go_out()
-      @second_out.go_out()
-    end
-
-    it "will go out on the round the game is on" do
-      expect(@second_out.round_out).to eq(@game.round)
-    end
-
-    it "will go out in it's ranked position" do
-      expect(@second_out.position_out).to eq(@first_out.position_out+1)
-    end
-  end
 
 end
