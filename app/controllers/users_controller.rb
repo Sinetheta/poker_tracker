@@ -3,7 +3,6 @@ class UsersController < ApplicationController
   def history
     @user = User.find(params[:id])
     @players = @user.players.includes(game: {players: [:user, :guest]}).select {|player| !player.winner.nil?}
-
     @stats = UserStats.new(@players)
   end
 end
@@ -35,8 +34,13 @@ class UserStats
         chips_round_out << (player.game.blinds[player.round_out]/player.game.total_chips.to_f)*100
       end
     end
-    @round_out_average = rounds_out.sum / rounds_out.length.to_f
-    @chips_out_perc = chips_round_out.sum / chips_round_out.length
+    if chips_round_out.empty?
+      @round_out_average = 0
+      @chips_out_perc = 0
+    else
+      @round_out_average = rounds_out.sum / rounds_out.length.to_f
+      @chips_out_perc = chips_round_out.sum / chips_round_out.length
+    end
     @win_perc = (@games_won.length/@players.length.to_f)*100
   end
 
