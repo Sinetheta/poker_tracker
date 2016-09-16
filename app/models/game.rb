@@ -57,9 +57,6 @@ class Game < ActiveRecord::Base
   end
 
   def attempt_declare_winner
-    # This self.reload is not necessary for the model spec to pass, but it is
-    # necessary for the controller spec to pass.
-    self.reload
     if self.players_out.length == self.number_of_players-1
       winner = (self.players - self.players_out)[0]
       winner.winner = true

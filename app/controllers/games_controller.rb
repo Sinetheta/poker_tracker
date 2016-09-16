@@ -60,7 +60,7 @@ class GamesController < ApplicationController
 
     # Mark a player out
     if player_out = params[:game][:player_out]
-      player_out = game.players.find(player_out.to_i)
+      player_out = game.players.detect {|player| player.id == player_out.to_i}
       game.set_player_out(player_out)
     end
 
