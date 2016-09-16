@@ -14,7 +14,7 @@ class GamesController < ApplicationController
     @current_blinds = @blinds[@game.round]
 
     respond_to do |format|
-      format.html { }
+      format.html { render "show" }
       format.json { render json: @game }
     end
   end
