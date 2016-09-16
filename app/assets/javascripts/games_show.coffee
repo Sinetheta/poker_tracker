@@ -3,8 +3,6 @@ $(document).on "turbolinks:load", ->
   $(window).on "turbolinks:before-render", (event) ->
     if $(".games.show")[0]
       saveTimer()
-  $(window).on "beforeunload", (event) ->
-    saveTimer()
   $(".games.show").ready ->
     $.ajax({
       type: "GET",
@@ -24,8 +22,11 @@ $(document).on "turbolinks:load", ->
     })
     $("#pauseTimer").hide()
     $("#pauseTimer").on "click", (event) ->
-      pauseTimer(window.timer)
+      pauseResumeTimer(window.timer)
     $("#startTimer").on "click", (event) ->
+      window.timerSave = setTimeout((->
+        saveTimer()
+      ), 10000)
       $("#pauseTimer").show()
       if window.game.saved_timer
         updateTimer(window.game.saved_timer)
@@ -62,12 +63,16 @@ saveTimer = () ->
       success: (game) ->
     })
 
-pauseTimer = () ->
+pauseResumeTimer = () ->
   if window.timer
     clearTimeout(window.timer)
+    clearTimeout(window.timerSave)
     window.timer = null
     $("#pauseTimer").html("Resume Timer")
   else
+    window.timerSave = setTimeout((->
+      saveTimer()
+    ), 10000)
     updateTimer($("#timer").data("currentTime"))
     $("#pauseTimer").html("Pause Timer")
 
