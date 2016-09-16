@@ -24,9 +24,7 @@ $(document).on "turbolinks:load", ->
     $("#pauseTimer").on "click", (event) ->
       pauseResumeTimer(window.timer)
     $("#startTimer").on "click", (event) ->
-      window.timerSave = setTimeout((->
-        saveTimer()
-      ), 10000)
+      saveTimerTimeout()
       $("#pauseTimer").show()
       if window.game.saved_timer
         updateTimer(window.game.saved_timer)
@@ -54,8 +52,15 @@ $(document).on "turbolinks:load", ->
             location.reload()
       })
 
+saveTimerTimeout = () ->
+  window.timerSave = setTimeout((->
+    saveTimer()
+    saveTimerTimeout()
+  ), 5000)
+
 saveTimer = () ->
   if $("#timer").data("currentTime")
+    console.log("Timer being saved")
     $.ajax({
       type: "PATCH"
       url: "/games/#{window.game.id}.json"
@@ -70,9 +75,7 @@ pauseResumeTimer = () ->
     window.timer = null
     $("#pauseTimer").html("Resume Timer")
   else
-    window.timerSave = setTimeout((->
-      saveTimer()
-    ), 10000)
+    saveTimerTimeout()
     updateTimer($("#timer").data("currentTime"))
     $("#pauseTimer").html("Pause Timer")
 
