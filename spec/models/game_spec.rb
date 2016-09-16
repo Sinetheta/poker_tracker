@@ -15,36 +15,37 @@ describe Game do
   end
 
   describe "putting players out" do
+    let(:player1) { create(:player) }
+    let(:player2) { create(:player) }
+    let(:player3) { create(:player) }
+    let(:game) { create(:game, :players => [player1, player2, player3]) }
     before :each do
-      @game = create(:game, :players => [create(:player), create(:player), create(:player)])
-      @game.round = Random.rand(@game.blinds.length)
-      @game.save
-      @first_out = @game.players.sample
-      @second_out = (@game.players - [@first_out]).sample
+      game.round = Random.rand(game.blinds.length)
+      game.save
     end
 
     it "will set a player to be out" do
-      @game.set_player_out(@first_out)
-      expect(@game.players_out).to include(@first_out)
+      game.set_player_out(player1)
+      expect(game.players_out).to include(player1)
     end
 
     it "will set a player's round_out to the current game round" do
-      @game.set_player_out(@first_out)
-      expect(@game.players.find(@first_out.id).round_out).to eq(@game.round)
+      game.set_player_out(player1)
+      expect(game.players.find(player1.id).round_out).to eq(game.round)
     end
 
     it "will cause the one remaining player to become a winner" do
-      @game.set_player_out(@first_out)
-      @game.set_player_out(@second_out)
-      winner = (@game.players - [@first_out, @second_out])[0]
+      game.set_player_out(player1)
+      game.set_player_out(player2)
+      winner = (game.players - [player1, player2])[0]
       expect(winner.winner).to be true
     end
 
     it "will become a completed game when all but one player have gone out" do
       expect {
-        @game.set_player_out(@first_out)
-        @game.set_player_out(@second_out)
-      }.to change { @game.complete }.from(false).to(true)
+        game.set_player_out(player1)
+        game.set_player_out(player2)
+      }.to change { game.complete }.from(false).to(true)
     end
 
   end

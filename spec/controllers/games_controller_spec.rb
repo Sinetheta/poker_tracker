@@ -4,14 +4,16 @@ RSpec.describe GamesController, type: :controller do
   include Devise::Test::ControllerHelpers
 
   describe "GET index" do
+    let(:game) { create(:game) }
+
     it "assigns @games" do
-      game = create(:game)
+      game
       get :index
       expect(assigns(:games)).to eq([game])
     end
 
     it "renders the index template if there are games" do
-      game = create(:game)
+      game
       get :index
       expect(response).to render_template("index")
     end
@@ -23,57 +25,59 @@ RSpec.describe GamesController, type: :controller do
   end
 
   describe "GET show" do
+    let (:game) { create(:game) }
     before :each do
-      @game = create(:game)
+      game
     end
 
     it "renders the show template with html format" do
-      get :show, :id => @game.id, :format => 'html'
+      get :show, :id => game.id, :format => 'html'
       expect(response).to render_template("show")
     end
 
     it "renders the game object as json with json format" do
-      get :show, :id => @game.id, :format => 'json'
+      get :show, :id => game.id, :format => 'json'
       parse_json = JSON(response.body)
       expect(parse_json).to include("id", "name", "blinds")
     end
 
     it "assigns @game" do
-      get :show, :id => @game.id
-      expect(assigns(:game)).to eq(@game)
+      get :show, :id => game.id
+      expect(assigns(:game)).to eq(game)
     end
 
     it "assigns @players" do
-      get :show, :id => @game.id
-      expect(assigns(:players)).to eq(@game.players)
+      get :show, :id => game.id
+      expect(assigns(:players)).to eq(game.players)
     end
 
     it "assigns @blinds" do
-      @blinds = @game.blinds.map {|small_blind| [small_blind, small_blind*2]}
-      get :show, :id => @game.id
-      expect(assigns(:blinds)).to eq(@blinds)
+      blinds = game.blinds.map {|small_blind| [small_blind, small_blind*2]}
+      get :show, :id => game.id
+      expect(assigns(:blinds)).to eq(blinds)
     end
   end
 
   describe "GET new" do
+    let(:user) { create(:user) }
     before :each do
-      @user = create(:user)
+      user
     end
 
     it "renders the new template" do
-      sign_in @user
+      sign_in user
       get :new
       expect(response).to render_template("new")
     end
 
     it "assigns @users" do
-      sign_in @user
+      sign_in user
       get :new
-      expect(assigns(:users)).to eq([@user])
+      expect(assigns(:users)).to eq([user])
     end
 
     it "assigns default values" do
-      sign_in @user
+      sign_in user
       get :new
       expect(assigns(:default_values)).to include(:game_length, :round_length,
                                                  :chips, :smallest_denomination,
@@ -87,95 +91,107 @@ RSpec.describe GamesController, type: :controller do
   end
 
   describe "GET edit" do
+    let(:game) { create(:game) }
+    let(:user) { create(:user) }
     before :each do
-      @game = create(:game)
+      game
     end
 
     it "renders the edit template if logged in" do
-      sign_in create(:user)
-      get :edit, :id => @game.id
+      sign_in user
+      get :edit, :id => game.id
       expect(response).to render_template("edit")
     end
 
     it "redirects to the sign in page if not logged in" do
-      get :edit, :id => @game.id
+      get :edit, :id => game.id
       expect(response).to redirect_to(new_user_session_path)
     end
 
     it "assigns @game" do
-      sign_in create(:user)
-      get :edit, :id => @game.id
-      expect(assigns(:game)).to eq(@game)
+      sign_in user
+      get :edit, :id => game.id
+      expect(assigns(:game)).to eq(game)
     end
 
   end
 
   describe "POST create" do
-    it "creates a new game if supplied at least 2 players" do
-      @user = create(:user)
-      sign_in @user
-      post :create, :game => attributes_for(:game, players: []).merge({:guests => ["Bob"], :user_ids => [@user.id]})
-      expect(assigns(:game)).to eq(Game.last())
+    let(:user) { create(:user) }
+    let(:game_attributes) { attributes_for(:game, players: []) }
+
+    it "assigns @game to a new instance of game" do
+      sign_in user
+      post :create, :game => game_attributes
+      expect(assigns(:game)).to be_a_new(Game)
+    end
+
+    it "persists a new game if supplied at least 2 of either guests or user_ids" do
+      sign_in user
+      post :create, :game => game_attributes.merge({:guests => ["Bob"], :user_ids => [user.id]})
+      expect(assigns(:game)).to be_persisted
     end
 
     it "redirects to the path of a created game" do
-      @user = create(:user)
-      sign_in @user
-      post :create, :game => attributes_for(:game, players: []).merge({:guests => ["Bob", "Joe"], :user_ids => [@user.id]})
+      sign_in user
+      post :create, :game => game_attributes.merge({:guests => ["Bob", "Joe"], :user_ids => [user.id]})
       expect(response).to redirect_to(game_path(assigns(:game).id))
     end
 
-    it "redirects to new_game_path if params are invalid" do
-      sign_in create(:user)
-      post :create, :game => attributes_for(:game, players: []).merge({:guests => [], :user_ids => []})
+    it "redirects to new_game_path if not enough players" do
+      sign_in user
+      post :create, :game => game_attributes.merge({:guests => [], :user_ids => []})
       expect(response).to redirect_to(new_game_path)
     end
+
   end
 
   describe "PATCH update" do
-    before :each do
-      @player1 = create(:player)
-      @player2 = create(:player)
-      @player3 = create(:player)
-      @game = create(:game, :players => [@player1, @player2, @player3])
-    end
+    let(:player1) { create(:player) }
+    let(:player2) { create(:player) }
+    let(:player3) { create(:player) }
+    let(:game) { create(:game, :players => [player1, player2, player3]) }
+    let(:user) { create(:user) }
 
     it "updates round_length when passed as a param" do
-      sign_in create(:user)
-      @game.round_length = 15
-      @game.save
+      sign_in user
+      game.round_length = 15
+      game.save
       expect {
-        patch :update, :id => @game.id, :game => {:round_length => 20}
-        @game.reload
-      }.to change { @game.round_length }.from(15).to(20)
+        patch :update, :id => game.id, :game => {:round_length => 20}
+        game.reload
+      }.to change { game.round_length }.from(15).to(20)
     end
 
     it "sets a player out when passed as a param" do
-      sign_in create(:user)
+      sign_in user
       expect {
-        patch :update, :id => @game.id, :game => {:player_out => @player1.id}
-        @player1.reload
-      }.to change { @player1.winner }.from(nil).to(false)
+        patch :update, :id => game.id, :game => {:player_out => player1.id}
+        player1.reload
+      }.to change { player1.winner }.from(nil).to(false)
     end
 
     it "sets the last player to be the winner when all but one player is set out" do
       sign_in create(:user)
       expect {
-        patch :update, :id => @game.id, :game => {:player_out => @player1.id}
-        patch :update, :id => @game.id, :game => {:player_out => @player2.id}
-        @player3.reload
-      }.to change { @player3.winner }.from(nil).to(true)
+        patch :update, :id => game.id, :game => {:player_out => player1.id}
+        patch :update, :id => game.id, :game => {:player_out => player2.id}
+        player3.reload
+      }.to change { player3.winner }.from(nil).to(true)
     end
 
     it "sets the game to be complete when all but one player is set out" do
       sign_in create(:user)
       expect {
-        patch :update, :id => @game.id, :game => {:player_out => @player1.id}
-        patch :update, :id => @game.id, :game => {:player_out => @player2.id}
-        @game.reload
-      }.to change { @game.complete }.from(false).to(true)
+        patch :update, :id => game.id, :game => {:player_out => player1.id}
+        patch :update, :id => game.id, :game => {:player_out => player2.id}
+        game.reload
+      }.to change { game.complete }.from(false).to(true)
     end
+  end
 
+  describe "DELETE destory" do
+    let(:game) { create(:game) }
   end
 
 end
