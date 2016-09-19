@@ -1,8 +1,8 @@
 class ExponentialSecant
 
-  # Assumes a y intercept at (0, x0)
+  # Assumes a y intercept at (0, y0)
   def initialize(y0, x1, y1)
-    # A smaller (a) will decrease change the curve to be less steep to start
+    # A larger (a) will change the curve to be less steep to start
     @a = 0.7
     @k = (Math::log(y1.abs)-Math::log(y0.abs))/x1
     @s = (Math::acos(1/((y1-y0)+1))/x1)
@@ -35,7 +35,7 @@ class BlindsGenerator
     @possible_round_lengths = [5, 10, 15, 20, 30, 45, 60, 90, 120]
     @round_length = @possible_round_lengths.min_by {|length| (length-game.round_length).abs}
     @blind_at_game_end = poker_value((game.total_chips*0.05))
-    @first_small_blind = generate_first_small_blind(game.chips)
+    @first_small_blind = generate_first_small_blind(game)
     @blinds = [@first_small_blind]
     @total_chips = game.total_chips
     @game_length = (game.game_length*60).to_i
@@ -51,8 +51,12 @@ class BlindsGenerator
     @possible_blinds.min_by { |x| (n-x).abs }
   end
 
-  def generate_first_small_blind(chips)
-    poker_value(chips*0.01)
+  def generate_first_small_blind(game)
+    if game.first_small_blind == nil
+      poker_value(game.chips*0.01)
+    else
+      game.first_small_blind
+    end
   end
 
   def generate_blinds
