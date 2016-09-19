@@ -225,12 +225,42 @@ RSpec.describe GamesController, type: :controller do
   describe "GET archive" do
     let(:complete_game) { create(:game, :complete => true)}
     let(:game) { create(:game) }
+
     it "assigns @games with completed games" do
       complete_game
       game
       get :archive
       expect(assigns(:games)).to eq([complete_game])
     end
+
+    it "renders the archive template" do
+      get :archive
+      expect(response).to render_template(:archive)
+    end
+  end
+
+  describe "GET leaderboard" do
+    let(:player1) { create(:player) }
+    let(:player2) { create(:player) }
+    let(:player3) { create(:player) }
+    let(:game) { create(:game, :players => [player1, player2, player3]) }
+    let(:user) { create(:user) }
+
+    before :each do
+      game.set_player_out(player1)
+      game.set_player_out(player2)
+    end
+
+    it "assigns @owners_stats with a stats object for each owner who participated in a completed game" do
+      get :leaderboard
+      expect(assigns(:owner_stats).length).to eq(game.players.length)
+    end
+
+    it "renders the leaderboard template" do
+      get :leaderboard
+      expect(response).to render_template(:leaderboard)
+    end
+
   end
 
 end

@@ -1,4 +1,3 @@
-# Lets generate blinds in here
 FactoryGirl.define do
   factory :game do |f|
     denominations = [1,5,10,25,50,100,250,500,1000]
@@ -19,4 +18,5 @@ FactoryGirl.define do
       players
     end
   end
+
 end
