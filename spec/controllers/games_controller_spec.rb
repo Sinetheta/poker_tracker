@@ -204,9 +204,8 @@ RSpec.describe GamesController, type: :controller do
     it "causes the passed game to be deleted" do
       sign_in user
       game
-      expect {
-        delete :destroy, :id => game.id
-      }.to change { game.destroyed? }.from(false).to(true)
+      delete :destroy, :id => game.id
+      expect { game.reload }.to raise_exception ActiveRecord::RecordNotFound
     end
 
     it "redirect a signed in user to games_path" do
@@ -230,7 +229,6 @@ RSpec.describe GamesController, type: :controller do
       complete_game
       game
       get :archive
-      binding.pry
       expect(assigns(:games)).to eq([complete_game])
     end
   end
