@@ -12,11 +12,11 @@
         </tr>
       </thead>
       <tbody>
-        <% @players.each do |player| %>
+        <% @owner_stats.each do |stats| %>
           <tr>
-            <td><%= player[:player].name %><%= "*" if player[:player].class == Guest %></td>
-            <td><%= player[:wins] %></td>
-            <td><%= player[:win_perc].round() %>%</td>
+            <td><%= stats.owner.name %><%= "*" if stats.owner.class == Guest %></td>
+            <td><%= stats.games_won.length %></td>
+            <td><%= stats.win_perc.round(2) %>%</td>
           </tr>
         <% end %>
       </tbody>

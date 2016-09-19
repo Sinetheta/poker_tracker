@@ -4,7 +4,7 @@
       <h1><%= "#{@user.name}'s History" %></h1>
     </div>
 
-    <% if @players.empty? %>
+    <% if @stats.win_perc.nil? %>
       <p>No history to display.</p>
     <% else %>
 
@@ -33,7 +33,7 @@
         </thead>
         <tbody>
 
-          <% @players.each do |player| %>
+          <% @stats.players.each do |player| %>
             <tr>
               <td><%= link_to player.game.name, game_path(player.game), class: "btn btn-default" %></td>
               <td><%= player.game.winner.owner.name %></td>

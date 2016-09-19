@@ -1,5 +1,7 @@
 class GamesController < ApplicationController
 
+  require 'owner_stats.rb'
+
   before_action :require_login, :except => [:index, :show, :leaderboard, :archive]
 
   def index
@@ -94,17 +96,13 @@ class GamesController < ApplicationController
   end
 
   def leaderboard
-    all_owners = (User.all.includes(:players) + Guest.all.includes(:players)).map do |owner|
-      # If user has never played a game
-      if owner.players.empty?
-        owner = nil
-      else
-        wins = owner.players.select {|player| player.winner == true}.length
-        owner = {player: owner, wins: wins, win_perc: (wins/owner.players.length.to_f)*100 }
+    @owner_stats = []
+    (User.all.includes(:players) + Guest.all.includes(:players)).each do |owner|
+      if owner.players.select {|player| !player.winner.nil?}.length > 0
+        @owner_stats << OwnerStats.new(owner)
       end
     end
-    all_owners.select! {|owner| !owner.nil?}
-    @players = all_owners.sort_by {|player| player[:win_perc]}.reverse
+    @owner_stats.sort_by! {|stats| stats.win_perc }.reverse!
   end
 
   private
