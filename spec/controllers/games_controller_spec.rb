@@ -172,7 +172,7 @@ RSpec.describe GamesController, type: :controller do
     end
 
     it "sets the last player to be the winner when all but one player is set out" do
-      sign_in create(:user)
+      sign_in user
       expect {
         patch :update, :id => game.id, :game => {:player_out => player1.id}
         patch :update, :id => game.id, :game => {:player_out => player2.id}
@@ -181,17 +181,58 @@ RSpec.describe GamesController, type: :controller do
     end
 
     it "sets the game to be complete when all but one player is set out" do
-      sign_in create(:user)
+      sign_in user
       expect {
         patch :update, :id => game.id, :game => {:player_out => player1.id}
         patch :update, :id => game.id, :game => {:player_out => player2.id}
         game.reload
       }.to change { game.complete }.from(false).to(true)
     end
+
+    it "renders the game object as json with json format" do
+      sign_in user
+      patch :update, :id => game.id, :format => 'json'
+      parse_json = JSON(response.body)
+      expect(parse_json).to include("id", "name", "blinds")
+    end
   end
 
   describe "DELETE destory" do
     let(:game) { create(:game) }
+    let(:user) { create(:user) }
+
+    it "causes the passed game to be deleted" do
+      sign_in user
+      game
+      expect {
+        delete :destroy, :id => game.id
+      }.to change { game.destroyed? }.from(false).to(true)
+    end
+
+    it "redirect a signed in user to games_path" do
+      sign_in user
+      game
+      delete :destroy, :id => game.id
+      expect(response).to redirect_to(games_path)
+    end
+
+    it "redirects to sign in if not signed in" do
+      game
+      delete :destroy, :id => game.id
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
+
+  describe "GET archive" do
+    let(:complete_game) { create(:game, :complete => true)}
+    let(:game) { create(:game) }
+    it "assigns @games with completed games" do
+      complete_game
+      game
+      get :archive
+      binding.pry
+      expect(assigns(:games)).to eq([complete_game])
+    end
   end
 
 end

@@ -58,18 +58,20 @@ class GamesController < ApplicationController
   def update
     game = Game.find(params[:id])
 
-    # Mark a player out
-    if player_out = params[:game][:player_out]
-      player_out = game.players.detect {|player| player.id == player_out.to_i}
-      game.set_player_out(player_out)
-    end
+    if params[:game]
+      # Mark a player out
+      if player_out = params[:game][:player_out]
+        player_out = game.players.detect {|player| player.id == player_out.to_i}
+        game.set_player_out(player_out)
+      end
 
-    # Clear saved_timer if changing round_length
-    if params[:game][:round_length] && game.saved_timer
-      game.saved_timer = nil
-    end
+      # Clear saved_timer if changing round_length
+      if params[:game][:round_length] && game.saved_timer
+        game.saved_timer = nil
+      end
 
-    game.update_attributes(game_params)
+      game.update_attributes(game_params)
+    end
 
     unless game.save
       flash[:alert] = game.errors.full_messages
