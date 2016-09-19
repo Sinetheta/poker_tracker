@@ -51,9 +51,22 @@
               <td class="outButtonCell" data-playerid=<%= player.id %>>
 
                 <% if player.round_out %>
-                  <%= "Out on round #{player.round_out+1}" %>
+                  <% if @game.runner_up == player %>
+                    <%= "Runner up." %>
+                    <td>
+                      <%= " Earnings this game: $#{@game.buy_in}" %>
+                    </td>
+                  <% else %>
+                    <%= "Out on round #{player.round_out+1}" %>
+                    <% if @game.complete %>
+                      <td></td>
+                    <% end %>
+                  <% end %>
                 <% elsif @game.winner == player %>
-                  <%= "Winner" %>
+                  <%= "Winner!" %>
+                    <td>
+                      <%= " Earnings this game: $#{@game.buy_in*(@game.number_of_players - 1)}" %>
+                    </td>
                 <% elsif user_signed_in? %>
                   <button type="button" class="btn btn-primary outButton" data-playerid=<%= player.id %>>Set Player Out</button>
                 <% end %>
