@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160920222811) do
+ActiveRecord::Schema.define(version: 20160920231351) do
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20160920222811) do
     t.integer  "pizzapage_id"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.string   "url"
   end
 
   add_index "categories", ["pizzapage_id"], name: "index_categories_on_pizzapage_id"
@@ -52,6 +53,7 @@ ActiveRecord::Schema.define(version: 20160920222811) do
     t.string   "checkout_path"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.string   "url"
   end
 
   create_table "players", force: :cascade do |t|
@@ -68,6 +70,17 @@ ActiveRecord::Schema.define(version: 20160920222811) do
   add_index "players", ["game_id"], name: "index_players_on_game_id"
   add_index "players", ["guest_id"], name: "index_players_on_guest_id"
   add_index "players", ["user_id"], name: "index_players_on_user_id"
+
+  create_table "products", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "iid_it"
+    t.integer  "category_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "url"
+  end
+
+  add_index "products", ["category_id"], name: "index_products_on_category_id"
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
