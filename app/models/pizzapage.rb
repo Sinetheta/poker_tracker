@@ -9,7 +9,7 @@ class Pizzapage < ActiveRecord::Base
 
   def create_categories
     generator = PizzaDataGenerator.new(self)
-    generator.make_categories
+    generator.create_categories
   end
 
   def checkout_url

@@ -1,5 +1,7 @@
 class PizzaDataGenerator
 
+  require 'url_helpers.rb'
+
   def initialize(page)
     @page = page
     @categories = {:classic => 124566, :premium => 124586,
@@ -7,7 +9,7 @@ class PizzaDataGenerator
                    :donairs => 124571, :sides => 124596, :drinks => 124576}
   end
 
-  def make_categories
+  def create_categories
     @categories.each do |name, mnuid_it|
       Category.find_or_create_by(name: name) do |category|
         category.mnuid_it = mnuid_it
@@ -15,10 +17,15 @@ class PizzaDataGenerator
       end
     end
     @categories = Category.all
-  end
-
-  def make_products
-
+    @categories.each do |category|
+      category_page = get_vcr_page("category_#{category.mnuid_it}", category.url)
+      category_page.links_with(:class => "menudetails_item_name_link").select { |link| !link.text.empty?  }.each do |product|
+        Product.find_or_create_by(name: product.text) do |p|
+          p.iid_it = product.href[/\d{7}/]
+          p.category_id = category.id
+        end
+      end
+    end
   end
 
 end
