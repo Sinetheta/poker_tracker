@@ -1,7 +1,21 @@
 #!/usr/bin/env ruby
 
 require 'mechanize'
+require 'vcr'
 require 'pry'
+
+VCR.configure do |c|
+  c.cassette_library_dir = 'vcr_cassettes'
+  c.allow_http_connections_when_no_cassette = true
+  c.hook_into :webmock
+end
+
+def get_page(name, url)
+  VCR.use_cassette(name) do
+    a = Mechanize.new
+    a.get(url)
+  end
+end
 
 def url_from_attributes(base_url, path, **attributes)
   url = base_url + path + "?"
@@ -14,10 +28,10 @@ end
 
 class PizzaPage
 
-  attr_reader :webpage, :menu_path, :item_path, :categories, :mech, :browser
+  attr_reader :webpage, :menu_path, :item_path, :categories, :browser, :mech
 
   def initialize(webpage, menu_path, item_path, checkout_path, categories)
-    @mech = Mechanize.new()
+    @mech = Mechanize.new
     @webpage = webpage
     @menu_path = menu_path
     @item_path = item_path
@@ -48,10 +62,9 @@ class Category
 
   def find_products
     products = []
-    @page.mech.get(@url) do |page|
-      page.links_with(:class => "menudetails_item_name_link").select { |link| !link.text.empty? }.each do |product|
-        @products << Product.new(product.text, product.href[/\d{7}/], self)
-      end
+    page = get_page("category_#{mnuid_it}", @url)
+    page.links_with(:class => "menudetails_item_name_link").select { |link| !link.text.empty? }.each do |product|
+      @products << Product.new(product.text, product.href[/\d{7}/], self)
     end
   end
 
@@ -59,7 +72,7 @@ end
 
 class LineItem
 
-  attr_reader :options, :text_fields
+  attr_reader :options, :text_fields, :product
 
   def initialize(product)
     @product = product
@@ -102,23 +115,29 @@ class Product
     @category = category
     @url = url_from_attributes(category.page.webpage, category.page.item_path, {:mnuid_it => category.mnuid_it, :iid_it => @iid_it})
     @form = find_form
-    @fields = {delivery_choice: delivery_choice, text_fields: text_fields,
-               size_choices: size_choices, crust_choices: crust_choices,
-               crust_options: crust_options, sauce_options: sauce_options,
-               add_ingredients: add_ingredients, remove_ingredients: remove_ingredients}
+    @fields = all_fields
     @line_item = nil
   end
 
   def build_line_item
+    @form = find_form_http
+    @fields = all_fields
     @line_item = LineItem.new(self)
   end
 
   def find_form
-    form = nil
-    @category.page.mech.get(@url) do |page|
-      form = page.form('crtitmfrm')
-    end
-    form
+    get_page("product_#{@iid_it}", @url).form('crtitmfrm')
+  end
+
+  def find_form_http
+    @category.page.mech.get(@url).form('crtitmfrm')
+  end
+
+  def all_fields
+    {delivery_choice: delivery_choice, text_fields: text_fields,
+     size_choices: size_choices, crust_choices: crust_choices,
+     crust_options: crust_options, sauce_options: sauce_options,
+     add_ingredients: add_ingredients, remove_ingredients: remove_ingredients}
   end
 
   def remove_ingredients
@@ -202,5 +221,3 @@ class Product
   end
 
 end
-
-binding.pry

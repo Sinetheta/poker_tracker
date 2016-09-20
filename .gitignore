@@ -32,3 +32,6 @@
 notes
 blinds_notes
 pizza_notes
+
+# Ignore cassettes
+/lib/vcr_cassettes/
