@@ -1,0 +1,11 @@
+<% @categories.each do |category| %>
+  <h3><%= category.name %></h3>
+  <table class="table">
+    <% category.products.each do |product| %>
+      <tr>
+        <td><%= product.name %></td>
+        <td><%= product.fields %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

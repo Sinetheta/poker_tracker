@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get '/pizza', to: 'static#pizza'
+
   devise_for :users, :controllers => { registrations: 'registrations' }
   root 'games#index'
   get '/archive', to: 'games#archive'
