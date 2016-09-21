@@ -33,7 +33,11 @@ class PizzaOrder
 
   def cart_total
     checkout_page = @mech.get(@page.checkout_url)
-    puts "Order Total: #{checkout_page.search("//font[starts-with(b, '$')]/b").text.gsub(/\$|\./, "").to_i/100.0}"
+    checkout_page.search("//font[starts-with(b, '$')]/b").text.gsub(/\$|\./, "").to_i/100.0
+  end
+
+  def proceed_to_checkout
+    checkout_page = @mech.get(@page.checkout_url)
     checkout_page.form('crtordlfrm').field('action_ith').value = "chkoutb"
     checkout_page = checkout_page.form('crtordlfrm').submit
     checkout_page = checkout_page.link.click
