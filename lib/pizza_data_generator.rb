@@ -4,9 +4,13 @@ class PizzaDataGenerator
 
   def initialize(page)
     @page = page
-    @categories = {:classic => 124566, :premium => 124586,
-                   :salads => 124591, :mini_meals => 124581,
-                   :donairs => 124571, :sides => 124596, :drinks => 124576}
+    if Category.all.empty?
+      @categories = {:classic => 124566, :premium => 124586,
+                    :salads => 124591, :mini_meals => 124581,
+                    :donairs => 124571, :sides => 124596, :drinks => 124576}
+    else
+      @categories = Category.all
+    end
   end
 
   def create_categories_and_products
@@ -26,6 +30,24 @@ class PizzaDataGenerator
         end
       end
     end
+  end
+
+  def options_for_product(product)
+    product_page = get_vcr_page("product_#{product.iid_it}", product.url)
+    form = product_page.form('crtitmfrm')
+    options = {radios: {}, checkboxes: {}, text_fields: []}
+    form.checkboxes.each do |checkbox|
+      options[:checkboxes][checkbox.name] = [] unless options[:checkboxes][checkbox.name]
+      options[:checkboxes][checkbox.name] << checkbox.text
+    end
+    form.fields.select {|f| f.type != "hidden"}.each do |field|
+      options[:text_fields] << field.name
+    end
+    form.radiobuttons.each do |radio|
+      options[:radios][radio.name] = [] unless options[:radios][radio.name]
+      options[:radios][radio.name] << radio.text
+    end
+    options
   end
 
 end
