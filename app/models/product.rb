@@ -14,6 +14,7 @@ class Product < ActiveRecord::Base
   def generate_options
     data_gen = PizzaDataGenerator.new(self.category.pizzapage)
     self.options = data_gen.options_for_product(self)
+    self.save
   end
 
   protected

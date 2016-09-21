@@ -29,9 +29,10 @@
 .byebug_history
 
 # Ignore notes file
-notes
-blinds_notes
-pizza_notes
+/notes/
+
+# Ignore pizza configuration files
+/lib/pizzaconfig.rb
 
 # Ignore cassettes
 vcr_cassettes/

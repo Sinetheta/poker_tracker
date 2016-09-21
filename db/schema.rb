@@ -11,7 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160921171331) do
+ActiveRecord::Schema.define(version: 20160921183751) do
+
+  create_table "carts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "categories", force: :cascade do |t|
     t.string   "name"
@@ -70,6 +75,17 @@ ActiveRecord::Schema.define(version: 20160921171331) do
   add_index "players", ["game_id"], name: "index_players_on_game_id"
   add_index "players", ["guest_id"], name: "index_players_on_guest_id"
   add_index "players", ["user_id"], name: "index_players_on_user_id"
+
+  create_table "product_orders", force: :cascade do |t|
+    t.integer  "product_id"
+    t.text     "options"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "cart_id"
+  end
+
+  add_index "product_orders", ["cart_id"], name: "index_product_orders_on_cart_id"
+  add_index "product_orders", ["product_id"], name: "index_product_orders_on_product_id"
 
   create_table "products", force: :cascade do |t|
     t.string   "name"
