@@ -4,7 +4,7 @@ require 'pizza_order_helpers.rb'
 namespace :db do
   desc "Seed Pizza Page"
   task seed_pizza: :environment do
-    pizzapage = Pizzapage.create(PizzaConfig::PIZZAPAGE_PARAMS)
+    pizzapage = Pizzapage.find_or_create_by(PizzaConfig::PIZZAPAGE_PARAMS)
     pizzapage.create_categories_and_products
     cart = Cart.create()
     PizzaConfig::ORDER.each do |product_name, options|
@@ -25,5 +25,6 @@ namespace :db do
         pizza_order.proceed_to_checkout
       end
     end
+    cart.destroy
   end
 end
