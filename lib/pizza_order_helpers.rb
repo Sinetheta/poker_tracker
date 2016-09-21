@@ -36,8 +36,9 @@ class PizzaOrder
     checkout_page.search("//font[starts-with(b, '$')]/b").text.gsub(/\$|\./, "").to_i/100.0
   end
 
-  def proceed_to_checkout(order_info)
+  def proceed_to_checkout(order_info, delivery_info)
     checkout_page = @mech.get(@page.checkout_url)
+    order_info.merge!(delivery_info) unless checkout_page.search("//td[starts-with(font, 'Delivery')]/font").empty?
     checkout_page.form('crtordlfrm').field('action_ith').value = "chkoutb"
     checkout_page = checkout_page.form('crtordlfrm').submit
     checkout_page = checkout_page.link.click

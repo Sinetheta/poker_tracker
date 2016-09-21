@@ -25,7 +25,7 @@ namespace :db do
       puts "Is the above total correct? Enter (y) to checkout"
       confirm = STDIN.gets.chomp
       if confirm == "y"
-        pizza_order.proceed_to_checkout(pizzaconfig.order_info)
+        pizza_order.proceed_to_checkout(pizzaconfig.order_info, pizzaconfig.delivery_info)
       end
     end
     cart.destroy
