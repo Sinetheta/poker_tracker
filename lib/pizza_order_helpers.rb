@@ -36,13 +36,13 @@ class PizzaOrder
     checkout_page.search("//font[starts-with(b, '$')]/b").text.gsub(/\$|\./, "").to_i/100.0
   end
 
-  def proceed_to_checkout
+  def proceed_to_checkout(order_info)
     checkout_page = @mech.get(@page.checkout_url)
     checkout_page.form('crtordlfrm').field('action_ith').value = "chkoutb"
     checkout_page = checkout_page.form('crtordlfrm').submit
     checkout_page = checkout_page.link.click
     form = checkout_page.form
-    PizzaConfig::ORDER_INFO.each do |name, value|
+    order_info.each do |name, value|
       form.fields.detect {|f| f.name == name.to_s}.value = value
     end
     binding.pry
