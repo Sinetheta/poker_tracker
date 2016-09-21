@@ -34,5 +34,8 @@
 # Ignore pizza configuration files
 /lib/pizzaconfig.rb
 
+# Ignore orders
+/orders/
+
 # Ignore cassettes
 vcr_cassettes/
