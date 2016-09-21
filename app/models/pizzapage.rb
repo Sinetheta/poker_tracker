@@ -7,9 +7,9 @@ class Pizzapage < ActiveRecord::Base
 
   validates :webpage_path, :menu_path, :item_path, :checkout_path, presence: true
 
-  def create_categories
+  def create_categories_and_products
     generator = PizzaDataGenerator.new(self)
-    generator.create_categories
+    generator.create_categories_and_products
   end
 
   def checkout_url

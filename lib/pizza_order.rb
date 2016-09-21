@@ -195,7 +195,7 @@ class Product
     @form.radiobuttons.select do |radio|
       radio.name == "mcctstids1"
     end.map do |radio|
-      crust_choices[radio.text.split(" ")[0].downcase.gsub(/\'|\"/, "").to_sym] = radio
+      crust_choices[radio.text.downcase.tr(" ", "_").gsub(/\'|\"/, "").to_sym] = radio
     end
     crust_choices
   end

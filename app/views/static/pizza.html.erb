@@ -4,8 +4,15 @@
     <% category.products.each do |product| %>
       <tr>
         <td><%= product.name %></td>
-        <td><%= product.fields %></td>
       </tr>
+      <% product.fields.each do |field, choices| %>
+        <tr>
+          <% if !choices.keys.empty? %>
+            <td><%= field %></td>
+            <td><%= choices.keys %></td>
+          <% end %>
+        </tr>
+      <% end %>
     <% end %>
   </table>
 <% end %>

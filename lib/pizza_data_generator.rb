@@ -9,7 +9,7 @@ class PizzaDataGenerator
                    :donairs => 124571, :sides => 124596, :drinks => 124576}
   end
 
-  def create_categories
+  def create_categories_and_products
     @categories.each do |name, mnuid_it|
       Category.find_or_create_by(name: name) do |category|
         category.mnuid_it = mnuid_it
