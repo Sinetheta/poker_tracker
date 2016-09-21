@@ -1,4 +1,4 @@
-namespace :db do
+namespace :pizza do
   desc "Generate pizza options YAML"
   task generate_pizza_options: :environment do
     products = Product.all()

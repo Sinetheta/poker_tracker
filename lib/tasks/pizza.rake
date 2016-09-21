@@ -1,13 +1,14 @@
 require 'pizzaconfig.rb'
 require 'pizza_order_helpers.rb'
 
-namespace :db do
-  desc "Seed Pizza Page"
-  task seed_pizza: :environment do
+namespace :pizza do
+  desc "Place a pizza order"
+  task pizza_order: :environment do
     puts "Enter the name of the order"
     order_name = STDIN.gets.chomp
     pizzaconfig = PizzaConfig.new(order_name)
     pizzapage = Pizzapage.find_or_create_by(pizzaconfig.pizzapage_params)
+    binding.pry
     pizzapage.create_categories_and_products
     cart = Cart.create()
     pizzaconfig.order.each do |product_name, options|
