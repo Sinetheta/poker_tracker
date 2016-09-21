@@ -16,7 +16,7 @@ class PizzaOrder
     form = page.form('crtitmfrm')
     product_order.options[:radios].each do |name, selection|
       radio = form.radiobuttons.detect {|r| r.name == name && r.text == selection}
-      radio.click unless radio.checked == true
+      radio.click unless radio.nil? or radio.checked == true
     end
     (product_order.options[:checkboxes] || []).each do |name, selections|
       selections.each do |selection|
