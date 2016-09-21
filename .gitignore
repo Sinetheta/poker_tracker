@@ -32,7 +32,7 @@
 /notes/
 
 # Ignore pizza configuration files
-/lib/pizzaconfig.rb
+/lib/filled_pizzaconfig.rb
 
 # Ignore orders
 /orders/
