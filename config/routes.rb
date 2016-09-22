@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get '/leaderboard', to: 'games#leaderboard'
   get '/users/:id/history', to: 'users#history', as: 'user_history'
   resources :games
+  resources :pizza_configs
   get '/pizza', to: 'pizza_orders#new'
   post '/pizza', to: 'pizza_orders#create'
   get '/pizza/checkout', to: 'pizza_orders#checkout'

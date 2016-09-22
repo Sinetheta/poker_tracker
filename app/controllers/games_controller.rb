@@ -1,6 +1,5 @@
 class GamesController < ApplicationController
 
-  require 'owner_stats.rb'
 
   before_action :require_login, :except => [:index, :show, :leaderboard, :archive]
 
@@ -96,6 +95,7 @@ class GamesController < ApplicationController
   end
 
   def leaderboard
+    require 'owner_stats.rb'
     @owner_stats = []
     (User.all.includes(:players) + Guest.all.includes(:players)).each do |owner|
       if owner.players.select {|player| !player.winner.nil?}.length > 0

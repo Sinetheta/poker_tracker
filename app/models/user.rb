@@ -6,5 +6,6 @@ class User < ActiveRecord::Base
 
   validates :name, presence: true, uniqueness: true
   has_many :players
+  has_one :pizza_config
 
 end

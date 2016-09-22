@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160922200735) do
+ActiveRecord::Schema.define(version: 20160922211538) do
 
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -50,6 +50,29 @@ ActiveRecord::Schema.define(version: 20160922200735) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "pizza_configs", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "webpage_path"
+    t.string   "menu_path"
+    t.string   "item_path"
+    t.string   "checkout_path"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "phone_number"
+    t.string   "email"
+    t.string   "ordernote"
+    t.string   "address"
+    t.string   "company"
+    t.string   "buzzer"
+    t.string   "city"
+    t.string   "postal_code"
+    t.string   "payment_method"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "pizza_configs", ["user_id"], name: "index_pizza_configs_on_user_id"
 
   create_table "pizza_orders", force: :cascade do |t|
     t.string   "cookiespath"

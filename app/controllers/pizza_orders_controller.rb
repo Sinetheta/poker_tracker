@@ -2,16 +2,21 @@ class PizzaOrdersController < ApplicationController
 
   require 'pizzaconfig.rb'
 
+  before_action :require_login
+  before_action :require_config
+
   def new
   end
 
   def create
-    pizza_config = PizzaConfig.new(params[:order_name])
-    if !pizza_config.order.nil?
+    pizza_config = current_user.pizza_config
+    order = load_order(params[:order_name])
+    if !order.nil?
       pizzapage = Pizzapage.find_or_create_by(pizza_config.pizzapage_params)
+      binding.pry
       pizzapage.create_categories_and_products
       cart = Cart.create()
-      pizza_config.order.each do |product_name, options|
+      order.each do |product_name, options|
         product = Product.find_by_name(product_name)
         ProductOrder.create(product: product, cart: cart, options: options)
       end
@@ -31,10 +36,35 @@ class PizzaOrdersController < ApplicationController
 
   def checkout_confirm
     pizza_order = PizzaOrder.find(params[:pizza_order_id])
-    pizza_config = PizzaConfig.new("")
-    pizza_order.proceed_to_checkout(pizza_config)
+    binding.pry
+    pizza_order.proceed_to_checkout(current_user.pizza_config.order_info, current_user.pizza_config.delivery_info)
     flash[:alert] = "Pizza Successfully Ordered!"
     redirect_to pizza_path
+  end
+
+  private
+
+  def load_order(order_name)
+    path = "orders/custom_orders/#{order_name}.yaml"
+    if File.exist?(path)
+      YAML::load(File.open(path, "r").read)
+    else
+      nil
+    end
+  end
+
+  def require_login
+    unless user_signed_in?
+      flash[:alert] = "You must log in to continue"
+      redirect_to new_user_session_path
+    end
+  end
+
+  def require_config
+    unless current_user.pizza_config
+      flash[:alert] = "You must create a config before you can continue"
+      redirect_to root_path
+    end
   end
 
 end

@@ -39,11 +39,10 @@ class PizzaOrder < ActiveRecord::Base
     self.save
   end
 
-  def proceed_to_checkout(config)
+  def proceed_to_checkout(order_info, delivery_info)
     mech = Mechanize.new()
     mech.cookie_jar.load(self.cookiespath)
     checkout_page = mech.get('https://secure1.securebrygid.com/zgrid/proc/site/secure/crtchkoutb.jsp')
-    order_info = config.order_info
     order_info.merge!(config.delivery_info) unless checkout_page.search("//td[starts-with(font, 'Delivery')]/font").empty?
     form = checkout_page.form
     order_info.each do |name, value|
