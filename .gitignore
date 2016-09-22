@@ -31,6 +31,9 @@
 # Ignore notes file
 /notes/
 
+# Ignore stored cookies
+/cookies/
+
 # Ignore pizza configuration files
 /lib/filled_pizzaconfig.rb
 

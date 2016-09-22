@@ -22,7 +22,7 @@ namespace :pizza do
     answer = STDIN.gets.chomp
     if answer == "y"
       pizza_order = PizzaOrder.new(cart, pizzapage)
-      puts pizza_order.cart_total
+      puts pizza_order.web_cart_total
       puts "Is the above total correct? Enter (y) to checkout"
       confirm = STDIN.gets.chomp
       if confirm == "y"
