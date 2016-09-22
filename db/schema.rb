@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160921183751) do
+ActiveRecord::Schema.define(version: 20160922200735) do
 
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -50,6 +50,18 @@ ActiveRecord::Schema.define(version: 20160921183751) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "pizza_orders", force: :cascade do |t|
+    t.string   "cookiespath"
+    t.integer  "cart_id"
+    t.integer  "pizzapage_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.decimal  "total"
+  end
+
+  add_index "pizza_orders", ["cart_id"], name: "index_pizza_orders_on_cart_id"
+  add_index "pizza_orders", ["pizzapage_id"], name: "index_pizza_orders_on_pizzapage_id"
 
   create_table "pizzapages", force: :cascade do |t|
     t.string   "webpage_path"

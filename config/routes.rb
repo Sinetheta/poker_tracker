@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   get '/pizza', to: 'pizza_orders#new'
   post '/pizza', to: 'pizza_orders#create'
   get '/pizza/checkout', to: 'pizza_orders#checkout'
+  get '/pizza/checkout_confirm', to: 'pizza_orders#checkout_confirm'
 end

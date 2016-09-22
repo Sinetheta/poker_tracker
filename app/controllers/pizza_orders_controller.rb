@@ -16,9 +16,10 @@ class PizzaOrdersController < ApplicationController
         product = Product.find_by_name(product_name)
         ProductOrder.create(product: product, cart: cart, options: options)
       end
-      pizza_order = PizzaOrder.new(cart, pizzapage, "cookies/#{params[:order_name]}.yaml")
-      total = pizza_order.add_cart_to_web_cart
-      redirect_to pizza_checkout_path(cartid: cart.id, pizzapageid: pizzapage.id, order_name: params[:order_name], total: total)
+      pizza_order = PizzaOrder.new(cart: cart, pizzapage: pizzapage, cookiespath: "cookies/#{params[:order_name]}.yaml")
+      pizza_order.add_cart_to_web_cart
+      pizza_order.save
+      redirect_to pizza_checkout_path(pizza_order_id: pizza_order.id)
     else
       flash[:alert] = "Order not found"
       redirect_to pizza_path
@@ -26,11 +27,16 @@ class PizzaOrdersController < ApplicationController
   end
 
   def checkout
-    pizzapage = Pizzapage.find(params[:pizzapageid])
-    cart = Cart.find(params[:cartid])
-    pizza_order = PizzaOrder.new(cart, pizzapage, "cookies/#{params[:order_name]}.yaml")
-    pizza_order.proceed_to_checkout
-    render plain: params[:total]
+    @pizza_order = PizzaOrder.find(params[:pizza_order_id])
+    redirect_to pizza_checkout_confirm_path(pizza_order_id: @pizza_order.id)
+  end
+
+  def checkout_confirm
+    pizza_order = PizzaOrder.find(params[:pizza_order_id])
+    pizza_config = PizzaConfig.new("")
+    pizza_order.proceed_to_checkout(pizza_config)
+    flash[:alert] = "Pizza Successfully Ordered!"
+    redirect_to pizza_path
   end
 
 end
