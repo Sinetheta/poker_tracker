@@ -27,7 +27,6 @@ class PizzaOrdersController < ApplicationController
 
   def checkout
     @pizza_order = PizzaOrder.find(params[:pizza_order_id])
-    redirect_to pizza_checkout_confirm_path(pizza_order_id: @pizza_order.id)
   end
 
   def checkout_confirm
