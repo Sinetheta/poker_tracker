@@ -1,7 +1,6 @@
 class PizzaOrdersController < ApplicationController
 
   require 'pizzaconfig.rb'
-  require 'pizza_order_helpers.rb'
 
   def new
   end
