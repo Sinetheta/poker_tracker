@@ -4,18 +4,15 @@ class PizzaDataGenerator
 
   def initialize(page)
     @page = page
-    if Category.all.empty?
-      @categories = {:classic => 124566, :premium => 124586,
-                    :salads => 124591, :mini_meals => 124581,
-                    :donairs => 124571, :sides => 124596, :drinks => 124576}
-    else
-      @categories = Category.all
-    end
+    @categories = {:classic => 124566, :premium => 124586,
+                  :salads => 124591, :mini_meals => 124581,
+                  :donairs => 124571, :sides => 124596, :drinks => 124576}
+    create_categories_and_products if page.categories.empty?
   end
 
   def create_categories_and_products
     @categories.each do |name, mnuid_it|
-      Category.find_or_create_by(name: name) do |category|
+      Category.create(name: name) do |category|
         category.mnuid_it = mnuid_it
         category.pizzapage_id = @page.id
       end

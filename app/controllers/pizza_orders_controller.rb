@@ -11,14 +11,15 @@ class PizzaOrdersController < ApplicationController
     order = load_order(params[:order_name])
     if !order.nil?
       pizzapage = Pizzapage.find_or_create_by(pizza_config.pizzapage_params)
-      binding.pry
-      pizzapage.create_categories_and_products
+      pizzapage.create_categories_and_products if pizzapage == Pizzapage.last
       cart = Cart.create()
       order.each do |product_name, options|
         product = Product.find_by_name(product_name)
         ProductOrder.create(product: product, cart: cart, options: options)
       end
-      pizza_order = PizzaOrder.new(cart: cart, pizzapage: pizzapage, cookiespath: "cookies/#{params[:order_name]}.yaml")
+      pizza_order = PizzaOrder.new(cart: cart,
+                                   pizzapage: pizzapage,
+                                   cookiespath: "cookies/#{params[:order_name]}.yaml")
       pizza_order.add_cart_to_web_cart
       pizza_order.save
       redirect_to pizza_checkout_path(pizza_order_id: pizza_order.id)
@@ -34,8 +35,8 @@ class PizzaOrdersController < ApplicationController
 
   def checkout_confirm
     pizza_order = PizzaOrder.find(params[:pizza_order_id])
-    binding.pry
-    pizza_order.proceed_to_checkout(current_user.pizza_config.order_info, current_user.pizza_config.delivery_info)
+    pizza_order.proceed_to_checkout(current_user.pizza_config.order_info,
+                                    current_user.pizza_config.delivery_info)
     flash[:alert] = "Pizza Successfully Ordered!"
     redirect_to pizza_path
   end

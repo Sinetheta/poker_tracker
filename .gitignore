@@ -36,6 +36,7 @@
 
 # Ignore pizza configuration files
 /lib/filled_pizzaconfig.rb
+/lib/tasks/config.rake
 
 # Ignore orders
 /orders/
