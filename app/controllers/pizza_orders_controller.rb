@@ -8,7 +8,7 @@ class PizzaOrdersController < ApplicationController
 
   def create
     pizza_config = current_user.pizza_config
-    order = load_order(params[:order_name])
+    order = SavedOrder.find(params[:saved_order_id]).order
     if !order.nil?
       pizzapage = Pizzapage.find_or_create_by(pizza_config.pizzapage_params)
       pizzapage.create_categories_and_products if pizzapage == Pizzapage.last
@@ -21,7 +21,6 @@ class PizzaOrdersController < ApplicationController
                                    pizzapage: pizzapage,
                                    cookiespath: "cookies/#{params[:order_name]}.yaml")
       pizza_order.add_cart_to_web_cart
-      pizza_order.save
       redirect_to pizza_checkout_path(pizza_order_id: pizza_order.id)
     else
       flash[:alert] = "Order not found"
@@ -42,15 +41,6 @@ class PizzaOrdersController < ApplicationController
   end
 
   private
-
-  def load_order(order_name)
-    path = "orders/custom_orders/#{order_name}.yaml"
-    if File.exist?(path)
-      YAML::load(File.open(path, "r").read)
-    else
-      nil
-    end
-  end
 
   def require_login
     unless user_signed_in?

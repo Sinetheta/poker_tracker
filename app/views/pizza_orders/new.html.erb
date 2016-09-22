@@ -2,15 +2,8 @@
   <div class="page-header span5 offset2">
     <h1>Order Pizza</h1>
   </div>
-  <%= form_tag("/pizza", method: "post") do %>
-    <div class="form-group">
-      <%= label_tag :order_name, "Order Name", class: "col-md-2 control-label" %>
-      <div class="col-md-10">
-        <%= text_field_tag(:order_name, nil, class: "form-control") %>
-      </div>
-    </div>
-    <div class="col-md-offset-2 button-row">
-      <%= submit_tag("Order Pizza", class: "btn btn-primary") %>
-    </div>
+  <% current_user.saved_orders.each do |saved_order| %>
+    <%= link_to saved_order.name, pizza_path(saved_order_id: saved_order.id), class: "btn btn-primary", method: "post" %>
+    <pre><%= saved_order.order.to_yaml %></pre>
   <% end %>
 </div>

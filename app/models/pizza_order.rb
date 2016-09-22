@@ -43,7 +43,7 @@ class PizzaOrder < ActiveRecord::Base
     mech = Mechanize.new()
     mech.cookie_jar.load(self.cookiespath)
     checkout_page = mech.get('https://secure1.securebrygid.com/zgrid/proc/site/secure/crtchkoutb.jsp')
-    order_info.merge!(config.delivery_info) unless checkout_page.search("//td[starts-with(font, 'Delivery')]/font").empty?
+    order_info.merge!(delivery_info) unless checkout_page.search("//td[starts-with(font, 'Delivery')]/font").empty?
     form = checkout_page.form
     order_info.each do |name, value|
       form.fields.detect {|f| f.name == name.to_s}.value = value
