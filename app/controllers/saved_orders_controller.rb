@@ -8,7 +8,12 @@ class SavedOrdersController < ApplicationController
 
   def create
     @saved_order = SavedOrder.new(saved_order_params)
-    @saved_order.order = YAML::load(params[:saved_order][:order])
+    if params[:saved_order][:order_upload]
+      binding.pry
+      @saved_order.order = YAML::load(params[:saved_order][:order_upload].read)
+    else
+      @saved_order.order = YAML::load(params[:saved_order][:order])
+    end
     @saved_order.user_id = current_user.id
     if @saved_order.save
       redirect_to pizza_path

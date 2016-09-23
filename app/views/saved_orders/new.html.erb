@@ -19,6 +19,13 @@
       </div>
     </div>
 
+    <div class="form-group">
+      <%= f.label "Order Upload (YAML)", class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.file_field :order_upload, class: "form-control", value: "" %>
+      </div>
+    </div>
+
     <div class="col-md-1 col-md-offset-2">
       <%= f.submit "Submit Order", class: "btn btn-primary" %>
     </div>
