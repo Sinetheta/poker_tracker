@@ -10,10 +10,6 @@ class PizzaConfigsController < ApplicationController
     
   end
 
-  def show
-    
-  end
-
   def create
 
   end

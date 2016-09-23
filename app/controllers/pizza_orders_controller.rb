@@ -13,7 +13,9 @@ class PizzaOrdersController < ApplicationController
       pizzapage = Pizzapage.find_or_create_by(pizza_config.pizzapage_params)
       pizzapage.create_categories_and_products if pizzapage == Pizzapage.last
       cart = Cart.create()
-      order.each do |product_name, options|
+      order.each do |order|
+        product_name = order.keys.first()
+        options = order.values.first()
         product = Product.find_by_name(product_name)
         ProductOrder.create(product: product, cart: cart, options: options)
       end

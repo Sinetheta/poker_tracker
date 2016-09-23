@@ -1,0 +1,2 @@
+class SavedOrdersController < ApplicationController
+end

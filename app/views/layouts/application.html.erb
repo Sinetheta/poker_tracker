@@ -28,6 +28,7 @@
               <li><%= link_to "New Game", new_game_path %></li>
               <% if user_signed_in? %>
                 <li><%= link_to "My History", user_history_path(current_user.id) %></li>
+                <li><%= link_to "Order Pizza", pizza_path %></li>
               <% end %>
             </ul>
             <ul class="nav navbar-nav navbar-right">
