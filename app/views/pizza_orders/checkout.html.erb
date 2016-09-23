@@ -10,4 +10,19 @@
   <% end %>
 </table>
 
+<h3>Configuration</h3>
+<hr>
+<p><b>Name:</b> <%= "#{@config.first_name} #{@config.last_name}" %></p>
+<p><b>Phone Number:</b> <%= "#{@config.phone_number}" %></p>
+<p><b>Email:</b> <%= "#{@config.email}" %></p>
+<p><b>Order Note:</b> <%= "#{@config.ordernote}" %></p>
+<hr>
+<p><b>Address:</b> <%= "#{@config.address}" %></p>
+<p><b>Company:</b> <%= "#{@config.company}" %></p>
+<p><b>Buzzer:</b> <%= "#{@config.buzzer}" %></p>
+<p><b>City:</b> <%= "#{@config.city}" %></p>
+<p><b>Postal Code:</b> <%= "#{@config.postal_code}" %></p>
+<p><b>Payment Method:</b> <%= "#{@config.payment_method}" %></p>
+<hr>
+
 <%= link_to "Confirm Submit", pizza_checkout_confirm_path(pizza_order_id: @pizza_order.id), class: "btn btn-primary" %>

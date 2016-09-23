@@ -34,6 +34,7 @@ class PizzaOrdersController < ApplicationController
     @checkout_info = @pizza_order.checkout_info.select {|line| !line.empty?}.each do |line|
       line.unshift("") if line.length == 2
     end
+    @config = current_user.pizza_config
   end
 
   def checkout_confirm

@@ -5,6 +5,8 @@
   </div>
   <% current_user.saved_orders.each do |saved_order| %>
     <%= link_to saved_order.name, pizza_path(saved_order_id: saved_order.id), class: "btn btn-primary", method: "post" %>
+    <%= link_to "Edit order", edit_saved_order_path(id: saved_order.id), class: "btn btn-default" %>
+    <%= link_to "Delete order", saved_order_path(id: saved_order.id), class: "btn btn-danger", method: "delete", data: { confirm: "Are you sure?" } %>
     <pre><%= saved_order.order.to_yaml %></pre>
   <% end %>
 </div>
