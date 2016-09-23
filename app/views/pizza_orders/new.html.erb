@@ -1,6 +1,7 @@
 <div class="container">
   <div class="page-header span5 offset2">
     <h1>Order Pizza</h1>
+    <%= link_to "Create a new Saved Order", new_saved_order_path, class: "btn btn-primary" %>
   </div>
   <% current_user.saved_orders.each do |saved_order| %>
     <%= link_to saved_order.name, pizza_path(saved_order_id: saved_order.id), class: "btn btn-primary", method: "post" %>
