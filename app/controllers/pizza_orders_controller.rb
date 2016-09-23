@@ -10,8 +10,7 @@ class PizzaOrdersController < ApplicationController
     pizza_config = current_user.pizza_config
     order = SavedOrder.find(params[:saved_order_id]).order
     if !order.nil?
-      pizzapage = Pizzapage.find_or_create_by(pizza_config.pizzapage_params)
-      pizzapage.create_categories_and_products if pizzapage == Pizzapage.last
+      pizzapage = Pizzapage.find_by(pizza_config.pizzapage_params)
       cart = Cart.create()
       order.each do |order|
         product_name = order.keys.first()

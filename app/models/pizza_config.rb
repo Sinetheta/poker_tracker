@@ -2,6 +2,8 @@ class PizzaConfig < ActiveRecord::Base
 
   belongs_to :user
 
+  after_save :create_pizzapage_and_products
+
   def pizzapage_params
     {webpage_path: self.webpage_path,
      menu_path: self.menu_path,
@@ -45,4 +47,10 @@ class PizzaConfig < ActiveRecord::Base
     end
   end
 
+  private
+
+  def create_pizzapage_and_products
+    pizzapage = Pizzapage.find_or_create_by(self.pizzapage_params)    
+    pizzapage.create_categories_and_products
+  end
 end
