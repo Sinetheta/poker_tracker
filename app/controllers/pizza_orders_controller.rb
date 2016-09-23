@@ -32,6 +32,9 @@ class PizzaOrdersController < ApplicationController
 
   def checkout
     @pizza_order = PizzaOrder.find(params[:pizza_order_id])
+    @checkout_info = @pizza_order.checkout_info.select {|line| !line.empty?}.each do |line|
+      line.unshift("") if line.length == 2
+    end
   end
 
   def checkout_confirm

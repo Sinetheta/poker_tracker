@@ -1,6 +1,8 @@
 class PizzaOrder < ActiveRecord::Base
   require 'mechanize'
 
+  serialize :checkout_info, Array
+
   belongs_to :cart
   belongs_to :pizzapage
 
@@ -31,6 +33,9 @@ class PizzaOrder < ActiveRecord::Base
 
     end
     checkout_page = mech.get(self.pizzapage.checkout_url)
+    self.checkout_info = checkout_page.search("//td[starts-with(font, '$') or starts-with(font, '($')]").map do |td|
+      td.parent.search(".//font[@color='#000000' or @color='#95221d']").to_html.gsub(/\t|\n|<i>|<\/i>|<b>|<\/b>|<\/font>$| color=\"#000000\"| color=\"#95221d\"|<a href=\".*\">|<\/a>|[  ]{2,}/, '').gsub(/^<font>/, "").split("</font><font>")
+    end
     self.total = checkout_page.search("//font[starts-with(b, '$')]/b").text.gsub(/\$|\./, "").to_i/100.0
     checkout_page.form('crtordlfrm').field('action_ith').value = "chkoutb"
     checkout_page = checkout_page.form('crtordlfrm').submit

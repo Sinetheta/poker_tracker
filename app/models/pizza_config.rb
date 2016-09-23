@@ -21,7 +21,7 @@ class PizzaConfig < ActiveRecord::Base
 
   def delivery_info
     {adstr_it: self.address,
-     orddlvaptsut: self.company,
+     ordshprcmp: self.company,
      orddelbuzno: self.buzzer,
      adcti_it: self.city,
      adz_it: self.postal_code,

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160922230920) do
+ActiveRecord::Schema.define(version: 20160923181435) do
 
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -78,9 +78,10 @@ ActiveRecord::Schema.define(version: 20160922230920) do
     t.string   "cookiespath"
     t.integer  "cart_id"
     t.integer  "pizzapage_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
     t.decimal  "total"
+    t.text     "checkout_info"
   end
 
   add_index "pizza_orders", ["cart_id"], name: "index_pizza_orders_on_cart_id"

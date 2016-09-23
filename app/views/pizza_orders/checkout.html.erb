@@ -1,3 +1,13 @@
 <h1><%= @pizza_order.total %></h1>
 
+<table class="table table-hover">
+  <% @checkout_info.each do |line| %>
+    <tr>
+      <% line.each do |cell| %>
+        <td><%= cell %></td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
 <%= link_to "Confirm Submit", pizza_checkout_confirm_path(pizza_order_id: @pizza_order.id), class: "btn btn-primary" %>
