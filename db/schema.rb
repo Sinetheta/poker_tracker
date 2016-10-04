@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160923181435) do
+ActiveRecord::Schema.define(version: 20161004234653) do
 
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -29,21 +29,8 @@ ActiveRecord::Schema.define(version: 20160923181435) do
 
   add_index "categories", ["pizzapage_id"], name: "index_categories_on_pizzapage_id"
 
-  create_table "games", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "chips"
-    t.float    "game_length"
-    t.integer  "round_length"
-    t.integer  "round",                 default: 0
-    t.integer  "first_small_blind"
-    t.integer  "smallest_denomination"
-    t.text     "blinds",                default: "---\n- 1\n"
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
-    t.integer  "buy_in"
-    t.boolean  "complete",              default: false
-    t.integer  "saved_timer"
-  end
+# Could not dump table "games" because of following NoMethodError
+#   undefined method `[]' for nil:NilClass
 
   create_table "guests", force: :cascade do |t|
     t.string   "name"

@@ -14,8 +14,7 @@
         </ul>
       <% end %>
 
-      <div id="hiddenUsers">
-      </div>
+      <div id="hiddenUsers"></div>
 
       <div class="form-group">
         <div class="col-md-offset-2">
@@ -69,6 +68,14 @@
         <div class="col-md-6 input-group">
           <div class="input-group-addon">$</div>
           <%= f.number_field :buy_in, class: "form-control", value: @default_values[:buy_in] %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :order_pizza_after_round, "Order Pizza (after round)", class: "col-md-6 control-label" %>
+        <div class="col-md-6 input-group">
+          <div class="input-group-addon">#</div>
+          <%= f.number_field :order_pizza_after_round, class: "form-control" %>
         </div>
       </div>
 
