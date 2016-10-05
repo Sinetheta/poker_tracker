@@ -71,6 +71,14 @@ class GamesController < ApplicationController
         game.saved_timer = nil
       end
 
+      # Order pizza
+      if params[:game][:round] && params[:game][:round].to_i == game.order_pizza_after_round
+        game.update_attribute(:order_pizza_after_round, nil)
+        # Maybe I should make a button here that links to the confirmation
+        redirect_to pizza_path, :saved_order_id => "1", :method => "post"
+        return
+      end
+
       game.update_attributes(game_params)
     end
 
@@ -108,7 +116,7 @@ class GamesController < ApplicationController
   private
   def game_params
     params.require(:game).permit(:game_length, :round_length, :buy_in, :round, :name, :saved_timer,
-                                 :chips, :first_small_blind, :smallest_denomination)
+                                 :chips, :first_small_blind, :smallest_denomination, :order_pizza_after_round)
   end
 
   def require_login
