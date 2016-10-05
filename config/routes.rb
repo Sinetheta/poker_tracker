@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :saved_orders
   get '/pizza', to: 'pizza_orders#new'
   post '/pizza', to: 'pizza_orders#create'
+  get '/pizza/random', to: 'pizza_orders#random_order'
   get '/pizza/checkout', to: 'pizza_orders#checkout'
   get '/pizza/checkout_confirm', to: 'pizza_orders#checkout_confirm'
 end

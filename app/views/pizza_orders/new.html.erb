@@ -2,11 +2,18 @@
   <div class="page-header span5 offset2">
     <h1>Order Pizza</h1>
     <%= link_to "Create a new Saved Order", new_saved_order_path, class: "btn btn-primary" %>
+    <%= link_to "Create Random Order", pizza_random_path, class: "btn btn-primary"%>
   </div>
-  <% current_user.saved_orders.each do |saved_order| %>
-    <%= link_to saved_order.name, pizza_path(saved_order_id: saved_order.id), class: "btn btn-primary", method: "post" %>
-    <%= link_to "Edit order", edit_saved_order_path(id: saved_order.id), class: "btn btn-default" %>
-    <%= link_to "Delete order", saved_order_path(id: saved_order.id), class: "btn btn-danger", method: "delete", data: { confirm: "Are you sure?" } %>
-    <pre><%= saved_order.order.to_yaml %></pre>
-  <% end %>
+  <div id="random-order-options"></div>
+  <div id="saved-orders">
+    <% current_user.saved_orders.each do |saved_order| %>
+      <div id=<%= "saved-order-#{saved_order.id}" %>>
+        <%= link_to "Order \"#{saved_order.name}\"", pizza_path(saved_order_id: saved_order.id), class: "btn btn-primary", method: "post" %>
+        <button type="button" class="btn btn-primary show-order" data-orderid=<%= saved_order.id %>>Show Order</button>
+        <%= link_to "Edit order", edit_saved_order_path(id: saved_order.id), class: "btn btn-default" %>
+        <%= link_to "Delete order", saved_order_path(id: saved_order.id), class: "btn btn-danger", method: "delete", data: { confirm: "Are you sure?" } %>
+        <pre class="saved-order" data-orderid=<%= saved_order.id %>><%= saved_order.order.to_yaml %></pre>
+      </div>
+    <% end %>
+  </div>
 </div>
