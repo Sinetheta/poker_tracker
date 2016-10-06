@@ -51,14 +51,9 @@ class PizzaOrdersController < ApplicationController
     # select out pizzas
     size = 2
     qty = 2
-    pizzas = []
-    pizza_categories = Category.select {|category| category.name == "classic" || category.name == "premium"}
-    pizza_categories.each do |category|
-      category.products.each do |product|
-        pizzas << product unless product.name == "Create Your Own Pizza"
-      end
-    end
     selection = []
+    pizzas = get_pizzas
+    pizzas.reject! {|pizza| pizza.name == "Create Your Own Pizza"}
     qty.times { selection << pizzas.sample }
     # check we have product options available
     selection.each do |pizza|
@@ -67,6 +62,10 @@ class PizzaOrdersController < ApplicationController
     selection.map! {|pizza| configure_pizza(pizza, size)}.flatten!
     SavedOrder.create(name: "random", user_id: current_user.id, order: selection)
     redirect_to pizza_path
+  end
+
+  def create_pizza
+    @pizzas = get_pizzas
   end
 
   private
@@ -83,6 +82,17 @@ class PizzaOrdersController < ApplicationController
       flash[:alert] = "You must create a config before you can continue"
       redirect_to root_path
     end
+  end
+
+  def get_pizzas
+    pizzas = []
+    pizza_categories = Category.select {|category| category.name == "classic" || category.name == "premium"}
+    pizza_categories.each do |category|
+      category.products.each do |product|
+        pizzas << product
+      end
+    end
+    pizzas
   end
 
   def configure_pizza(pizza, size)

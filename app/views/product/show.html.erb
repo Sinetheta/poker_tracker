@@ -1,0 +1,99 @@
+<h3><%= @product.name %></h3>
+
+<%= form_tag do %>
+  <div class="row">
+    <div class="col-xs-4">
+      <% @sizes.each_with_index do |size, i| %>
+        <div class="radio">
+          <label>
+            <%= radio_button_tag(:size, i) %>
+            <%= size %>
+          </label>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-xs-4">
+      <% @option1.each_with_index do |option, i| %>
+        <div class="radio">
+          <label>
+            <%= radio_button_tag(:mcctstids1, i) %>
+            <%= option %>
+          </label>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-xs-4">
+      <% @option2.each_with_index do |option, i| %>
+        <div class="radio">
+          <label>
+            <%= radio_button_tag(:mcctstids2, i) %>
+            <%= option %>
+          </label>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-4">
+      <% @option3.each_with_index do |option, i| %>
+        <div class="radio">
+          <label>
+            <%= radio_button_tag(:mcctstids3, i) %>
+            <%= option %>
+          </label>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-xs-8">
+      <div class="row">
+        <div class="col-xs-6">
+          <% @removals.each_with_index do |option, i| %>
+            <div class="checkbox">
+              <label>
+                <%= check_box_tag("mcctsuids-#{i}") %>
+                <%= option %>
+              </label>
+            </div>
+          <% end %>
+        </div>
+        <div class="col-xs-6">
+          <% @additions.each_with_index do |option, i| %>
+            <div class="checkbox">
+              <label>
+                <%= check_box_tag("mcctadids-#{i}") %>
+                <%= option %>
+              </label>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= submit_tag("Done") %>
+<% end %>
+
+<h3>Text Fields</h3>
+<% @text_fields.each_with_index do |option, i| %>
+  <p><%= "#{i.to_i+1}: #{option}" %></p>
+<% end %>
+<p><%= @orders.length %></p>
+
+
+<%= form_tag do %>
+  <div class="row">
+    <div class="col-xs-4">
+      <%= select_tag(:size, options_for_select(@sizes, {include_blank: true}), class: "select2") %>
+    </div>
+    <div class="col-xs-4">
+    <%= select_tag(:removals, options_for_select(@removals), class: "select2-multi", multiple: "multiple") %>
+    </div>
+    <div class="col-xs-4">
+    <%= select_tag(:additions, options_for_select(@additions), class: "select2-multi", multiple: "multiple") %>
+    </div>
+    <div class="col-xs-4">
+    <%= submit_tag("Done") %>
+    </div>
+  </div>
+<% end %>
+

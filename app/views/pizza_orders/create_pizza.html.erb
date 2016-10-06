@@ -1,0 +1,16 @@
+<h1>Create a Pizza</h1>
+
+<table class="table table-hover" id="pizzas-table">
+  <tr>
+    <th>Name</th>
+    <th>Default Toppings</th>
+    <th></th>
+  </tr>
+<% @pizzas.each do |pizza| %>
+  <tr>
+    <td><%= pizza.name %></td>
+    <td><%= (pizza.options[:checkboxes]["mcctsuids"] || []).join(", ") %></td>
+    <td><%= link_to "Select", product_path(pizza.id), class: "btn btn-primary" %></td>
+  </tr>
+<% end %>
+</table>
