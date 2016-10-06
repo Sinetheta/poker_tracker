@@ -26,6 +26,8 @@ gem 'webmock'
 # Bootstrap
 gem 'sprockets-rails', :require => 'sprockets/railtie'
 gem 'bootstrap-sass', '~> 3.3.6'
+# Select2
+gem 'select2-rails'
 
 # Devise for Auth
 gem 'devise'
