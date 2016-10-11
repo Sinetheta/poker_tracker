@@ -9,7 +9,7 @@
 <% @pizzas.each do |pizza| %>
   <tr>
     <td><%= pizza.name %></td>
-    <td><%= (pizza.options[:checkboxes]["mcctsuids"] || []).join(", ") %></td>
+    <td><%= (pizza.options[:checkboxes]["mcctsuids"] || []).join(", ") if pizza.options[:checkboxes]%></td>
     <td><%= link_to "Select", product_path(pizza.id), class: "btn btn-primary" %></td>
   </tr>
 <% end %>

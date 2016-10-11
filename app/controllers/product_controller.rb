@@ -14,6 +14,26 @@ class ProductController < ApplicationController
   end
 
   def add_to_saved_order
-    binding.pry
+    line_item = { params[:name] => { :radios =>
+                                     { "olszid" => params[:size],
+                                       "mcctstids1" => params[:option1],
+                                       "mcctstids2" => params[:option2],
+                                       "mcctstids3" => params[:option3],
+                                       "otid" => params[:delivery] },
+                                     :checkboxes =>
+                                     { "mcctsuids" => (params[:removals] || []),
+                                       "mcctadids" => (params[:additions] || []) },
+                                     :text_fields =>
+                                     { "olytq" => params[:quantity],
+                                       "olfnm" => params[:name_for],
+                                       "olynt" => params[:instructions] }}}
+    if params[:order_id].empty?
+      order = SavedOrder.new(user_id: current_user.id, name: params[:name], order: [line_item])
+    else
+      order = SavedOrder.find(params[:order_id].to_i)
+      order.order << line_item
+    end
+    order.save
+    redirect_to pizza_path
   end
 end
