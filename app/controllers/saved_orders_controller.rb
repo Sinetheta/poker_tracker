@@ -6,6 +6,29 @@ class SavedOrdersController < ApplicationController
     @saved_order = SavedOrder.new
   end
 
+  def show
+    pizza_config = current_user.pizza_config
+    order = SavedOrder.find(params[:id]).order
+    if !order.nil?
+      pizzapage = Pizzapage.find_by(pizza_config.pizzapage_params)
+      cart = Cart.create()
+      order.each do |order|
+        product_name = order.keys.first()
+        options = order.values.first()
+        product = Product.find_by_name(product_name)
+        ProductOrder.create(product: product, cart: cart, options: options)
+      end
+      pizza_order = PizzaOrder.new(cart: cart,
+                                   pizzapage: pizzapage,
+                                   cookiespath: "cookies/#{params[:order_name]}.yaml")
+      pizza_order.add_cart_to_web_cart
+      redirect_to pizza_checkout_path(pizza_order_id: pizza_order.id, game_id: params[:game_id])
+    else
+      flash[:alert] = "Order not found"
+      redirect_to pizza_path
+    end
+  end
+
   def create
     @saved_order = SavedOrder.new(saved_order_params)
     if params[:saved_order][:order_upload]
