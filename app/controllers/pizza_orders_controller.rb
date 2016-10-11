@@ -92,7 +92,7 @@ class PizzaOrdersController < ApplicationController
         pizzas << product
       end
     end
-    pizzas
+    pizzas.sort_by! {|pizza| (pizza.options[:checkboxes]["mcctsuids"] || []).length}
   end
 
   def configure_pizza(pizza, size)
