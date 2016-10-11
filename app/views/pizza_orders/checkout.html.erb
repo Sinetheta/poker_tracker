@@ -25,4 +25,4 @@
 <p><b>Payment Method:</b> <%= "#{@config.payment_method}" %></p>
 <hr>
 
-<%= link_to "Confirm Submit", pizza_checkout_confirm_path(pizza_order_id: @pizza_order.id), class: "btn btn-primary" %>
+<%= link_to "Confirm Submit", pizza_checkout_confirm_path(pizza_order_id: @pizza_order.id, game_id: params[:game_id]), class: "btn btn-primary" %>
