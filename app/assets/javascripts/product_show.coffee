@@ -1,5 +1,4 @@
 $(document).on "turbolinks:load", ->
-  console.log($(".select2-hidden-accessible").length > 0)
   if $(".select2-hidden-accessible").length > 0
     location.reload()
   $("#size.select2").select2
