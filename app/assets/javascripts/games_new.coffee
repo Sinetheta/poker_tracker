@@ -3,6 +3,7 @@ $(document).on "turbolinks:load", ->
   $(".games.new").ready ->
     $("#userButtons").hide()
     $("#guestForm").hide()
+    $("#order-select").hide()
     $("#addUser").on "click", (event) ->
       $("#userButtons").show()
       $("#addingUser").show()
@@ -46,6 +47,11 @@ $(document).on "turbolinks:load", ->
       if event.keyCode == 13
         $("#guestSubmit").click()
         return false
+    $("#order-pizza-round").change ->
+      if $(this)[0].value == ""
+        $("#order-select").hide()
+      else
+        $("#order-select").show()
 
 String::strip = -> @replace /^\s+|\s+$/g, ""
 

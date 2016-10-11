@@ -75,11 +75,11 @@
         <%= f.label :order_pizza_after_round, "Order Pizza (after round)", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
           <div class="input-group-addon">#</div>
-          <%= f.number_field :order_pizza_after_round, class: "form-control" %>
+          <%= f.number_field :order_pizza_after_round, class: "form-control", id: "order-pizza-round" %>
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="order-select">
         <%= f.label :saved_order_id, "Pizza Order", class: "col-md-6 control-label" %>
         <div class="col-md-6 input-group">
           <%= f.select :saved_order_id, options_for_select(current_user.saved_orders.collect {|order| [order.name, order.id]}), {}, {class: "form-control"} %>
