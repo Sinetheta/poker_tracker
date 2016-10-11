@@ -66,6 +66,7 @@ saveTimer = () ->
       url: "/games/#{window.game.id}.json"
       data: { game: { saved_timer: $("#timer").data("currentTime") } }
       success: (game) ->
+        window.game = game
     })
 
 pauseResumeTimer = () ->
@@ -79,7 +80,7 @@ pauseResumeTimer = () ->
     updateTimer($("#timer").data("currentTime"))
     $("#pauseTimer").html("Pause Timer")
 
-updateTimer = (currentTime) ->
+updateTimer = (currentTime, paused = false) ->
   timer = document.getElementById('timer')
   if timer != null and currentTime >= 0
     if currentTime == 0
@@ -92,10 +93,17 @@ updateTimer = (currentTime) ->
       seconds = currentTime % 60
       if seconds < 10
         seconds = "0" + seconds
-      window.timer = setTimeout((->
+      if paused == false
+        window.timer = setTimeout((->
+          timer.innerHTML = "#{minutes}:#{seconds}"
+          updateTimer(currentTime-1)
+        ), 1000)
+      else
         timer.innerHTML = "#{minutes}:#{seconds}"
-        updateTimer(currentTime-1, game)
-      ), 1000)
+        window.timer = null
+        $("#startTimer").show()
+        $("#pauseTimer").hide()
+        saveTimer()
 
 incRound = () ->
   $.ajax({
@@ -107,7 +115,8 @@ incRound = () ->
       $("#roundDisplay").data("roundid", game.round)
       document.getElementById('roundDisplay').innerHTML = "Round #{game.round+1}"
       updateBlinds(game)
-      updateTimer(game.round_length*60)
+      updateTimer(game.round_length*60, paused = true)
+
   })
 
 updateBlinds = (game) ->
