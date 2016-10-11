@@ -18,6 +18,11 @@
   padding-bottom: 20px;
 }
 
+.content-centered {
+  margin: auto;
+  max-width: 960px;
+}
+
 @import "games";
 @import "bootstrap-sprockets";
 @import "bootstrap";
