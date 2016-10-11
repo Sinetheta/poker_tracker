@@ -9,7 +9,7 @@
     <% current_user.saved_orders.each do |saved_order| %>
       <div id=<%= "saved-order-#{saved_order.id}" %> class="row">
         <div class="col-xs-3">
-          <%= link_to "Order \"#{saved_order.name}\"", pizza_path(saved_order_id: saved_order.id), class: "btn btn-primary", method: "post" %>
+          <%= link_to "Order \"#{saved_order.name}\"", saved_order_path(id: saved_order.id), class: "btn btn-primary" %>
         </div>
         <div class="col-xs-9">
           <button type="button" class="btn btn-primary show-order" data-orderid=<%= saved_order.id %>>Show Order</button>
