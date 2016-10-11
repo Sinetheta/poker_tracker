@@ -19,7 +19,7 @@ class ProductController < ApplicationController
                                        "mcctstids1" => params[:option1],
                                        "mcctstids2" => params[:option2],
                                        "mcctstids3" => params[:option3],
-                                       "otid" => params[:delivery] },
+                                       "otid" => params[:takeout] },
                                      :checkboxes =>
                                      { "mcctsuids" => (params[:removals] || []),
                                        "mcctadids" => (params[:additions] || []) },

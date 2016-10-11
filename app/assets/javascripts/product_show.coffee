@@ -26,3 +26,6 @@ $(document).on "turbolinks:load", ->
   $("#order_id.select2").select2
     placeholder: "Order name"
     width: "100%"
+  $("#takeout.select2").select2
+    allowClear: false
+    width: "100%"
