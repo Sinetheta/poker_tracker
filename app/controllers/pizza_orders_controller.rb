@@ -1,7 +1,7 @@
 class PizzaOrdersController < ApplicationController
 
   before_action :require_login
-  before_action :require_config
+  before_action :require_config, except: [:new, :create_pizza]
 
   def new
   end

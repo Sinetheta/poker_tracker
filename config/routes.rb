@@ -5,9 +5,10 @@ Rails.application.routes.draw do
   get '/leaderboard', to: 'games#leaderboard'
   get '/users/:id/history', to: 'users#history', as: 'user_history'
   resources :games
-  resources :pizza_configs
+  resource :pizza_config
   resources :saved_orders
   resources :product, only: :show
+
   post '/product(/:id)', to: 'product#add_to_saved_order'
   get '/pizza', to: 'pizza_orders#new'
   post '/pizza', to: 'pizza_orders#create'

@@ -53,8 +53,9 @@ class PizzaOrder < ActiveRecord::Base
     order_info.each do |name, value|
       form.fields.detect {|f| f.name == name.to_s}.value = value
     end
-    binding.pry
-
+    puts mech.page.inspect
+    #form.submit
+    puts mech.page.inspect
   end
 
 end

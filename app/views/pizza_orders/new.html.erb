@@ -2,14 +2,22 @@
   <div class="page-header span5 offset2">
     <h1>Order Pizza</h1>
     <%= link_to "Add a pizza to a new or existing order", pizza_create_path, class: "btn btn-primary" %>
-    <%= link_to "Create Random Order", pizza_random_path, class: "btn btn-primary"%>
+    <% if current_user.pizza_config %>
+      <%= link_to "Edit Order Configuration", edit_pizza_config_path, class: "btn btn-primary" %>
+    <% else %>
+      <%= link_to "You do not currently have an order configurtion, click here to set one", new_pizza_config_path, class: "btn btn-danger" %>
+    <% end %>
   </div>
   <div id="random-order-options"></div>
   <div id="saved-orders">
     <% current_user.saved_orders.each do |saved_order| %>
       <div id=<%= "saved-order-#{saved_order.id}" %> class="row">
         <div class="col-xs-3">
-          <%= link_to "Order \"#{saved_order.name}\"", saved_order_path(id: saved_order.id), class: "btn btn-primary" %>
+          <% if current_user.pizza_config %>
+            <%= link_to "Order \"#{saved_order.name}\"", saved_order_path(id: saved_order.id), class: "btn btn-primary" %>
+          <% else %>
+            <button type="button" class="btn btn-primary" disabled><%= "Order \"#{saved_order.name}\"" %></button>
+          <% end %>
         </div>
         <div class="col-xs-9">
           <button type="button" class="btn btn-primary show-order" data-orderid=<%= saved_order.id %>>Show Order</button>
