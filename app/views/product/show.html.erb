@@ -9,19 +9,19 @@
         <div class="row">
           <% if @sizes.length > 1 %>
             <div class="col-xs-12 col-md-6">
-              <%= label_tag :size %>
+              <%= label_tag :size, "Size*" %>
               <%= select_tag(:size, options_for_select(@sizes, @sizes.first), include_hidden: false, class: "select2", id: "size") %>
             </div>
           <% end %>
           <% if !@option1.empty? %>
             <div class="col-xs-12 col-md-6">
-              <%= label_tag :option1, 'Crust Choice' %>
+              <%= label_tag :option1, 'Crust Choice*' %>
               <%= select_tag(:option1, options_for_select(@option1, @option1.first), class: "select2", id: "option1") %>
             </div>
           <% end %>
           <% if !@option2.empty? %>
             <div class="col-xs-12 col-md-6">
-              <%= label_tag :option2, 'Crust Thickness' %>
+              <%= label_tag :option2, 'Crust Thickness*' %>
               <%= select_tag(:option2, options_for_select(@option2, @option2.first), class: "select2", id: "option2") %>
             </div>
           <% end %>
@@ -52,7 +52,7 @@
       <div class="col-xs-12">
         <div class="row">
           <div class="col-xs-6 col-md-3">
-            <%= label_tag :quantity %>
+            <%= label_tag :quantity, "Quantity*" %>
             <%= number_field_tag(:quantity, '1', in: 1...100, class: "form-control") %>
           </div>
           <div class="col-xs-6 col-md-3">
@@ -72,7 +72,7 @@
             <%= text_area_tag(:instructions, nil, class: "form-control") %>
           </div>
           <div class="col-xs-3 col-md-6">
-            <%= label_tag :takeout, 'Takeout or Delivery' %>
+            <%= label_tag :takeout, 'Takeout or Delivery*' %>
             <%= select_tag(:takeout, options_for_select(["Takeout", "Delivery"], "Takeout"), class: "select2", id: "takeout") %>
           </div>
         </div>
