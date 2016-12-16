@@ -1,0 +1,93 @@
+<div class="container">
+  <div class="page-header span-md-4 offset-md-2">
+    <h3>Edit Pizza Config</h3>
+  </div>
+
+  <%= form_for @pizza_config, url: pizza_config_path, html: { class: "form-horizontal center" } do |f| %>
+    <%= f.hidden_field :webpage_path, value: 'http://victoria.alibabapizza.ca' %>
+    <%= f.hidden_field :menu_path, value:'/zgrid/proc/site/sitemnup.jsp' %>
+    <%= f.hidden_field :item_path, value: '/zgrid/proc/site/crtctmitm.jsp' %>
+    <%= f.hidden_field :checkout_path, value: '/zgrid/proc/site/crtvword.jsp' %>
+
+    <div class="form-group">
+      <%= f.label 'First Name*', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_field :first_name, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Last Name*', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_field :last_name, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Company', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_field :company, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Phone Number*', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_field :phone_number, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Email Address', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_field :email, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <h3>Address</h3>
+
+    <div class="form-group">
+      <%= f.label 'Street Address*', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_field :address, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Ring/Buzzer', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_field :buzzer, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'City*', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_field :city, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Postal Code*', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_field :postal_code, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Payment Method*', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.select :payment_method, options_for_select(["Cash", "Visa", "Mastercard", "American Express", "Gift Card", "Debit"]), {}, { autofocus: true, class: "form-control" } %>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <%= f.label 'Speical Instructions', class: "col-md-2 control-label" %>
+      <div class="col-md-4">
+        <%= f.text_area :ordernote, autofocus: true, class: "form-control" %>
+      </div>
+    </div>
+
+    <%= f.submit class: "btn btn-primary" %>
+  <% end %>
+</div>
