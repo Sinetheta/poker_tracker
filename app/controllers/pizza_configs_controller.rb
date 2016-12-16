@@ -3,26 +3,38 @@ class PizzaConfigsController < ApplicationController
   before_action :require_login
 
   def new
-    if current_user.pizza_config != nil
+    if current_user.pizza_config
       redirect_to edit_pizza_config_path
     end
   end
 
   def edit
+    @pizza_config = current_user.pizza_config
   end
 
   def create
     @pizza_config = PizzaConfig.new(config_params)
     @pizza_config.user = current_user
     @pizza_config.save
+    redirect_to games_path
   end
 
   def update
-
+    @pizza_config = current_user.pizza_config
+    @pizza_config.update_attributes(config_params)
+    redirect_to games_path
   end
 
   def destory
 
+  end
+
+  def show
+    if current_user.pizza_config
+      redirect_to edit_pizza_config_path
+    else
+      redirect_to new_pizza_config_path
+    end
   end
 
   private
